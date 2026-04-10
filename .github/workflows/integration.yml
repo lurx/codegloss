@@ -1,0 +1,52 @@
+name: Integration tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  example:
+    name: ${{ matrix.example }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        example:
+          - vanilla-html
+          - plain-markdown
+          - react-18
+          - react-19
+          - nextjs-app
+          - nextjs-static
+          - velite
+          - docusaurus
+          - astro-starlight
+          - vitepress
+          - sveltekit
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build local packages
+        run: pnpm -w run build:packages
+
+      - name: Run example build + assertions
+        run: pnpm --filter @codegloss-examples/${{ matrix.example }} test
