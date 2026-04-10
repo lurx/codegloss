@@ -45,6 +45,7 @@ export function HeroDemo() {
       code={CODE}
       lang="ts"
       filename="use-throttle.ts"
+      theme="github-light"
       annotations={ANNOTATIONS}
       connections={CONNECTIONS}
       runnable={false}

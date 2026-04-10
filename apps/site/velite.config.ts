@@ -1,9 +1,15 @@
 import { defineConfig, s } from 'velite';
 import remarkCodegloss from 'remark-codegloss';
+import codeglossConfig from './codegloss.config';
+
+const theme =
+	typeof codeglossConfig.theme === 'string'
+		? codeglossConfig.theme
+		: undefined;
 
 export default defineConfig({
   mdx: {
-    remarkPlugins: [[remarkCodegloss, { skipImport: true }]],
+    remarkPlugins: [[remarkCodegloss, { skipImport: true, theme }]],
   },
   collections: {
     docs: {
