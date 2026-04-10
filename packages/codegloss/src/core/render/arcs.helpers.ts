@@ -8,6 +8,14 @@ import type { Annotation, Connection } from '../code-gloss.types';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
+export type ArcStyleOverrides = {
+	dotRadius?: number;
+	dotOpacity?: number;
+	strokeWidth?: number;
+	strokeDasharray?: string;
+	opacity?: number;
+};
+
 type DrawArcsParameters = {
 	svg: SVGSVGElement;
 	height: number;
@@ -17,6 +25,8 @@ type DrawArcsParameters = {
 	annotationYMap: Map<string, number>;
 	/** Click handler invoked when an interactive arc/dot is clicked */
 	onConnectionClick: (conn: Connection, event: MouseEvent) => void;
+	/** Optional style overrides for arcs */
+	arcStyle?: ArcStyleOverrides;
 };
 
 export function drawArcs({
@@ -25,7 +35,13 @@ export function drawArcs({
 	connections,
 	annotationYMap,
 	onConnectionClick,
+	arcStyle,
 }: DrawArcsParameters): void {
+	const dotR = arcStyle?.dotRadius ?? 2.5;
+	const dotOp = arcStyle?.dotOpacity ?? 0.8;
+	const sw = arcStyle?.strokeWidth ?? 1.5;
+	const dash = arcStyle?.strokeDasharray ?? '4 3';
+	const arcOp = arcStyle?.opacity ?? 0.55;
 	svg.setAttribute('height', String(height));
 	svg.setAttribute('viewBox', `0 0 ${GUTTER_WIDTH} ${height}`);
 
@@ -45,12 +61,12 @@ export function drawArcs({
 			? (event: MouseEvent) => onConnectionClick(conn, event)
 			: null;
 
-		const dot1 = createDot(xPos, fromY, conn.color);
-		const dot2 = createDot(xPos, toY, conn.color);
+		const dot1 = createDot(xPos, fromY, conn.color, dotR, dotOp);
+		const dot2 = createDot(xPos, toY, conn.color, dotR, dotOp);
 		svg.append(dot1);
 		svg.append(dot2);
 
-		const path = createArcPath(xPos, fromY, toY, conn.color);
+		const path = createArcPath(xPos, fromY, toY, conn.color, sw, dash, arcOp);
 		svg.append(path);
 
 		if (interactive && onClick) {
@@ -69,13 +85,19 @@ export function drawArcs({
 	}
 }
 
-function createDot(cx: number, cy: number, color: string): SVGCircleElement {
+function createDot(
+	cx: number,
+	cy: number,
+	color: string,
+	radius: number,
+	opacity: number,
+): SVGCircleElement {
 	const circle = document.createElementNS(SVG_NS, 'circle');
 	circle.setAttribute('cx', String(cx));
 	circle.setAttribute('cy', String(cy));
-	circle.setAttribute('r', '2.5');
+	circle.setAttribute('r', String(radius));
 	circle.setAttribute('fill', color);
-	circle.setAttribute('opacity', '0.8');
+	circle.setAttribute('opacity', String(opacity));
 	return circle;
 }
 
@@ -84,6 +106,9 @@ function createArcPath(
 	fromY: number,
 	toY: number,
 	color: string,
+	strokeWidth: number,
+	dasharray: string,
+	opacity: number,
 ): SVGPathElement {
 	const path = document.createElementNS(SVG_NS, 'path');
 	path.setAttribute(
@@ -91,9 +116,12 @@ function createArcPath(
 		`M${xPos} ${fromY} C ${ARC_BEND} ${fromY} ${ARC_BEND} ${toY} ${xPos} ${toY}`,
 	);
 	path.setAttribute('stroke', color);
-	path.setAttribute('stroke-width', '1.5');
-	path.setAttribute('stroke-dasharray', '4 3');
-	path.setAttribute('opacity', '0.55');
+	path.setAttribute('stroke-width', String(strokeWidth));
+	if (dasharray !== 'none') {
+		path.setAttribute('stroke-dasharray', dasharray);
+	}
+
+	path.setAttribute('opacity', String(opacity));
 	path.setAttribute('fill', 'none');
 	return path;
 }

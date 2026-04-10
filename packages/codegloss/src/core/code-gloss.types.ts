@@ -56,6 +56,14 @@ export type CodeGlossConfig = {
 	runnable?: boolean;
 	/** Named theme or inline theme object for syntax + chrome colors */
 	theme?: string;
+	/** Style overrides for connection arcs */
+	arcs?: {
+		dotRadius?: number;
+		dotOpacity?: number;
+		strokeWidth?: number;
+		strokeDasharray?: string;
+		opacity?: number;
+	};
 };
 
 export type RunResult = {

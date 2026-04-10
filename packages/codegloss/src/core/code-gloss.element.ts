@@ -494,6 +494,7 @@ export class CodeGlossElement extends SafeHTMLElement {
 			connections: this.config.connections,
 			annotationYMap,
 			onConnectionClick: this.handleConnectionClick,
+			arcStyle: this.config.arcs,
 		});
 	}
 
