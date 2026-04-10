@@ -1,29 +1,29 @@
 export type Annotation = {
-  /** Unique within this block, e.g. "a1" */
-  id: string;
-  /** Exact substring to highlight, e.g. "memo[k]" */
-  token: string;
-  /** 0-indexed line number */
-  line: number;
-  /** 0-indexed: which match on that line (for repeated tokens) */
-  occurrence: number;
-  /** Tooltip heading */
-  title: string;
-  /** Tooltip body */
-  text: string;
+	/** Unique within this block, e.g. "a1" */
+	id: string;
+	/** Exact substring to highlight, e.g. "memo[k]" */
+	token: string;
+	/** 0-indexed line number */
+	line: number;
+	/** 0-indexed: which match on that line (for repeated tokens) */
+	occurrence: number;
+	/** Tooltip heading */
+	title: string;
+	/** Tooltip body */
+	text: string;
 };
 
 export type Connection = {
-  /** Annotation id */
-  from: string;
-  /** Annotation id */
-  to: string;
-  /** Hex color for the arc + dots */
-  color: string;
-  /** Tooltip heading shown when the arc is clicked */
-  title?: string;
-  /** Tooltip body shown when the arc is clicked. Without it, the arc isn't clickable. */
-  text?: string;
+	/** Annotation id */
+	from: string;
+	/** Annotation id */
+	to: string;
+	/** Hex color for the arc + dots */
+	color: string;
+	/** Tooltip heading shown when the arc is clicked */
+	title?: string;
+	/** Tooltip body shown when the arc is clicked. Without it, the arc isn't clickable. */
+	text?: string;
 };
 
 /**
@@ -44,31 +44,31 @@ export type Highlighter = (code: string, lang: string) => string[];
  * element directly (or use the React wrapper which handles it via ref).
  */
 export type CodeGlossConfig = {
-  /** Raw source string (preserve indentation) */
-  code: string;
-  /** Language identifier: "js", "ts", "py", etc. */
-  lang: string;
-  /** Shown in toolbar, e.g. "fibonacci.js" */
-  filename?: string;
-  annotations?: Annotation[];
-  connections?: Connection[];
-  /** Show Run button (default: true when lang === "js") */
-  runnable?: boolean;
+	/** Raw source string (preserve indentation) */
+	code: string;
+	/** Language identifier: "js", "ts", "py", etc. */
+	lang: string;
+	/** Shown in toolbar, e.g. "fibonacci.js" */
+	filename?: string;
+	annotations?: Annotation[];
+	connections?: Connection[];
+	/** Show Run button (default: true when lang === "js") */
+	runnable?: boolean;
 };
 
 export type RunResult = {
-  lines: string[];
-  error?: string;
+	lines: string[];
+	error?: string;
 };
 
 export type AnnotationHit = {
-  start: number;
-  end: number;
-  annotation: Annotation;
+	start: number;
+	end: number;
+	annotation: Annotation;
 };
 
 export type ConnectionTooltipState = {
-  connection: Connection;
-  top: number;
-  left: number;
+	connection: Connection;
+	top: number;
+	left: number;
 };

@@ -13,76 +13,83 @@ import type { AnnotationHit } from './code-gloss.types';
  *   result: '<span class="kw">const</span> <mark ...>memo</mark> = {};'
  */
 export function injectAnnotationsIntoHtml(
-  html: string,
-  hits: AnnotationHit[],
+	html: string,
+	hits: AnnotationHit[],
 ): string {
-  if (hits.length === 0) return html;
+	if (hits.length === 0) return html;
 
-  // Build a map from plain-text index → html index.
-  const textToHtml: number[] = [];
-  let inTag = false;
-  let inEntity = false;
+	// Build a map from plain-text index → html index.
+	const textToHtml: number[] = [];
+	let inTag = false;
+	let inEntity = false;
 
-  for (let i = 0; i < html.length; i++) {
-    if (inTag) {
-      if (html[i] === '>') inTag = false;
-      continue;
-    }
+	for (let i = 0; i < html.length; i++) {
+		if (inTag) {
+			if (html[i] === '>') inTag = false;
+			continue;
+		}
 
-    if (html[i] === '<') {
-      inTag = true;
-      continue;
-    }
+		if (html[i] === '<') {
+			inTag = true;
+			continue;
+		}
 
-    if (inEntity) {
-      if (html[i] === ';') inEntity = false;
-      continue;
-    }
+		if (inEntity) {
+			if (html[i] === ';') inEntity = false;
+			continue;
+		}
 
-    if (html[i] === '&') {
-      inEntity = true;
-      textToHtml.push(i);
-      continue;
-    }
+		if (html[i] === '&') {
+			inEntity = true;
+			textToHtml.push(i);
+			continue;
+		}
 
-    textToHtml.push(i);
-  }
+		textToHtml.push(i);
+	}
 
-  const insertions: Array<{ htmlIndex: number; tag: string; priority: number }> = [];
+	const insertions: Array<{
+		htmlIndex: number;
+		tag: string;
+		priority: number;
+	}> = [];
 
-  for (const hit of hits) {
-    if (hit.start >= textToHtml.length) continue;
+	for (const hit of hits) {
+		if (hit.start >= textToHtml.length) continue;
 
-    const openAt = textToHtml[hit.start];
-    const lastTextIdx = Math.min(hit.end - 1, textToHtml.length - 1);
-    const lastHtmlIdx = textToHtml[lastTextIdx];
-    const closeAt = findEndOfChar(html, lastHtmlIdx);
+		const openAt = textToHtml[hit.start];
+		const lastTextIdx = Math.min(hit.end - 1, textToHtml.length - 1);
+		const lastHtmlIdx = textToHtml[lastTextIdx];
+		const closeAt = findEndOfChar(html, lastHtmlIdx);
 
-    const markOpen = `<mark class="atk" data-ann-id="${hit.annotation.id}">`;
-    const markClose = '</mark>';
+		const markOpen = `<mark class="atk" data-ann-id="${hit.annotation.id}">`;
+		const markClose = '</mark>';
 
-    insertions.push({ htmlIndex: closeAt, tag: markClose, priority: 1 });
-    insertions.push({ htmlIndex: openAt, tag: markOpen, priority: 0 });
-  }
+		insertions.push(
+			{ htmlIndex: closeAt, tag: markClose, priority: 1 },
+			{ htmlIndex: openAt, tag: markOpen, priority: 0 },
+		);
+	}
 
-  insertions.sort((a, b) =>
-    b.htmlIndex - a.htmlIndex || b.priority - a.priority,
-  );
+	insertions.sort(
+		(a, b) => b.htmlIndex - a.htmlIndex || b.priority - a.priority,
+	);
 
-  let result = html;
+	let result = html;
 
-  for (const ins of insertions) {
-    result = result.slice(0, ins.htmlIndex) + ins.tag + result.slice(ins.htmlIndex);
-  }
+	for (const ins of insertions) {
+		result =
+			result.slice(0, ins.htmlIndex) + ins.tag + result.slice(ins.htmlIndex);
+	}
 
-  return result;
+	return result;
 }
 
 function findEndOfChar(html: string, idx: number): number {
-  if (html[idx] === '&') {
-    const semi = html.indexOf(';', idx);
-    return semi === -1 ? idx + 1 : semi + 1;
-  }
+	if (html[idx] === '&') {
+		const semi = html.indexOf(';', idx);
+		return semi === -1 ? idx + 1 : semi + 1;
+	}
 
-  return idx + 1;
+	return idx + 1;
 }

@@ -1,10 +1,9 @@
 import type { Html } from 'mdast';
-
 import type { DetectedPair } from './detect.helpers';
 
 type AnnotationsData = {
-  annotations?: unknown[];
-  connections?: unknown[];
+	annotations?: unknown[];
+	connections?: unknown[];
 };
 
 /**
@@ -16,38 +15,41 @@ type AnnotationsData = {
  * `codegloss` runtime in their HTML page.
  */
 export function buildCodeGlossHtmlNode(pair: DetectedPair): Html {
-  const config: Record<string, unknown> = {
-    code: pair.code,
-    lang: pair.lang,
-  };
+	const config: Record<string, unknown> = {
+		code: pair.code,
+		lang: pair.lang,
+	};
 
-  if (pair.filename) {
-    config.filename = pair.filename;
-  }
+	if (pair.filename) {
+		config.filename = pair.filename;
+	}
 
-  if (pair.annotationsJson) {
-    try {
-      const parsed = JSON.parse(pair.annotationsJson) as AnnotationsData;
+	if (pair.annotationsJson) {
+		try {
+			const parsed = JSON.parse(pair.annotationsJson) as AnnotationsData;
 
-      if (parsed.annotations && Array.isArray(parsed.annotations)) {
-        config.annotations = parsed.annotations;
-      }
+			if (parsed.annotations && Array.isArray(parsed.annotations)) {
+				config.annotations = parsed.annotations;
+			}
 
-      if (parsed.connections && Array.isArray(parsed.connections)) {
-        config.connections = parsed.connections;
-      }
-    } catch {
-      console.warn(
-        '[remark-codegloss] Failed to parse annotations JSON, rendering without annotations',
-      );
-    }
-  }
+			if (parsed.connections && Array.isArray(parsed.connections)) {
+				config.connections = parsed.connections;
+			}
+		} catch {
+			console.warn(
+				'[remark-codegloss] Failed to parse annotations JSON, rendering without annotations',
+			);
+		}
+	}
 
-  // Escape `</script` so the JSON payload can't break out of the script tag.
-  const json = JSON.stringify(config).replace(/<\/script/gi, '<\\/script');
+	// Escape `</script` so the JSON payload can't break out of the script tag.
+	const json = JSON.stringify(config).replaceAll(
+		/<\/script/gi,
+		String.raw`<\/script`,
+	);
 
-  return {
-    type: 'html',
-    value: `<code-gloss><script type="application/json">${json}</script></code-gloss>`,
-  };
+	return {
+		type: 'html',
+		value: `<code-gloss><script type="application/json">${json}</script></code-gloss>`,
+	};
 }
