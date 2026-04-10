@@ -45,7 +45,7 @@ export default function HomePage() {
       {/* Hero */}
       <section style={{ padding: '5rem 0 3rem' }}>
         <div style={{ maxWidth: '36rem', marginBottom: '2rem' }}>
-          <h1 style={{ fontSize: '3rem', fontWeight: 700, color: '#fff', lineHeight: 1.1, marginBottom: '1rem', letterSpacing: '-0.03em' }}>
+          <h1 style={{ fontSize: '3rem', fontWeight: 700, color: 'var(--site-heading)', lineHeight: 1.1, marginBottom: '1rem', letterSpacing: '-0.03em' }}>
             Annotated code, <em style={{ color: 'var(--accent-light)' }}>explained.</em>
           </h1>
           <p style={{ fontSize: '1.125rem', color: 'var(--site-muted)', lineHeight: 1.6, marginBottom: '1.5rem' }}>
@@ -66,7 +66,7 @@ export default function HomePage() {
       <section style={{ padding: '2rem 0', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
         {FEATURES.map((f) => (
           <div key={f.title} style={{ border: '1px solid var(--site-border)', borderRadius: '12px', padding: '1.25rem' }}>
-            <h3 style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#fff', marginBottom: '0.5rem' }}>{f.title}</h3>
+            <h3 style={{ fontSize: '0.9375rem', fontWeight: 600, color: 'var(--site-heading)', marginBottom: '0.5rem' }}>{f.title}</h3>
             <p style={{ fontSize: '0.875rem', color: 'var(--site-muted)', lineHeight: 1.5, margin: 0 }}>{f.description}</p>
           </div>
         ))}
@@ -74,7 +74,7 @@ export default function HomePage() {
 
       {/* Quick Start */}
       <section style={{ padding: '2rem 0' }}>
-        <h2 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#fff', marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>Quick start</h2>
+        <h2 style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--site-heading)', marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>Quick start</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', maxWidth: '36rem' }}>
           {[
             { num: '1', label: 'Install', code: 'npm install codegloss remark-codegloss' },
@@ -83,10 +83,10 @@ export default function HomePage() {
           ].map((step) => (
             <div key={step.num}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-                <span style={{ width: '1.5rem', height: '1.5rem', borderRadius: '50%', background: 'rgba(83,74,183,0.15)', color: 'var(--accent-light)', fontSize: '0.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{step.num}</span>
-                <span style={{ fontSize: '0.875rem', fontWeight: 500, color: '#fff' }}>{step.label}</span>
+                <span style={{ width: '1.5rem', height: '1.5rem', borderRadius: '50%', background: 'var(--site-step-bg)', color: 'var(--accent-light)', fontSize: '0.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{step.num}</span>
+                <span style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--site-heading)' }}>{step.label}</span>
               </div>
-              <pre style={{ background: 'var(--site-surface)', border: '1px solid var(--site-border)', borderRadius: '8px', padding: '0.75rem 1rem', fontSize: '0.8125rem', lineHeight: 1.6, color: '#d1d5db', overflowX: 'auto', margin: 0 }}>
+              <pre style={{ background: 'var(--site-surface)', border: '1px solid var(--site-border)', borderRadius: '8px', padding: '0.75rem 1rem', fontSize: '0.8125rem', lineHeight: 1.6, color: 'var(--site-pre-fg)', overflowX: 'auto', margin: 0 }}>
                 {step.code}
               </pre>
             </div>
@@ -96,7 +96,7 @@ export default function HomePage() {
 
       {/* CTA */}
       <section style={{ padding: '3rem 0 4rem', textAlign: 'center' }}>
-        <Link href="/docs/getting-started" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1.25rem', borderRadius: '8px', background: 'var(--accent)', color: '#fff', fontSize: '0.875rem', fontWeight: 500, textDecoration: 'none' }}>
+        <Link href="/docs/getting-started" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1.25rem', borderRadius: '8px', background: 'var(--accent)', color: 'var(--site-heading)', fontSize: '0.875rem', fontWeight: 500, textDecoration: 'none' }}>
           Read the docs →
         </Link>
       </section>

@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import { Logo } from '@/components/logo.component';
+import { ThemeToggle } from '@/components/theme-toggle.component';
 
 import './globals.css';
 
@@ -18,7 +19,14 @@ type RootLayoutProps = {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="dark" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('codegloss-color-scheme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;else if(window.matchMedia('(prefers-color-scheme:light)').matches)document.documentElement.dataset.theme='light';}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body>
         <nav
           style={{
@@ -32,7 +40,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             alignItems: 'center',
             padding: '0 1.5rem',
             borderBottom: '1px solid var(--site-border)',
-            background: 'rgba(13,15,19,0.8)',
+            background: 'var(--site-nav-bg)',
             backdropFilter: 'blur(16px)',
             WebkitBackdropFilter: 'blur(16px)',
           }}
@@ -50,7 +58,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <Link
               href="/"
               style={{
-                color: '#fff',
+                color: 'var(--site-heading)',
                 fontSize: '1.125rem',
                 fontWeight: 600,
                 letterSpacing: '-0.02em',
@@ -82,6 +90,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
               >
                 GitHub
               </a>
+              <ThemeToggle />
             </div>
           </div>
         </nav>

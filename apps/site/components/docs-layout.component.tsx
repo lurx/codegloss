@@ -46,8 +46,8 @@ export function DocsLayout({ children }: DocsLayoutProps) {
                       padding: '0.375rem 0.75rem',
                       borderRadius: '6px',
                       fontSize: '0.875rem',
-                      color: active ? '#fff' : 'var(--site-muted)',
-                      background: active ? 'rgba(255,255,255,0.06)' : 'transparent',
+                      color: active ? 'var(--site-heading)' : 'var(--site-muted)',
+                      background: active ? 'var(--site-active-bg)' : 'transparent',
                       textDecoration: 'none',
                       marginBottom: '2px',
                     }}
