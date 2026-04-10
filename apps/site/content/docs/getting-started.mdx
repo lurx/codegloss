@@ -115,9 +115,23 @@ module.exports = withMdx(nextConfig);
 
 The plugin detects the sandbox blocks and emits `<CodeGloss />` JSX (auto-importing from `codegloss/react`). See the [Remark Plugin docs](/docs/plugin) for output modes (`mdx` for React/MDX, `html` for plain markdown pipelines).
 
-## Styles
+## Styles & Theming
 
-You don't need to import a stylesheet. The Web Component uses **Shadow DOM** with constructable stylesheets — all styles are bundled into the JS and applied automatically. There's nothing for you (or your bundler) to wire up.
+You don't need to import a stylesheet. The Web Component uses **Shadow DOM** with constructable stylesheets — all styles are bundled into the JS and applied automatically.
+
+Apply a named theme to match your site's look:
+
+````html
+<code-gloss theme="github-dark">
+````
+
+````jsx
+<CodeGloss code="..." lang="js" theme="dracula" />
+````
+
+Bundled themes: `github-light`, `github-dark`, `one-light`, `one-dark`, `dracula`, `nord-light`, `nord-dark`, `vitesse-light`, `vitesse-dark`.
+
+You can also set a global default via the remark plugin (`remarkCodegloss({ theme: 'github-dark' })`) or fine-tune individual colors with CSS custom properties. See the [Component API](/docs/api) for the full theming reference.
 
 ## Next steps
 

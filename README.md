@@ -85,6 +85,35 @@ import { CodeGloss } from 'codegloss/vue';
 />
 ```
 
+### Theming
+
+Apply a named theme to any code block:
+
+```html
+<code-gloss theme="github-dark">
+```
+
+```tsx
+<CodeGloss code="..." lang="js" theme="dracula" />
+```
+
+**Bundled themes:** `github-light`, `github-dark`, `one-light`, `one-dark`, `dracula`, `nord-light`, `nord-dark`, `vitesse-light`, `vitesse-dark`.
+
+Set a default theme for all blocks via the remark plugin:
+
+```js
+remarkCodegloss({ theme: 'github-dark' })
+```
+
+Or apply globally in vanilla JS:
+
+```js
+import { applyGlobalTheme } from 'codegloss';
+applyGlobalTheme('github-dark');
+```
+
+Themes cover both syntax token colors and UI chrome (background, borders, annotations). CSS variable overrides still win over theme values. See the [Theming docs](./THEMES.md) for the full design.
+
 ### Markdown / MDX
 
 ````md

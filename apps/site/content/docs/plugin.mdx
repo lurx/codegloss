@@ -67,8 +67,23 @@ type RemarkCodeglossOptions = {
    * Set true when CodeGloss is provided via a custom MDX components map.
    */
   skipImport?: boolean;
+  /**
+   * Default theme applied to all code blocks unless the block specifies its own.
+   * Accepts a bundled theme name (e.g. 'github-dark', 'dracula').
+   */
+  theme?: string;
 };
 ````
+
+### Applying a global theme
+
+Pass a `theme` option to apply a default theme to all code blocks processed by the plugin:
+
+````js
+remarkCodegloss({ theme: 'github-dark' })
+````
+
+Individual code blocks can override the global default — the remark plugin only injects the theme when the block doesn't specify its own.
 
 ## Configuration examples
 

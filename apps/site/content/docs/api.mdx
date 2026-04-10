@@ -55,6 +55,7 @@ The same `CodeGlossConfig` shape powers both usage modes:
 | `annotations` | `Annotation[]?` | `[]` | Token-level annotations with inline callouts. |
 | `connections` | `Connection[]?` | `[]` | Visual arcs between related annotations. |
 | `runnable` | `boolean?` | `lang === 'js'` | Whether to show the Run button. |
+| `theme` | `string?` | — | Named theme (`github-dark`, `dracula`, etc.). |
 
 ## Types
 
@@ -122,7 +123,82 @@ The function receives the full code and language, and returns an array of HTML s
 
 ## Theming
 
-CodeGloss styles live inside Shadow DOM, so they're isolated from page styles. Theming happens via CSS custom properties on `:host` — set them on the `code-gloss` element from the outside:
+### Named themes
+
+Apply a bundled theme via the `theme` attribute (HTML) or prop (React/Vue/Svelte):
+
+````html
+<code-gloss theme="github-dark">
+````
+
+````jsx
+<CodeGloss code="..." lang="js" theme="dracula" />
+````
+
+**Bundled themes:**
+
+| Theme | Variant | Based on |
+| --- | --- | --- |
+| `github-light` | light | GitHub code blocks |
+| `github-dark` | dark | GitHub code blocks |
+| `one-light` | light | Atom One Light |
+| `one-dark` | dark | Atom One Dark |
+| `dracula` | dark | Dracula |
+| `nord-light` | light | Nord Snow Storm |
+| `nord-dark` | dark | Nord Polar Night |
+| `vitesse-light` | light | Vitesse by antfu |
+| `vitesse-dark` | dark | Vitesse by antfu |
+
+Each theme sets both **syntax token colors** (keywords, strings, numbers, comments) and **chrome colors** (background, borders, toolbar, annotations). Dark-only themes (like Dracula) apply unconditionally. Themes with a single variant ignore `prefers-color-scheme`.
+
+### Global theme via remark plugin
+
+Set a default theme for all code blocks:
+
+````js
+remarkCodegloss({ theme: 'github-dark' })
+````
+
+Individual blocks can override the global default by specifying their own `theme`.
+
+### Global theme in vanilla JS
+
+````js
+import { applyGlobalTheme } from 'codegloss';
+
+// Applies 'github-dark' to all <code-gloss> elements on the page
+// that don't already have a theme attribute.
+applyGlobalTheme('github-dark');
+````
+
+### Theme resolution
+
+The `theme` is resolved in this order (first one wins):
+
+1. `theme` HTML attribute on the element
+2. `theme` in the JSON config
+3. Global theme set via `applyGlobalTheme()` or the remark plugin's `theme` option
+
+### Programmatic theme access
+
+````ts
+import { resolveTheme } from 'codegloss';
+import type { CodeGlossTheme, CodeGlossThemeVariant } from 'codegloss';
+
+const theme = resolveTheme('dracula');
+// theme.name === 'dracula'
+// theme.dark contains all color values
+````
+
+Themes are also available as individual tree-shakeable imports:
+
+````ts
+import { dracula, githubLight, oneDark } from 'codegloss/themes';
+````
+
+### CSS variable overrides
+
+For fine-grained control, override individual CSS custom properties on the `code-gloss` element. **CSS variable overrides always win over theme values** because they're more specific than `:host` rules:
 
 ````css
 code-gloss {
@@ -146,7 +222,11 @@ code-gloss {
 | `--cg-ann-border` | `#534ab7` | `#afa9ec` | Annotation underline |
 | `--cg-ann-hover` | `rgba(83,74,183,0.22)` | `rgba(174,169,236,0.22)` | Annotation hover state |
 
-Dark mode activates automatically via `prefers-color-scheme: dark`. To force a theme regardless of the OS preference (e.g. tied to a site theme toggle), override the variables on the host element directly. See the [Docusaurus setup guide](/docs/setup/docusaurus) for an example.
+Dark mode activates automatically via `prefers-color-scheme: dark`. To force a theme regardless of OS preference (e.g. tied to a site theme toggle), use a named theme or override the variables on the host element directly.
+
+### External highlighter interaction
+
+When using a custom `highlight` function (Shiki, Prism, etc.), the **syntax token colors** from the theme are unused — the external tool owns the token markup. Only the **chrome** portion of the theme applies (background, borders, annotations, toolbar).
 
 ## No CSS import required
 
