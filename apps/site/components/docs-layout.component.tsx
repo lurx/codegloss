@@ -25,15 +25,13 @@ export function DocsLayout({ children }: DocsLayoutProps) {
   const pathname = usePathname();
 
   return (
-    <div style={{ display: 'flex', maxWidth: '72rem', margin: '0 auto', padding: '3rem 1.5rem', gap: '4rem' }}>
-      <aside style={{ width: '13rem', flexShrink: 0 }}>
-        <nav style={{ position: 'sticky', top: '5rem' }}>
-          {SIDEBAR.map((section) => (
-            <div key={section.title} style={{ marginBottom: '1.5rem' }}>
-              <p style={{ fontSize: '0.6875rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--site-muted)', marginBottom: '0.5rem', paddingLeft: '0.75rem' }}>
-                {section.title}
-              </p>
-              {section.items.map((item) => {
+    <div className="docs-container">
+      <aside className="docs-sidebar">
+        <nav>
+          {SIDEBAR.map(section => (
+            <div key={section.title} className="docs-section">
+              <p className="docs-section-title">{section.title}</p>
+              {section.items.map(item => {
                 const href = `/docs/${item.slug}`;
                 const active = pathname === href;
 
@@ -41,16 +39,7 @@ export function DocsLayout({ children }: DocsLayoutProps) {
                   <Link
                     key={item.slug}
                     href={href}
-                    style={{
-                      display: 'block',
-                      padding: '0.375rem 0.75rem',
-                      borderRadius: '6px',
-                      fontSize: '0.875rem',
-                      color: active ? 'var(--site-heading)' : 'var(--site-muted)',
-                      background: active ? 'var(--site-active-bg)' : 'transparent',
-                      textDecoration: 'none',
-                      marginBottom: '2px',
-                    }}
+                    className={`docs-link${active ? ' docs-link-active' : ''}`}
                   >
                     {item.label}
                   </Link>
@@ -60,7 +49,7 @@ export function DocsLayout({ children }: DocsLayoutProps) {
           ))}
         </nav>
       </aside>
-      <main style={{ flex: 1, minWidth: 0, maxWidth: '48rem' }}>
+      <main className="docs-main">
         {children}
       </main>
     </div>

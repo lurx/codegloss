@@ -28,65 +28,21 @@ export default function RootLayout({ children }: RootLayoutProps) {
         />
       </head>
       <body>
-        <nav
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            zIndex: 50,
-            height: '3.5rem',
-            display: 'flex',
-            alignItems: 'center',
-            padding: '0 1.5rem',
-            borderBottom: '1px solid var(--site-border)',
-            background: 'var(--site-nav-bg)',
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
-          }}
-        >
-          <div
-            style={{
-              margin: '0 auto',
-              width: '100%',
-              maxWidth: '72rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <Link
-              href="/"
-              style={{
-                color: 'var(--site-heading)',
-                fontSize: '1.125rem',
-                fontWeight: 600,
-                letterSpacing: '-0.02em',
-                textDecoration: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-              }}
-            >
-              <Logo size={26} />
+        <nav className="nav">
+          <div className="nav-inner">
+            <Link href="/" className="nav-logo">
+              <Logo size={24} />
               codegloss
             </Link>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1.5rem',
-                fontSize: '0.875rem',
-              }}
-            >
-              <Link href="/docs/getting-started" style={{ color: 'var(--site-muted)' }}>
+            <div className="nav-links">
+              <Link href="/docs/getting-started" className="nav-link">
                 Docs
               </Link>
               <a
-                href="https://github.com/anthropics/codegloss"
+                href="https://github.com/lurx/codegloss"
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ color: 'var(--site-muted)' }}
+                className="nav-link"
               >
                 GitHub
               </a>
