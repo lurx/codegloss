@@ -2,6 +2,7 @@
 
 import { CodeGloss } from 'codegloss/react';
 import type { Annotation, Connection } from 'codegloss/react';
+import { useSiteTheme } from '@/hooks/use-site-theme.hook';
 
 const CODE = `function useThrottle<T>(value: T, interval = 500) {
   const [throttled, setThrottled] = useState(value);
@@ -39,13 +40,20 @@ const CONNECTIONS: Connection[] = [
   { from: 'a4', to: 'a5', color: '#0F6E56' },
 ];
 
+const THEME_MAP = {
+  light: 'github-light',
+  dark: 'dracula',
+} as const;
+
 export function HeroDemo() {
+  const siteTheme = useSiteTheme();
+
   return (
     <CodeGloss
       code={CODE}
       lang="ts"
       filename="use-throttle.ts"
-      theme="github-light"
+      theme={THEME_MAP[siteTheme]}
       annotations={ANNOTATIONS}
       connections={CONNECTIONS}
       runnable={false}
