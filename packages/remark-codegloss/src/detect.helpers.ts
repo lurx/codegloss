@@ -9,6 +9,8 @@ export type DetectedPair = {
 	codeIndex: number;
 	/** Number of nodes consumed (1 if no annotations block, 2 if paired) */
 	nodeCount: number;
+	/** Theme name injected by the remark plugin from config */
+	theme?: string;
 };
 
 const SANDBOX_PATTERN = /^(\w+)\s+sandbox(?:\s+(.+))?$/;

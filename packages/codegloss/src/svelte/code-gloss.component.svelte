@@ -36,6 +36,7 @@
     lang: string;
     filename?: string;
     runnable?: boolean;
+    theme?: string;
     annotations?: CodeGlossAnnotation[];
     connections?: CodeGlossConnection[];
   };
@@ -46,6 +47,7 @@
   export let lang: string;
   export let filename: string | undefined = undefined;
   export let runnable: boolean | undefined = undefined;
+  export let theme: string | undefined = undefined;
   export let annotations: CodeGlossAnnotation[] | undefined = undefined;
   export let connections: CodeGlossConnection[] | undefined = undefined;
 
@@ -56,6 +58,7 @@
         lang,
         filename,
         runnable,
+        theme,
         annotations,
         connections,
       }).filter(([, v]) => v !== undefined),

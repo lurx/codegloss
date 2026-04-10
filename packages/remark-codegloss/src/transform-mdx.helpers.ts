@@ -50,6 +50,10 @@ export function buildCodeGlossMdxNode(pair: DetectedPair): MdxJsxFlowElement {
 		attributes.push(jsxAttribute('filename', pair.filename));
 	}
 
+	if (pair.theme) {
+		attributes.push(jsxAttribute('theme', pair.theme));
+	}
+
 	if (pair.annotationsJson) {
 		try {
 			const parsed = JSON.parse(pair.annotationsJson) as AnnotationsData;

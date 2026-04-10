@@ -24,6 +24,7 @@ export const CodeGloss = defineComponent({
 		lang: { type: String, required: true },
 		filename: { type: String, default: undefined },
 		runnable: { type: Boolean, default: undefined },
+		theme: { type: String, default: undefined },
 		annotations: {
 			type: Array as PropType<Annotation[]>,
 			default: undefined,
@@ -50,7 +51,7 @@ export const CodeGloss = defineComponent({
 			);
 			const json = JSON.stringify(cleaned);
 
-			return h('code-gloss', null, [
+			return h('code-gloss', { theme: props.theme }, [
 				h('script', {
 					type: 'application/json',
 					innerHTML: json,

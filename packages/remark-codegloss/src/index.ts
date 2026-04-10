@@ -23,6 +23,11 @@ type RemarkCodeglossOptions = {
 	 * (e.g. Docusaurus MDXComponents swizzle).
 	 */
 	skipImport?: boolean;
+	/**
+	 * Default theme applied to all code blocks unless the block specifies its own.
+	 * Accepts a bundled theme name (e.g. 'github-dark', 'dracula').
+	 */
+	theme?: string;
 };
 
 export function remarkCodegloss(options: RemarkCodeglossOptions = {}) {
@@ -44,10 +49,13 @@ export function remarkCodegloss(options: RemarkCodeglossOptions = {}) {
 				const pair = detectSandboxPair(parent.children, index);
 
 				if (pair) {
+					const pairWithTheme = options.theme
+						? { ...pair, theme: options.theme }
+						: pair;
 					const node =
 						output === 'html'
-							? buildCodeGlossHtmlNode(pair)
-							: buildCodeGlossMdxNode(pair);
+							? buildCodeGlossHtmlNode(pairWithTheme)
+							: buildCodeGlossMdxNode(pairWithTheme);
 
 					parent.children.splice(
 						pair.codeIndex,

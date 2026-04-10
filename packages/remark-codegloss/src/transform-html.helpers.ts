@@ -24,6 +24,8 @@ export function buildCodeGlossHtmlNode(pair: DetectedPair): Html {
 		config.filename = pair.filename;
 	}
 
+	const themeAttr = pair.theme ? ` theme="${pair.theme}"` : '';
+
 	if (pair.annotationsJson) {
 		try {
 			const parsed = JSON.parse(pair.annotationsJson) as AnnotationsData;
@@ -50,6 +52,6 @@ export function buildCodeGlossHtmlNode(pair: DetectedPair): Html {
 
 	return {
 		type: 'html',
-		value: `<code-gloss><script type="application/json">${json}</script></code-gloss>`,
+		value: `<code-gloss${themeAttr}><script type="application/json">${json}</script></code-gloss>`,
 	};
 }
