@@ -38,6 +38,7 @@
 	border-radius: 8px;
 	overflow: hidden;
 	background: var(--cg-bg);
+	color: var(--cg-text);
 }
 
 /* Toolbar */
@@ -345,9 +346,9 @@
 	font-style: italic;
 }
 
-/* Dark mode */
+/* Dark mode — only when no explicit theme is set */
 @media (prefers-color-scheme: dark) {
-	:host {
+	:host(:not([theme])) {
 		--cg-bg: var(--cg-bg-dark);
 		--cg-border: var(--cg-border-dark);
 		--cg-text: var(--cg-text-dark);
@@ -360,37 +361,37 @@
 		--cg-ann-hover: var(--cg-ann-hover-dark);
 	}
 
-	.runButton {
+	:host(:not([theme])) .runButton {
 		color: #ccc;
 		border-color: #555;
 	}
 
-	.runButton:hover {
+	:host(:not([theme])) .runButton:hover {
 		background: #333;
 	}
 
-	.calloutChip {
+	:host(:not([theme])) .calloutChip {
 		color: #afa9ec;
 		background: rgba(174, 169, 236, 0.12);
 	}
 
-	.outputLabel {
+	:host(:not([theme])) .outputLabel {
 		color: #666;
 	}
 
-	.cg-keyword {
+	:host(:not([theme])) .cg-keyword {
 		color: #afa9ec;
 	}
 
-	.cg-string {
+	:host(:not([theme])) .cg-string {
 		color: #5dcaa5;
 	}
 
-	.cg-number {
+	:host(:not([theme])) .cg-number {
 		color: #ef9f27;
 	}
 
-	.cg-comment {
+	:host(:not([theme])) .cg-comment {
 		color: #444;
 	}
 }

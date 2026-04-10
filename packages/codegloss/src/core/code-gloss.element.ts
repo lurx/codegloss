@@ -151,6 +151,14 @@ export class CodeGlossElement extends SafeHTMLElement {
 			this.themeStylesheet = undefined;
 		}
 
+		// Ensure the theme attribute is on the host element so the CSS
+		// selector :host(:not([theme])) correctly disables base dark-mode.
+		if (themeName && this.getAttribute('theme') !== themeName) {
+			this.setAttribute('theme', themeName);
+		} else if (!themeName && this.hasAttribute('theme')) {
+			this.removeAttribute('theme');
+		}
+
 		if (!themeName) return;
 
 		const theme = resolveTheme(themeName);
