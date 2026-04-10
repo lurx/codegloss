@@ -1,6 +1,7 @@
 {
   "name": "codegloss-monorepo",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "pnpm --filter site dev",
     "build:codegloss": "pnpm --filter codegloss build",
@@ -11,10 +12,16 @@
     "test:unit": "pnpm --filter ./packages/codegloss --filter ./packages/remark-codegloss test",
     "test:coverage": "pnpm --filter ./packages/codegloss --filter ./packages/remark-codegloss test:coverage",
     "test:examples": "pnpm --filter './examples/*' test",
-    "test:e2e": "pnpm build:packages && pnpm --filter @codegloss/e2e test"
+    "test:e2e": "pnpm build:packages && pnpm --filter @codegloss/e2e test",
+    "lint": "xo",
+    "lint:fix": "xo --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
-    "typescript": "^6.0.2"
+    "prettier": "^3.8.2",
+    "typescript": "^5.9.3",
+    "xo": "^2.0.2"
   },
   "packageManager": "pnpm@10.15.1+sha512.34e538c329b5553014ca8e8f4535997f96180a1d0f614339357449935350d924e22f8614682191264ec33d1462ac21561aff97f6bb18065351c162c7e8f6de67",
   "pnpm": {
