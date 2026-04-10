@@ -39,6 +39,8 @@ export default defineConfig({
 				'src/core/code-gloss.element.ts',
 				'src/react/code-gloss.component.tsx',
 				'src/vue/code-gloss.component.ts',
+				'src/themes/theme-css.helpers.ts',
+				'src/themes/index.ts',
 			],
 			thresholds: {
 				lines: 100,

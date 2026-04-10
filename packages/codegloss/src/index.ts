@@ -10,5 +10,8 @@ export type {
 	RunResult,
 } from './core/code-gloss.types';
 
+export { resolveTheme, applyGlobalTheme } from './themes';
+export type { CodeGlossTheme, CodeGlossThemeVariant } from './themes';
+
 // Side effect: register the custom element on import.
 defineCodeGloss();

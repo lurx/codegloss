@@ -38,6 +38,16 @@
     "./svelte": {
       "svelte": "./src/svelte/code-gloss.component.svelte",
       "default": "./src/svelte/code-gloss.component.svelte"
+    },
+    "./themes": {
+      "types": "./dist/themes/index.d.ts",
+      "import": "./dist/themes/index.js",
+      "require": "./dist/themes/index.cjs"
+    },
+    "./config": {
+      "types": "./dist/config/index.d.ts",
+      "import": "./dist/config/index.js",
+      "require": "./dist/config/index.cjs"
     }
   },
   "peerDependencies": {
@@ -64,7 +74,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "tsup": "^8",
-    "typescript": "^6.0.2",
+    "typescript": "^5.9.3",
     "vitest": "^4.1.4",
     "vue": "^3.5.13"
   },
