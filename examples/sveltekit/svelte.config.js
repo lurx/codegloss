@@ -1,6 +1,6 @@
 import adapter from '@sveltejs/adapter-static';
 import { mdsvex } from 'mdsvex';
-import remarkCodegloss from 'remark-codegloss';
+import remarkCodegloss from 'codegloss/remark';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {

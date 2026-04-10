@@ -1,7 +1,7 @@
 import starlight from '@astrojs/starlight';
 import { defineConfig } from 'astro/config';
 
-import remarkCodegloss from 'remark-codegloss';
+import remarkCodegloss from 'codegloss/remark';
 
 // Astro 5 + Starlight + remark-codegloss in HTML mode. Astro renders pages
 // to static HTML, so we ask remark-codegloss to emit raw <code-gloss> nodes

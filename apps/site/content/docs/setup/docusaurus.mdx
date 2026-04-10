@@ -10,7 +10,7 @@ Set up CodeGloss with [Docusaurus](https://docusaurus.io/) v3.
 ## Install
 
 ````
-npm install codegloss remark-codegloss
+npm install codegloss
 ````
 
 ## Configure the remark plugin
@@ -18,7 +18,7 @@ npm install codegloss remark-codegloss
 Add `remark-codegloss` to your `docusaurus.config.js`. Use `skipImport: true` because we'll provide the component via Docusaurus's MDX components map (next step):
 
 ````js
-const remarkCodegloss = require('remark-codegloss');
+const remarkCodegloss = require('codegloss/remark');
 
 module.exports = {
   presets: [

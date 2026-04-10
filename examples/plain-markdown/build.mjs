@@ -3,7 +3,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import rehypeStringify from 'rehype-stringify';
-import remarkCodegloss from 'remark-codegloss';
+import remarkCodegloss from 'codegloss/remark';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import { unified } from 'unified';

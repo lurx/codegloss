@@ -48,11 +48,25 @@
       "types": "./dist/config/index.d.ts",
       "import": "./dist/config/index.js",
       "require": "./dist/config/index.cjs"
+    },
+    "./config/node": {
+      "types": "./dist/config/node.d.ts",
+      "import": "./dist/config/node.js",
+      "require": "./dist/config/node.cjs"
+    },
+    "./remark": {
+      "types": "./dist/remark/index.d.ts",
+      "import": "./dist/remark/index.js",
+      "require": "./dist/remark/index.cjs"
     }
+  },
+  "dependencies": {
+    "unist-util-visit": "^5"
   },
   "peerDependencies": {
     "react": ">=16.14.0",
     "svelte": ">=4.0.0",
+    "unified": ">=11",
     "vue": ">=3.0.0"
   },
   "peerDependenciesMeta": {
@@ -62,11 +76,15 @@
     "svelte": {
       "optional": true
     },
+    "unified": {
+      "optional": true
+    },
     "vue": {
       "optional": true
     }
   },
   "devDependencies": {
+    "@types/mdast": "^4",
     "@types/node": "^22.19.17",
     "@types/react": "^18",
     "@types/react-dom": "^18.3.7",
@@ -77,6 +95,9 @@
     "tsup": "^8",
     "typescript": "^5.9.3",
     "vitest": "^4.1.4",
+    "mdast-util-mdx-jsx": "^3",
+    "remark-parse": "^11.0.0",
+    "unified": "^11.0.5",
     "vue": "^3.5.13"
   },
   "scripts": {

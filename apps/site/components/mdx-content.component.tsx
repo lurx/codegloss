@@ -4,11 +4,14 @@ import { useState, useMemo } from 'react';
 import * as runtime from 'react/jsx-runtime';
 import { CodeGloss } from 'codegloss/react';
 import { ThemeShowcase } from './theme-showcase.component';
+import { useSiteTheme } from '@/hooks/use-site-theme.hook';
+import codeglossConfig from '@/codegloss.config';
 
 import type { CodeGlossProps } from 'codegloss/react';
 
 function CodeGlossWithTabs(props: CodeGlossProps) {
   const [tab, setTab] = useState<'sandbox' | 'source'>('sandbox');
+  const siteTheme = useSiteTheme();
   const { code, lang, filename, annotations, connections } = props;
 
   const fence = `\`\`\`${lang} sandbox${filename ? ` ${filename}` : ''}\n${code}\n\`\`\``;
@@ -38,7 +41,14 @@ function CodeGlossWithTabs(props: CodeGlossProps) {
         </button>
       </div>
       {tab === 'sandbox' ? (
-        <CodeGloss {...props} />
+        <CodeGloss
+          {...props}
+          theme={
+            siteTheme === 'dark'
+              ? String(codeglossConfig.darkTheme ?? codeglossConfig.theme ?? '')
+              : String(codeglossConfig.theme ?? '')
+          }
+        />
       ) : (
         <pre style={{ background: 'var(--site-surface)', border: '1px solid var(--site-border)', borderRadius: '0 8px 8px 8px', padding: '1rem', overflowX: 'auto', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', lineHeight: 1.7, color: 'var(--site-pre-fg)' }}>
           <code>{source}</code>

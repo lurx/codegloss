@@ -7,9 +7,11 @@ export default defineConfig({
 		'vue/index': 'src/vue/index.ts',
 		'themes/index': 'src/themes/index.ts',
 		'config/index': 'src/config/index.ts',
+		'config/node': 'src/config/load-config.ts',
+		'remark/index': 'src/remark/index.ts',
 	},
 	format: ['esm', 'cjs'],
 	dts: true,
 	clean: true,
-	external: ['react', 'react/jsx-runtime', 'vue'],
+	external: ['react', 'react/jsx-runtime', 'vue', 'unified'],
 });

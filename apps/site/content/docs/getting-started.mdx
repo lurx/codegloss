@@ -15,13 +15,7 @@ It ships as a **Web Component** so it works in any framework — or no framework
 npm install codegloss
 ````
 
-That's it. One package, zero peer dependencies for vanilla usage. If you're using React, npm/pnpm/yarn won't ask you to install anything else — `react` is an optional peer dependency.
-
-To author content with the markdown sandbox syntax, also install the remark plugin:
-
-````
-npm install codegloss remark-codegloss
-````
+That's it. One package — the web component, framework wrappers, remark plugin, themes, and config are all included. Framework-specific peer dependencies (`react`, `vue`, `unified`) are optional.
 
 ## Pick your usage
 
@@ -98,7 +92,7 @@ Configure `remark-codegloss` in your MDX pipeline. Here's a Next.js example with
 
 ````js
 const createMdx = require('@next/mdx');
-const remarkCodegloss = require('remark-codegloss');
+const remarkCodegloss = require('codegloss/remark');
 
 const nextConfig = {
   pageExtensions: ['ts', 'tsx', 'mdx'],

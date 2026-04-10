@@ -21,7 +21,7 @@ npm install codegloss
 For MDX authoring (also installs the remark plugin):
 
 ````
-npm install codegloss remark-codegloss @next/mdx @mdx-js/loader
+npm install codegloss @next/mdx @mdx-js/loader
 ````
 
 `codegloss` declares `react` as an **optional** peer dependency with a permissive range (`>=16.14.0`) — npm/pnpm/yarn won't error on any modern React version.
@@ -64,7 +64,7 @@ Configure the remark plugin in `next.config.ts`:
 
 ````js
 const createMdx = require('@next/mdx');
-const remarkCodegloss = require('remark-codegloss');
+const remarkCodegloss = require('codegloss/remark');
 
 const nextConfig = {
   pageExtensions: ['ts', 'tsx', 'mdx'],
@@ -109,7 +109,7 @@ If you load MDX from a CMS or filesystem:
 
 ````js
 const { serialize } = require('next-mdx-remote/serialize');
-const remarkCodegloss = require('remark-codegloss');
+const remarkCodegloss = require('codegloss/remark');
 
 const source = await serialize(mdxContent, {
   mdxOptions: {

@@ -1,5 +1,5 @@
 import { defineConfig, s } from 'velite';
-import remarkCodegloss from 'remark-codegloss';
+import remarkCodegloss from 'codegloss/remark';
 import codeglossConfig from './codegloss.config';
 
 const theme =

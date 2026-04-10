@@ -6,12 +6,17 @@
 
 Interactive annotated code blocks for the web. Drop a `<code-gloss>` element on any page — vanilla HTML, React, Vue, Svelte, Next.js, Astro, VitePress, Docusaurus, or plain markdown — and get clickable token annotations, connection arcs, copy buttons, and an in-place JS runner.
 
-## Packages
+## Entry points
 
-| Package | What it is |
+| Import | What it is |
 |---|---|
-| [`codegloss`](./packages/codegloss) | The `<code-gloss>` Web Component plus thin, zero-state wrappers for **React** (`codegloss/react`), **Vue** (`codegloss/vue`), and **Svelte** (`codegloss/svelte`). Each wrapper just JSON-stringifies its props into the WC's config script. |
-| [`remark-codegloss`](./packages/remark-codegloss) | A remark plugin that turns annotated code fences into `<code-gloss>` elements. Supports both MDX (`output: 'mdx'`) and plain-HTML (`output: 'html'`) output. |
+| `codegloss` | The `<code-gloss>` Web Component (auto-registers on import). |
+| `codegloss/react` | Thin React wrapper. |
+| `codegloss/vue` | Thin Vue 3 wrapper. |
+| `codegloss/svelte` | Thin Svelte wrapper. |
+| `codegloss/remark` | Remark plugin — turns annotated fenced code blocks into `<code-gloss>` elements. Supports MDX and plain-HTML output. |
+| `codegloss/themes` | Bundled themes (tree-shakeable). |
+| `codegloss/config` | `defineConfig` helper for `codegloss.config.ts`. |
 
 ## Quick start
 
@@ -149,14 +154,13 @@ function fib(n) { return n < 2 ? n : fib(n-1) + fib(n-2); }
 ```
 ````
 
-Wire up `remark-codegloss` in your unified pipeline (default `output: 'mdx'` for MDX, `output: 'html'` for plain markdown).
+Wire up `codegloss/remark` in your unified pipeline (default `output: 'mdx'` for MDX, `output: 'html'` for plain markdown).
 
 ## Repo layout
 
 ```
 packages/
-  codegloss/         # web component + React wrapper
-  remark-codegloss/  # remark plugin
+  codegloss/         # everything: web component, framework wrappers, remark plugin, themes, config
 apps/
   dev/               # local dev playground
   site/              # documentation site (deployed via .github/workflows/deploy.yml)

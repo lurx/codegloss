@@ -13,7 +13,6 @@
     "@astrojs/starlight": "^0.30.0",
     "astro": "^5.0.0",
     "codegloss": "workspace:*",
-    "remark-codegloss": "workspace:*",
     "sharp": "^0.33.5"
   }
 }

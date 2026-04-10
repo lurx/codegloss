@@ -41,6 +41,11 @@ export default defineConfig({
 				'src/vue/code-gloss.component.ts',
 				'src/themes/theme-css.helpers.ts',
 				'src/themes/index.ts',
+				'src/remark/index.ts',
+				'src/remark/detect.helpers.ts',
+				'src/remark/inject-import.helpers.ts',
+				'src/remark/transform-html.helpers.ts',
+				'src/remark/transform-mdx.helpers.ts',
 			],
 			thresholds: {
 				lines: 100,

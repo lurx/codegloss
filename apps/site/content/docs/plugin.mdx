@@ -93,7 +93,7 @@ Individual code blocks can override the global default — the remark plugin onl
 
 ````js
 const createMdx = require('@next/mdx');
-const remarkCodegloss = require('remark-codegloss');
+const remarkCodegloss = require('codegloss/remark');
 
 const withMdx = createMdx({
   options: {
@@ -105,7 +105,7 @@ const withMdx = createMdx({
 #### Docusaurus
 
 ````js
-const remarkCodegloss = require('remark-codegloss');
+const remarkCodegloss = require('codegloss/remark');
 
 module.exports = {
   presets: [
@@ -126,7 +126,7 @@ module.exports = {
 const { unified } = require('unified');
 const remarkParse = require('remark-parse');
 const remarkMdx = require('remark-mdx');
-const remarkCodegloss = require('remark-codegloss');
+const remarkCodegloss = require('codegloss/remark');
 
 const processor = unified()
   .use(remarkParse)
@@ -143,7 +143,7 @@ const { unified } = require('unified');
 const remarkParse = require('remark-parse');
 const remarkRehype = require('remark-rehype');
 const rehypeStringify = require('rehype-stringify');
-const remarkCodegloss = require('remark-codegloss');
+const remarkCodegloss = require('codegloss/remark');
 
 const html = await unified()
   .use(remarkParse)

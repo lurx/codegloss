@@ -3,60 +3,106 @@
 import { CodeGloss } from 'codegloss/react';
 import type { Annotation, Connection } from 'codegloss/react';
 import { useSiteTheme } from '@/hooks/use-site-theme.hook';
+import codeglossConfig from '@/codegloss.config';
 
-const CODE = `function useThrottle<T>(value: T, interval = 500) {
-  const [throttled, setThrottled] = useState(value);
-  const lastUpdated = useRef(Date.now());
+const CODE = `function fibonacci(n) {
+  const memo = {};
 
-  useEffect(() => {
-    const now = Date.now();
+  function fib(k) {
+    if (k <= 1) return k;
+    if (memo[k]) return memo[k];
+    memo[k] = fib(k - 1) + fib(k - 2);
+    return memo[k];
+  }
 
-    if (now >= lastUpdated.current + interval) {
-      lastUpdated.current = now;
-      setThrottled(value);
-    } else {
-      const id = setTimeout(() => {
-        lastUpdated.current = Date.now();
-        setThrottled(value);
-      }, interval);
-
-      return () => clearTimeout(id);
-    }
-  }, [value, interval]);
-
-  return throttled;
+  return fib(n);
 }`;
 
 const ANNOTATIONS: Annotation[] = [
-  { id: 'a1', token: 'throttled', line: 1, occurrence: 0, title: 'Throttled state', text: 'Holds the most recently emitted value. Updates at most once per interval.' },
-  { id: 'a2', token: 'lastUpdated', line: 2, occurrence: 0, title: 'Timestamp ref', text: 'Tracks when the output last changed. Persists across renders without causing re-renders.' },
-  { id: 'a3', token: 'now >= lastUpdated.current + interval', line: 6, occurrence: 0, title: 'Cooldown check', text: 'If enough time has passed since the last emit, update immediately. Otherwise, schedule a delayed update.' },
-  { id: 'a4', token: 'setTimeout', line: 10, occurrence: 0, title: 'Trailing edge', text: 'Schedules the final update to fire after the interval. Cleaned up if the value changes before it fires.' },
-  { id: 'a5', token: 'clearTimeout', line: 15, occurrence: 0, title: 'Cleanup', text: 'Cancels any pending update when the value or interval changes, preventing stale writes.' },
+	{
+		id: 'a1',
+		token: 'memo',
+		line: 1,
+		occurrence: 0,
+		title: 'Memoization table',
+		text: 'Stores already-computed values to avoid repeated recursion.',
+	},
+	{
+		id: 'a2',
+		token: 'memo[k]',
+		line: 5,
+		occurrence: 0,
+		title: 'Cache lookup',
+		text: 'Returns immediately when this subproblem was solved before.',
+	},
+	{
+		id: 'a3',
+		token: 'memo[k]',
+		line: 6,
+		occurrence: 0,
+		title: 'Cache write',
+		text: 'Store the result so future calls short-circuit at the lookup.',
+	},
+	{
+		id: 'a4',
+		token: 'fib(k - 1)',
+		line: 6,
+		occurrence: 0,
+		title: 'Recursive descent',
+		text: 'Splits the problem into overlapping subproblems.',
+	},
 ];
 
 const CONNECTIONS: Connection[] = [
-  { from: 'a2', to: 'a3', color: '#534AB7' },
-  { from: 'a4', to: 'a5', color: '#0F6E56' },
+	{ from: 'a1', to: 'a2', color: '#6c5ce7' },
+	{ from: 'a3', to: 'a2', color: '#00b894' },
 ];
 
-const THEME_MAP = {
-  light: 'github-light',
-  dark: 'dracula',
-} as const;
+const LIGHT_THEME = String(codeglossConfig.theme ?? '');
+const DARK_THEME = String(
+	codeglossConfig.darkTheme ?? codeglossConfig.theme ?? '',
+);
+
+const LINES = CODE.split('\n');
 
 export function HeroDemo() {
-  const siteTheme = useSiteTheme();
+	const siteTheme = useSiteTheme();
 
-  return (
-    <CodeGloss
-      code={CODE}
-      lang="ts"
-      filename="use-throttle.ts"
-      theme={THEME_MAP[siteTheme]}
-      annotations={ANNOTATIONS}
-      connections={CONNECTIONS}
-      runnable={false}
-    />
-  );
+	return (
+		<div className="hero-compare">
+			<div className="hero-compare-panel">
+				<div className="hero-compare-label">Before</div>
+				<div className="hero-plain">
+					<div className="hero-plain-toolbar">
+						<span className="hero-plain-dots">
+							<span className="hero-plain-dot" data-color="red" />
+							<span className="hero-plain-dot" data-color="yellow" />
+							<span className="hero-plain-dot" data-color="green" />
+						</span>
+						<span className="hero-plain-filename">fibonacci.js</span>
+					</div>
+					<pre className="hero-plain-code">
+						{LINES.map((line, i) => (
+							<div key={i} className="hero-plain-line">
+								<span className="hero-plain-num">{i + 1}</span>
+								<span>{line}</span>
+							</div>
+						))}
+					</pre>
+				</div>
+			</div>
+			<div className="hero-compare-panel">
+				<div className="hero-compare-label">After</div>
+				<CodeGloss
+					code={CODE}
+					lang="js"
+					filename="fibonacci.js"
+					theme={siteTheme === 'dark' ? DARK_THEME : LIGHT_THEME}
+					annotations={ANNOTATIONS}
+					connections={CONNECTIONS}
+					runnable={false}
+				/>
+			</div>
+		</div>
+	);
 }

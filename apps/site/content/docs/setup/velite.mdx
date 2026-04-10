@@ -12,7 +12,7 @@ This documentation site itself uses Velite + Next.js.
 ## Install
 
 ````
-npm install codegloss remark-codegloss velite
+npm install codegloss velite
 ````
 
 ## Configure Velite
@@ -21,7 +21,7 @@ Add `remark-codegloss` to your `velite.config.ts`. Use `skipImport: true` becaus
 
 ````js
 const { defineConfig, s } = require('velite');
-const remarkCodegloss = require('remark-codegloss');
+const remarkCodegloss = require('codegloss/remark');
 
 module.exports = defineConfig({
   mdx: {

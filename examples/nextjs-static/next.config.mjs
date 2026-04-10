@@ -1,5 +1,5 @@
 import createMDX from '@next/mdx';
-import remarkCodegloss from 'remark-codegloss';
+import remarkCodegloss from 'codegloss/remark';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

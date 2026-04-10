@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "rehype-stringify": "^10.0.1",
-    "remark-codegloss": "workspace:*",
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.1",
     "unified": "^11.0.5"

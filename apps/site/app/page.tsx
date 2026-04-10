@@ -2,10 +2,10 @@ import Link from 'next/link';
 import { HeroDemo } from '@/components/hero-demo.component';
 import { CopyButton } from '@/components/copy-button.component';
 
-const INSTALL_CMD = 'npm install codegloss remark-codegloss';
+const INSTALL_CMD = 'npm install codegloss';
 
 const CONFIG_SNIPPET = `import createMdx from '@next/mdx';
-import remarkCodegloss from 'remark-codegloss';
+import remarkCodegloss from 'codegloss/remark';
 
 const withMdx = createMdx({
   options: {
@@ -43,18 +43,14 @@ export default function HomePage() {
   return (
     <main className="page-container">
       {/* Hero */}
-      <section className="hero">
+      <section className="hero-stacked">
         <div className="hero-text fade-in">
-          <div className="hero-badge">
-            <span className="hero-badge-dot" />
-            Open source
-          </div>
           <h1>
             Annotated code,{' '}
             <em>explained.</em>
           </h1>
           <p className="hero-desc">
-            Interactive token-level annotations for MDX. Highlight code, add
+            Interactive token-level annotations for Markdown. Highlight code, add
             tooltips, draw connection arcs between related concepts. Drop a
             remark plugin into your pipeline — done.
           </p>
@@ -64,7 +60,7 @@ export default function HomePage() {
             <CopyButton text={INSTALL_CMD} />
           </div>
         </div>
-        <div className="hero-demo fade-in fade-in-delay-1">
+        <div className="fade-in fade-in-delay-1">
           <HeroDemo />
         </div>
       </section>

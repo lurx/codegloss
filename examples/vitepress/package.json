@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "codegloss": "workspace:*",
-    "remark-codegloss": "workspace:*",
     "vue": "^3.5.13"
   },
   "devDependencies": {

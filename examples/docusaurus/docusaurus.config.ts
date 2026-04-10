@@ -1,4 +1,4 @@
-import remarkCodegloss from 'remark-codegloss';
+import remarkCodegloss from 'codegloss/remark';
 
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
