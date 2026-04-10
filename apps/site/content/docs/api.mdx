@@ -56,6 +56,7 @@ The same `CodeGlossConfig` shape powers both usage modes:
 | `connections` | `Connection[]?` | `[]` | Visual arcs between related annotations. |
 | `runnable` | `boolean?` | `lang === 'js'` | Whether to show the Run button. |
 | `theme` | `string?` | — | Named theme (`github-dark`, `dracula`, etc.). |
+| `arcs` | `object?` | — | Arc style overrides (see [Arc style options](#arc-style-options)). |
 
 ## Types
 
@@ -227,6 +228,91 @@ Dark mode activates automatically via `prefers-color-scheme: dark`. To force a t
 ### External highlighter interaction
 
 When using a custom `highlight` function (Shiki, Prism, etc.), the **syntax token colors** from the theme are unused — the external tool owns the token markup. Only the **chrome** portion of the theme applies (background, borders, annotations, toolbar).
+
+## Config file
+
+Create a project-level config file to set defaults for all `<code-gloss>` instances. Searched in order:
+
+- `codegloss.config.ts`
+- `codegloss.config.mts`
+- `codegloss.config.js`
+- `codegloss.config.mjs`
+- `.codeglossrc.json`
+- `.codeglossrc`
+
+````ts
+// codegloss.config.ts
+import { defineConfig } from 'codegloss/config';
+
+export default defineConfig({
+  theme: 'github-dark',
+  darkTheme: 'github-light',
+  arcs: {
+    strokeWidth: 2,
+    strokeDasharray: 'none',  // solid lines instead of dashed
+    opacity: 0.7,
+    dotRadius: 3,
+    dotOpacity: 1,
+  },
+});
+````
+
+### Config shape
+
+````ts
+type CodeGlossUserConfig = {
+  /** Named bundled theme, or an inline theme object. */
+  theme?: string | CodeGlossTheme;
+  /** Override for dark mode only. */
+  darkTheme?: string | CodeGlossTheme;
+  /** Style overrides for connection arcs. */
+  arcs?: CodeGlossArcStyle;
+};
+````
+
+### Arc style options
+
+Arcs are the Bezier curves drawn in the line number gutter to connect related annotations. Override their appearance globally via the config file, or per-block via the JSON config.
+
+| Field | Type | Default | Description |
+| --- | --- | --- | --- |
+| `dotRadius` | `number` | `2.5` | Endpoint dot radius in px |
+| `dotOpacity` | `number` | `0.8` | Endpoint dot opacity (0–1) |
+| `strokeWidth` | `number` | `1.5` | Arc stroke width in px |
+| `strokeDasharray` | `string` | `'4 3'` | SVG dash pattern, or `'none'` for solid |
+| `opacity` | `number` | `0.55` | Arc opacity (0–1) |
+
+Per-block override via JSON config:
+
+````html
+<code-gloss>
+  <script type="application/json">
+    {
+      "code": "...",
+      "lang": "js",
+      "arcs": {
+        "strokeDasharray": "none",
+        "opacity": 0.8
+      },
+      "connections": [...]
+    }
+  </script>
+</code-gloss>
+````
+
+### Loading the config programmatically
+
+````ts
+import { loadConfig } from 'codegloss/config';
+
+const result = loadConfig();
+if (result) {
+  console.log(result.config);   // CodeGlossUserConfig
+  console.log(result.filepath); // absolute path to the config file
+}
+````
+
+The remark plugin reads the config file automatically — pass `theme` directly in the plugin options, or let it pick up the project config file.
 
 ## No CSS import required
 

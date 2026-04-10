@@ -112,7 +112,25 @@ import { applyGlobalTheme } from 'codegloss';
 applyGlobalTheme('github-dark');
 ```
 
-Themes cover both syntax token colors and UI chrome (background, borders, annotations). CSS variable overrides still win over theme values. See the [Theming docs](./THEMES.md) for the full design.
+Themes cover both syntax token colors and UI chrome (background, borders, annotations). CSS variable overrides still win over theme values.
+
+### Config file
+
+Set project-wide defaults in a `codegloss.config.ts` (or `.codeglossrc.json`, `codegloss.config.js`, etc.):
+
+```ts
+import { defineConfig } from 'codegloss/config';
+
+export default defineConfig({
+  theme: 'github-dark',
+  arcs: {
+    strokeDasharray: 'none',  // solid arcs
+    opacity: 0.7,
+  },
+});
+```
+
+The config file sets defaults for themes, connection arc styles, and more. See the [Component API docs](./apps/site/content/docs/api.mdx) for all options.
 
 ### Markdown / MDX
 
