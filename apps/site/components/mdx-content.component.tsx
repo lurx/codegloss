@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import * as runtime from 'react/jsx-runtime';
 import { CodeGloss } from 'codegloss/react';
+import { ThemeShowcase } from './theme-showcase.component';
 
 import type { CodeGlossProps } from 'codegloss/react';
 
@@ -39,7 +40,7 @@ function CodeGlossWithTabs(props: CodeGlossProps) {
       {tab === 'sandbox' ? (
         <CodeGloss {...props} />
       ) : (
-        <pre style={{ background: 'var(--site-surface)', border: '1px solid var(--site-border)', borderRadius: '0 8px 8px 8px', padding: '1rem', overflowX: 'auto', fontSize: '0.8125rem', lineHeight: 1.6, color: '#d1d5db' }}>
+        <pre style={{ background: 'var(--site-surface)', border: '1px solid var(--site-border)', borderRadius: '0 8px 8px 8px', padding: '1rem', overflowX: 'auto', fontSize: '0.8125rem', lineHeight: 1.6, color: 'var(--site-pre-fg)' }}>
           <code>{source}</code>
         </pre>
       )}
@@ -49,6 +50,7 @@ function CodeGlossWithTabs(props: CodeGlossProps) {
 
 const MDX_COMPONENTS = {
   CodeGloss: CodeGlossWithTabs,
+  ThemeShowcase,
 };
 
 type MdxContentProps = {
