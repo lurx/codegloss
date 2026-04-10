@@ -1,0 +1,109 @@
+---
+title: Styles & Theming
+sidebar_position: 4
+---
+
+# Styles & Theming
+
+You don't need to import a stylesheet. The Web Component uses **Shadow DOM** with constructable stylesheets — all styles are bundled into the JS and applied automatically.
+
+## Named themes
+
+Apply a bundled theme via the `theme` attribute (HTML) or prop (React/Vue/Svelte):
+
+````html
+<code-gloss theme="github-dark">
+````
+
+````jsx
+<CodeGloss code="..." lang="js" theme="dracula" />
+````
+
+### Bundled themes
+
+<ThemeShowcase />
+
+| Theme | Variant | Based on |
+| --- | --- | --- |
+| `github-light` | light | GitHub code blocks |
+| `github-dark` | dark | GitHub code blocks |
+| `one-light` | light | Atom One Light |
+| `one-dark` | dark | Atom One Dark |
+| `dracula` | dark | Dracula |
+| `nord-light` | light | Nord Snow Storm |
+| `nord-dark` | dark | Nord Polar Night |
+| `vitesse-light` | light | Vitesse by antfu |
+| `vitesse-dark` | dark | Vitesse by antfu |
+
+Each theme sets both **syntax token colors** (keywords, strings, numbers, comments) and **chrome colors** (background, borders, toolbar, annotations). Dark-only themes (like Dracula) apply unconditionally.
+
+## Global theme via remark plugin
+
+Set a default theme for all code blocks:
+
+````js
+import remarkCodegloss from 'codegloss/remark';
+
+remarkCodegloss({ theme: 'github-dark' })
+````
+
+Individual blocks can override the global default by specifying their own `theme`.
+
+## Global theme in vanilla JS
+
+````js
+import { applyGlobalTheme } from 'codegloss';
+
+// Applies 'github-dark' to all <code-gloss> elements on the page
+// that don't already have a theme attribute.
+applyGlobalTheme('github-dark');
+````
+
+## Programmatic theme access
+
+````ts
+import { resolveTheme } from 'codegloss';
+import type { CodeGlossTheme, CodeGlossThemeVariant } from 'codegloss';
+
+const theme = resolveTheme('dracula');
+// theme.name === 'dracula'
+// theme.dark contains all color values
+````
+
+Themes are also available as individual tree-shakeable imports:
+
+````ts
+import { dracula, githubLight, oneDark } from 'codegloss/themes';
+````
+
+## CSS variable overrides
+
+For fine-grained control, override individual CSS custom properties on the `code-gloss` element. **CSS variable overrides always win over theme values** because they're more specific than `:host` rules:
+
+````css
+code-gloss {
+  --cg-bg: #1a1a1a;
+  --cg-border: #333;
+  --cg-text: #e0e0e0;
+  --cg-ann-border: #ff6b9d;
+}
+````
+
+| Property | Light default | Dark default | Description |
+| --- | --- | --- | --- |
+| `--cg-bg` | `#f8f8f6` | `#1e1e1e` | Code area background |
+| `--cg-border` | `#e8e8e6` | `#3a3a3a` | Border color |
+| `--cg-text` | `#1a1a1a` | `#e0e0e0` | Code text color |
+| `--cg-muted` | `#666` | `#999` | Secondary text |
+| `--cg-line-num` | `#bbb` | `#555` | Line number color |
+| `--cg-toolbar-bg` | `#f8f8f6` | `#2a2a2a` | Toolbar background |
+| `--cg-badge-bg` | `#efefed` | `#3a3a3a` | Lang badge background |
+| `--cg-ann-bg` | `rgba(83,74,183,0.12)` | `rgba(174,169,236,0.12)` | Annotation highlight |
+| `--cg-ann-border` | `#534ab7` | `#afa9ec` | Annotation underline |
+| `--cg-ann-hover` | `rgba(83,74,183,0.22)` | `rgba(174,169,236,0.22)` | Annotation hover state |
+
+Dark mode activates automatically via `prefers-color-scheme: dark`. To force a theme regardless of OS preference, use a named theme or override the variables on the host element directly.
+
+## External highlighter interaction
+
+When using a custom `highlight` function (Shiki, Prism, etc.), the **syntax token colors** from the theme are unused — the external tool owns the token markup. Only the **chrome** portion of the theme applies (background, borders, annotations, toolbar).

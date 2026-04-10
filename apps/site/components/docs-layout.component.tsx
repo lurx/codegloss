@@ -8,6 +8,7 @@ const SIDEBAR = [
     { label: 'Getting Started', slug: 'getting-started' },
     { label: 'Remark Plugin', slug: 'plugin' },
     { label: 'Component API', slug: 'api' },
+    { label: 'Styles & Theming', slug: 'theming' },
     { label: 'Examples', slug: 'examples' },
   ]},
   { title: 'Integrations', items: [

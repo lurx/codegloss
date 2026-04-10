@@ -4,6 +4,8 @@ import { useState, useMemo } from 'react';
 import * as runtime from 'react/jsx-runtime';
 import { CodeGloss } from 'codegloss/react';
 import { ThemeShowcase } from './theme-showcase.component';
+import { MdxTabs } from './mdx-tabs.component';
+import { UsageTabs } from './usage-tabs.component';
 import { useSiteTheme } from '@/hooks/use-site-theme.hook';
 import codeglossConfig from '@/codegloss.config';
 
@@ -61,6 +63,8 @@ function CodeGlossWithTabs(props: CodeGlossProps) {
 const MDX_COMPONENTS = {
   CodeGloss: CodeGlossWithTabs,
   ThemeShowcase,
+  MdxTabs,
+  UsageTabs,
 };
 
 type MdxContentProps = {

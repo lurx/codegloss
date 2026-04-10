@@ -728,6 +728,54 @@ a:hover {
 	color: var(--site-heading);
 }
 
+/* ─── MDX Tabs ─── */
+.mdx-tabs {
+	margin-bottom: 1.5rem;
+}
+
+.mdx-tabs-bar {
+	display: flex;
+	gap: 0;
+	border-bottom: 1px solid var(--site-border);
+	margin-bottom: 1rem;
+}
+
+.mdx-tabs-trigger {
+	font-family: var(--font-sans);
+	font-size: 0.8125rem;
+	font-weight: 500;
+	padding: 0.5rem 1rem;
+	background: none;
+	border: none;
+	color: var(--site-muted);
+	cursor: pointer;
+	position: relative;
+	transition: color 150ms ease;
+}
+
+.mdx-tabs-trigger:hover {
+	color: var(--site-heading);
+}
+
+.mdx-tabs-trigger-active {
+	color: var(--site-heading);
+}
+
+.mdx-tabs-trigger-active::after {
+	content: '';
+	position: absolute;
+	bottom: -1px;
+	left: 0;
+	right: 0;
+	height: 2px;
+	background: var(--accent);
+	border-radius: 1px 1px 0 0;
+}
+
+.mdx-tabs-panel :first-child {
+	margin-top: 0;
+}
+
 /* ─── Theme toggle ─── */
 .theme-toggle {
 	background: none;

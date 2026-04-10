@@ -3,6 +3,7 @@
 [![Unit tests](https://github.com/lurx/codegloss/actions/workflows/unit.yml/badge.svg)](https://github.com/lurx/codegloss/actions/workflows/unit.yml)
 [![Integration tests](https://github.com/lurx/codegloss/actions/workflows/integration.yml/badge.svg)](https://github.com/lurx/codegloss/actions/workflows/integration.yml)
 [![codecov](https://codecov.io/gh/lurx/codegloss/branch/main/graph/badge.svg)](https://codecov.io/gh/lurx/codegloss)
+[![XO code style](https://shields.io/badge/code_style-5ed9c7?logo=xo&labelColor=gray&logoSize=auto)](https://github.com/xojs/xo)
 
 Interactive annotated code blocks for the web. Drop a `<code-gloss>` element on any page — vanilla HTML, React, Vue, Svelte, Next.js, Astro, VitePress, Docusaurus, or plain markdown — and get clickable token annotations, connection arcs, copy buttons, and an in-place JS runner.
 
