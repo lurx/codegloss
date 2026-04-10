@@ -1,0 +1,16 @@
+node_modules
+dist
+out
+build
+.next
+.velite
+.svelte-kit
+.docusaurus
+.astro
+.claude
+.vscode
+*.generated.ts
+coverage
+test-results
+playwright-report
+test/e2e/fixtures/codegloss
