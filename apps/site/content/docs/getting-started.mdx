@@ -1,0 +1,127 @@
+---
+title: Getting Started
+sidebar_position: 1
+---
+
+# Getting Started
+
+CodeGloss renders interactive, annotated code blocks. Highlight tokens, attach inline callouts, and draw connection arcs between related concepts.
+
+It ships as a **Web Component** so it works in any framework — or no framework at all.
+
+## Installation
+
+````
+npm install codegloss
+````
+
+That's it. One package, zero peer dependencies for vanilla usage. If you're using React, npm/pnpm/yarn won't ask you to install anything else — `react` is an optional peer dependency.
+
+To author content with the markdown sandbox syntax, also install the remark plugin:
+
+````
+npm install codegloss remark-codegloss
+````
+
+## Pick your usage
+
+CodeGloss has three usage patterns. Pick the one that matches your stack:
+
+### 1. Vanilla HTML / static sites
+
+Drop a `<script>` tag and a `<code-gloss>` custom element with a JSON config child.
+
+````html
+<script type="module" src="https://unpkg.com/codegloss/dist/index.js"></script>
+
+<code-gloss>
+  <script type="application/json">
+    {
+      "code": "function greet(name) {\n  return 'Hello, ' + name;\n}",
+      "lang": "js",
+      "filename": "greet.js",
+      "annotations": [
+        { "id": "a1", "token": "name", "line": 0, "occurrence": 0, "title": "Parameter", "text": "The name to greet." }
+      ]
+    }
+  </script>
+</code-gloss>
+````
+
+Works in plain HTML pages, Hugo, Eleventy, Jekyll, anywhere you can drop a `<script>` tag.
+
+### 2. React (any version 16.14+)
+
+````js
+import { CodeGloss } from 'codegloss/react';
+
+<CodeGloss
+  code="function greet(name) { return 'Hello, ' + name; }"
+  lang="js"
+  filename="greet.js"
+  annotations={[
+    { id: 'a1', token: 'name', line: 0, occurrence: 0, title: 'Parameter', text: 'The name to greet.' },
+  ]}
+/>
+````
+
+The React wrapper is a thin JSX adapter — zero React APIs beyond JSX itself, so it works across all major React versions.
+
+### 3. MDX with the remark plugin
+
+If you're authoring content in MDX, the `remark-codegloss` plugin lets you use a fenced code block syntax that auto-renders as a CodeGloss component:
+
+`````
+```js sandbox greet.js
+function greet(name) {
+  return "Hello, " + name + "!";
+}
+```
+
+```json annotations
+{
+  "annotations": [
+    {
+      "id": "a1",
+      "token": "name",
+      "line": 0,
+      "occurrence": 0,
+      "title": "Parameter",
+      "text": "The name to greet."
+    }
+  ]
+}
+```
+`````
+
+Configure `remark-codegloss` in your MDX pipeline. Here's a Next.js example with `@next/mdx`:
+
+````js
+const createMdx = require('@next/mdx');
+const remarkCodegloss = require('remark-codegloss');
+
+const nextConfig = {
+  pageExtensions: ['ts', 'tsx', 'mdx'],
+};
+
+const withMdx = createMdx({
+  options: {
+    remarkPlugins: [remarkCodegloss],
+  },
+});
+
+module.exports = withMdx(nextConfig);
+````
+
+The plugin detects the sandbox blocks and emits `<CodeGloss />` JSX (auto-importing from `codegloss/react`). See the [Remark Plugin docs](/docs/plugin) for output modes (`mdx` for React/MDX, `html` for plain markdown pipelines).
+
+## Styles
+
+You don't need to import a stylesheet. The Web Component uses **Shadow DOM** with constructable stylesheets — all styles are bundled into the JS and applied automatically. There's nothing for you (or your bundler) to wire up.
+
+## Next steps
+
+- [Remark Plugin](/docs/plugin) — detection patterns, output modes, configuration
+- [Component API](/docs/api) — all props, types, and theming
+- [Examples](/docs/examples) — live interactive demos
+- Integration guides: [Next.js](/docs/setup/nextjs), [Docusaurus](/docs/setup/docusaurus), [Velite](/docs/setup/velite)

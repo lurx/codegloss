@@ -1,0 +1,184 @@
+---
+title: Examples
+sidebar_position: 4
+---
+
+# Examples
+
+Live demos rendered through `remark-codegloss`. Each example below is a standard MDX fenced code block in this page's source — the plugin transforms them into `<code-gloss>` Web Component instances at build time.
+
+Click any underlined token to expand its annotation. Click a connection arc (or one of its endpoint dots) to see why those annotations are related.
+
+---
+
+## Memoized Fibonacci
+
+A classic memoization pattern. Annotations explain the cache lifecycle, and connections link the table declaration to its lookups.
+
+```js sandbox fibonacci.js
+function fibonacci(n) {
+  const memo = {};
+
+  function fib(k) {
+    if (k <= 1) return k;
+    if (memo[k] !== undefined) return memo[k];
+    memo[k] = fib(k - 1) + fib(k - 2);
+    return memo[k];
+  }
+
+  return fib(n);
+}
+
+console.log(fibonacci(10));
+```
+
+```json annotations
+{
+  "annotations": [
+    {
+      "id": "a1",
+      "token": "memo",
+      "line": 1,
+      "occurrence": 0,
+      "title": "Memoization table",
+      "text": "Stores already-computed values by index to avoid repeated recursion."
+    },
+    {
+      "id": "a2",
+      "token": "memo[k]",
+      "line": 5,
+      "occurrence": 0,
+      "title": "Cache lookup",
+      "text": "Returns immediately when this subproblem was solved before. Each unique k is computed once."
+    },
+    {
+      "id": "a3",
+      "token": "memo[k]",
+      "line": 6,
+      "occurrence": 0,
+      "title": "Cache write",
+      "text": "Store the result so future calls to fib(k) short-circuit at the lookup line."
+    },
+    {
+      "id": "a4",
+      "token": "fib(k - 1)",
+      "line": 6,
+      "occurrence": 0,
+      "title": "Recursive descent",
+      "text": "Splits the problem into overlapping subproblems. Memoization removes exponential blowup."
+    },
+    {
+      "id": "a5",
+      "token": "fibonacci(10)",
+      "line": 13,
+      "occurrence": 0,
+      "title": "Result: 55",
+      "text": "fib(10) = 55."
+    }
+  ],
+  "connections": [
+    {
+      "from": "a1",
+      "to": "a2",
+      "color": "#534AB7",
+      "title": "Read after declare",
+      "text": "The cache is declared on line 2 and read on line 6. Click the dots or arc to jump between them mentally."
+    },
+    {
+      "from": "a3",
+      "to": "a2",
+      "color": "#0F6E56",
+      "title": "Write before read",
+      "text": "Each new k computes once on line 7, then all subsequent reads on line 6 short-circuit."
+    }
+  ]
+}
+```
+
+---
+
+## Event Delegation
+
+A pattern where a single listener on a parent element handles events for multiple children.
+
+```js sandbox delegation.js
+function delegate(parent, selector, event, handler) {
+  parent.addEventListener(event, function (e) {
+    const target = e.target.closest(selector);
+
+    if (target && parent.contains(target)) {
+      handler.call(target, e);
+    }
+  });
+}
+
+delegate(
+  document.getElementById("list"),
+  ".item",
+  "click",
+  function (e) {
+    console.log("Clicked:", this.textContent);
+  }
+);
+```
+
+```json annotations
+{
+  "annotations": [
+    {
+      "id": "d1",
+      "token": "parent.addEventListener",
+      "line": 1,
+      "occurrence": 0,
+      "title": "Single listener",
+      "text": "One event listener on the parent replaces individual listeners on every child. More efficient and works for dynamically added elements."
+    },
+    {
+      "id": "d2",
+      "token": "e.target.closest(selector)",
+      "line": 2,
+      "occurrence": 0,
+      "title": "Bubble traversal",
+      "text": "Walks up the DOM from the actual click target to find the nearest ancestor matching the selector."
+    },
+    {
+      "id": "d3",
+      "token": "parent.contains(target)",
+      "line": 4,
+      "occurrence": 0,
+      "title": "Containment check",
+      "text": "Ensures the matched element is actually inside our parent, not a sibling or ancestor."
+    },
+    {
+      "id": "d4",
+      "token": "handler.call(target, e)",
+      "line": 5,
+      "occurrence": 0,
+      "title": "Context binding",
+      "text": "Calls the handler with `this` set to the matched element, mimicking direct event binding."
+    }
+  ],
+  "connections": [
+    { "from": "d1", "to": "d2", "color": "#534AB7" }
+  ]
+}
+```
+
+---
+
+## Minimal — No Annotations
+
+A sandbox block without a following annotations block renders as a plain code viewer with line numbers and a toolbar.
+
+```js sandbox counter.js
+let count = 0;
+
+function increment() {
+  count += 1;
+  console.log("count:", count);
+}
+
+increment();
+increment();
+increment();
+```

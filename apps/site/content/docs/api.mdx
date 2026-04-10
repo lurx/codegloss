@@ -1,0 +1,153 @@
+---
+title: Component API
+sidebar_position: 3
+---
+
+# Component API
+
+CodeGloss is a Web Component (`<code-gloss>`) with a thin React wrapper at `codegloss/react`. The configuration shape is the same in both — only the way you pass it differs.
+
+## Web Component
+
+````html
+<script type="module" src="https://unpkg.com/codegloss/dist/index.js"></script>
+
+<code-gloss>
+  <script type="application/json">
+    {
+      "code": "...",
+      "lang": "js",
+      "filename": "example.js",
+      "annotations": [...],
+      "connections": [...]
+    }
+  </script>
+</code-gloss>
+````
+
+The element reads its config from a `<script type="application/json">` child. JSON keeps complex props (arrays, objects) clean — no attribute serialization headaches.
+
+## React wrapper
+
+````js
+import { CodeGloss } from 'codegloss/react';
+
+<CodeGloss
+  code="..."
+  lang="js"
+  filename="example.js"
+  annotations={[...]}
+  connections={[...]}
+/>
+````
+
+The React wrapper is a thin JSX adapter. Under the hood it renders the same `<code-gloss>` custom element with a JSON config child.
+
+## Configuration
+
+The same `CodeGlossConfig` shape powers both usage modes:
+
+| Field | Type | Default | Description |
+| --- | --- | --- | --- |
+| `code` | `string` | — | Raw source code to display. Preserve indentation. |
+| `lang` | `string` | — | Language identifier (`js`, `ts`, `py`, `css`, etc.). |
+| `filename` | `string?` | — | Filename shown in the toolbar. |
+| `annotations` | `Annotation[]?` | `[]` | Token-level annotations with inline callouts. |
+| `connections` | `Connection[]?` | `[]` | Visual arcs between related annotations. |
+| `runnable` | `boolean?` | `lang === 'js'` | Whether to show the Run button. |
+
+## Types
+
+### Annotation
+
+Defines a single highlighted token with an expanding callout.
+
+````ts
+type Annotation = {
+  id: string;          // Unique ID, e.g. "a1"
+  token: string;       // Exact substring to match, e.g. "memo[k]"
+  line: number;        // 0-indexed line number
+  occurrence: number;  // 0-indexed match on that line
+  title: string;       // Callout heading
+  text: string;        // Callout body
+};
+````
+
+- **`token`** — the exact substring to search for on the given line. Must match character-for-character.
+- **`line`** — 0-indexed. Line 0 is the first line of the code.
+- **`occurrence`** — when a token appears multiple times on one line, this selects which instance (0 = first).
+
+Clicking an annotated token expands an inline callout row directly below the line, with smooth animation. Click again or press Escape to dismiss.
+
+### Connection
+
+Draws a visual arc between two annotations in the line number gutter.
+
+````ts
+type Connection = {
+  from: string;   // Source annotation ID
+  to: string;     // Target annotation ID
+  color: string;  // Hex color, e.g. "#534AB7"
+  title?: string; // Popover heading shown on click
+  text?: string;  // Popover body. Without it, the arc is not clickable.
+};
+````
+
+When a connection has `text`, the arc and its endpoint dots become clickable. Clicking opens a popover (using the native [Popover API](https://developer.chrome.com/blog/introducing-popover-api)) with the title and text — useful for explaining *why* two pieces of code are related.
+
+Arcs render as dashed Bezier curves with dots at each endpoint. Multiple connections are offset horizontally to avoid overlap.
+
+## Custom syntax highlighting
+
+The Web Component uses a built-in regex highlighter by default (recognizes JS/TS keywords, strings, numbers, comments). To plug in Shiki, Prism, or any HTML-emitting highlighter, set the `highlight` property on the element directly:
+
+````js
+import { codeToTokens } from 'shiki';
+
+const el = document.querySelector('code-gloss');
+
+el.highlight = (code, lang) => {
+  const { tokens } = codeToTokens(code, { lang, theme: 'github-dark' });
+  return tokens.map((line) =>
+    line.map((token) =>
+      `<span style="color:${token.color}">${escapeHtml(token.content)}</span>`
+    ).join('')
+  );
+};
+````
+
+The function receives the full code and language, and returns an array of HTML strings — one per line. Annotation marks are injected into the highlighted HTML automatically using position mapping through the tag structure.
+
+> Because functions can't be serialized to JSON, `highlight` is set as a property on the element, not via the JSON config child. The React wrapper exposes it through a ref / property setter.
+
+## Theming
+
+CodeGloss styles live inside Shadow DOM, so they're isolated from page styles. Theming happens via CSS custom properties on `:host` — set them on the `code-gloss` element from the outside:
+
+````css
+code-gloss {
+  --cg-bg: #1a1a1a;
+  --cg-border: #333;
+  --cg-text: #e0e0e0;
+  --cg-ann-border: #ff6b9d;
+}
+````
+
+| Property | Light default | Dark default | Description |
+| --- | --- | --- | --- |
+| `--cg-bg` | `#f8f8f6` | `#1e1e1e` | Code area background |
+| `--cg-border` | `#e8e8e6` | `#3a3a3a` | Border color |
+| `--cg-text` | `#1a1a1a` | `#e0e0e0` | Code text color |
+| `--cg-muted` | `#666` | `#999` | Secondary text |
+| `--cg-line-num` | `#bbb` | `#555` | Line number color |
+| `--cg-toolbar-bg` | `#f8f8f6` | `#2a2a2a` | Toolbar background |
+| `--cg-badge-bg` | `#efefed` | `#3a3a3a` | Lang badge background |
+| `--cg-ann-bg` | `rgba(83,74,183,0.12)` | `rgba(174,169,236,0.12)` | Annotation highlight |
+| `--cg-ann-border` | `#534ab7` | `#afa9ec` | Annotation underline |
+| `--cg-ann-hover` | `rgba(83,74,183,0.22)` | `rgba(174,169,236,0.22)` | Annotation hover state |
+
+Dark mode activates automatically via `prefers-color-scheme: dark`. To force a theme regardless of the OS preference (e.g. tied to a site theme toggle), override the variables on the host element directly. See the [Docusaurus setup guide](/docs/setup/docusaurus) for an example.
+
+## No CSS import required
+
+You don't need to import a stylesheet anywhere. The Web Component uses Shadow DOM with constructable stylesheets — all styles are bundled into the JS chunk and applied automatically when the element registers.
