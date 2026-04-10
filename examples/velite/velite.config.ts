@@ -1,6 +1,6 @@
 import { defineConfig, s } from 'velite';
 
-import remarkCodegloss from 'remark-codegloss';
+import remarkCodegloss from 'codegloss/remark';
 
 export default defineConfig({
   mdx: {
