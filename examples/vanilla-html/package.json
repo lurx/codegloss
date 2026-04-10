@@ -1,0 +1,13 @@
+{
+  "name": "@codegloss-examples/vanilla-html",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node ./build.mjs",
+    "test": "node ./build.mjs && node ./test.mjs"
+  },
+  "dependencies": {
+    "codegloss": "workspace:*"
+  }
+}
