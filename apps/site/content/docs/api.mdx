@@ -124,138 +124,37 @@ The function receives the full code and language, and returns an array of HTML s
 
 ## Theming
 
-### Named themes
-
-Apply a bundled theme via the `theme` attribute (HTML) or prop (React/Vue/Svelte):
-
-````html
-<code-gloss theme="github-dark">
-````
-
-````jsx
-<CodeGloss code="..." lang="js" theme="dracula" />
-````
-
-**Bundled themes:**
-
-| Theme | Variant | Based on |
-| --- | --- | --- |
-| `github-light` | light | GitHub code blocks |
-| `github-dark` | dark | GitHub code blocks |
-| `one-light` | light | Atom One Light |
-| `one-dark` | dark | Atom One Dark |
-| `dracula` | dark | Dracula |
-| `nord-light` | light | Nord Snow Storm |
-| `nord-dark` | dark | Nord Polar Night |
-| `vitesse-light` | light | Vitesse by antfu |
-| `vitesse-dark` | dark | Vitesse by antfu |
-
-Each theme sets both **syntax token colors** (keywords, strings, numbers, comments) and **chrome colors** (background, borders, toolbar, annotations). Dark-only themes (like Dracula) apply unconditionally. Themes with a single variant ignore `prefers-color-scheme`.
-
-### Global theme via remark plugin
-
-Set a default theme for all code blocks:
-
-````js
-remarkCodegloss({ theme: 'github-dark' })
-````
-
-Individual blocks can override the global default by specifying their own `theme`.
-
-### Global theme in vanilla JS
-
-````js
-import { applyGlobalTheme } from 'codegloss';
-
-// Applies 'github-dark' to all <code-gloss> elements on the page
-// that don't already have a theme attribute.
-applyGlobalTheme('github-dark');
-````
-
-### Theme resolution
-
-The `theme` is resolved in this order (first one wins):
-
-1. `theme` HTML attribute on the element
-2. `theme` in the JSON config
-3. Global theme set via `applyGlobalTheme()` or the remark plugin's `theme` option
-
-### Programmatic theme access
-
-````ts
-import { resolveTheme } from 'codegloss';
-import type { CodeGlossTheme, CodeGlossThemeVariant } from 'codegloss';
-
-const theme = resolveTheme('dracula');
-// theme.name === 'dracula'
-// theme.dark contains all color values
-````
-
-Themes are also available as individual tree-shakeable imports:
-
-````ts
-import { dracula, githubLight, oneDark } from 'codegloss/themes';
-````
-
-### CSS variable overrides
-
-For fine-grained control, override individual CSS custom properties on the `code-gloss` element. **CSS variable overrides always win over theme values** because they're more specific than `:host` rules:
-
-````css
-code-gloss {
-  --cg-bg: #1a1a1a;
-  --cg-border: #333;
-  --cg-text: #e0e0e0;
-  --cg-ann-border: #ff6b9d;
-}
-````
-
-| Property | Light default | Dark default | Description |
-| --- | --- | --- | --- |
-| `--cg-bg` | `#f8f8f6` | `#1e1e1e` | Code area background |
-| `--cg-border` | `#e8e8e6` | `#3a3a3a` | Border color |
-| `--cg-text` | `#1a1a1a` | `#e0e0e0` | Code text color |
-| `--cg-muted` | `#666` | `#999` | Secondary text |
-| `--cg-line-num` | `#bbb` | `#555` | Line number color |
-| `--cg-toolbar-bg` | `#f8f8f6` | `#2a2a2a` | Toolbar background |
-| `--cg-badge-bg` | `#efefed` | `#3a3a3a` | Lang badge background |
-| `--cg-ann-bg` | `rgba(83,74,183,0.12)` | `rgba(174,169,236,0.12)` | Annotation highlight |
-| `--cg-ann-border` | `#534ab7` | `#afa9ec` | Annotation underline |
-| `--cg-ann-hover` | `rgba(83,74,183,0.22)` | `rgba(174,169,236,0.22)` | Annotation hover state |
-
-Dark mode activates automatically via `prefers-color-scheme: dark`. To force a theme regardless of OS preference (e.g. tied to a site theme toggle), use a named theme or override the variables on the host element directly.
-
-### External highlighter interaction
-
-When using a custom `highlight` function (Shiki, Prism, etc.), the **syntax token colors** from the theme are unused — the external tool owns the token markup. Only the **chrome** portion of the theme applies (background, borders, annotations, toolbar).
+See the dedicated [Styles & Theming](/docs/theming) page for named themes, CSS variable overrides, theme showcase, and external highlighter interaction.
 
 ## Config file
 
-Create a project-level config file to set defaults for all `<code-gloss>` instances. Searched in order:
-
-- `codegloss.config.ts`
-- `codegloss.config.mts`
-- `codegloss.config.js`
-- `codegloss.config.mjs`
-- `.codeglossrc.json`
-- `.codeglossrc`
+Create a project-level config file to set defaults for all `<code-gloss>` instances.
 
 ````ts
 // codegloss.config.ts
 import { defineConfig } from 'codegloss/config';
 
 export default defineConfig({
-  theme: 'github-dark',
-  darkTheme: 'github-light',
+  theme: 'github-light',
+  darkTheme: 'github-dark',
   arcs: {
     strokeWidth: 2,
-    strokeDasharray: 'none',  // solid lines instead of dashed
+    strokeDasharray: 'none',
     opacity: 0.7,
-    dotRadius: 3,
-    dotOpacity: 1,
   },
 });
 ````
+
+### Config file resolution
+
+Searched in order from the project root:
+
+1. `codegloss.config.ts`
+2. `codegloss.config.mts`
+3. `codegloss.config.js`
+4. `codegloss.config.mjs`
+5. `.codeglossrc.json`
+6. `.codeglossrc`
 
 ### Config shape
 
@@ -263,16 +162,25 @@ export default defineConfig({
 type CodeGlossUserConfig = {
   /** Named bundled theme, or an inline theme object. */
   theme?: string | CodeGlossTheme;
-  /** Override for dark mode only. */
+  /** Theme override for dark mode. */
   darkTheme?: string | CodeGlossTheme;
   /** Style overrides for connection arcs. */
   arcs?: CodeGlossArcStyle;
 };
 ````
 
+### Theme defaults
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `theme` | `string \| CodeGlossTheme` | Default theme for all blocks (e.g. `'github-light'`). |
+| `darkTheme` | `string \| CodeGlossTheme` | Theme used when the user is in dark mode. Falls back to `theme` if not set. |
+
+The config file is **build-time only** — framework integrations (remark plugin, React wrappers) read it and inject the theme into each rendered block. Individual blocks can still override the default by specifying their own `theme`.
+
 ### Arc style options
 
-Arcs are the Bezier curves drawn in the line number gutter to connect related annotations. Override their appearance globally via the config file, or per-block via the JSON config.
+Arcs are the Bezier curves drawn in the line number gutter connecting related annotations.
 
 | Field | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -282,7 +190,7 @@ Arcs are the Bezier curves drawn in the line number gutter to connect related an
 | `strokeDasharray` | `string` | `'4 3'` | SVG dash pattern, or `'none'` for solid |
 | `opacity` | `number` | `0.55` | Arc opacity (0–1) |
 
-Per-block override via JSON config:
+Arc styles can also be set per-block via the JSON config:
 
 ````html
 <code-gloss>
@@ -290,10 +198,7 @@ Per-block override via JSON config:
     {
       "code": "...",
       "lang": "js",
-      "arcs": {
-        "strokeDasharray": "none",
-        "opacity": 0.8
-      },
+      "arcs": { "strokeDasharray": "none", "opacity": 0.8 },
       "connections": [...]
     }
   </script>
@@ -302,8 +207,10 @@ Per-block override via JSON config:
 
 ### Loading the config programmatically
 
+For build tools and server-side scripts, use the Node-only config loader:
+
 ````ts
-import { loadConfig } from 'codegloss/config';
+import { loadConfig } from 'codegloss/config/node';
 
 const result = loadConfig();
 if (result) {
@@ -312,7 +219,7 @@ if (result) {
 }
 ````
 
-The remark plugin reads the config file automatically — pass `theme` directly in the plugin options, or let it pick up the project config file.
+> `loadConfig` uses Node.js `fs` APIs and is only available from `codegloss/config/node`. The browser-safe `codegloss/config` entry exports `defineConfig` and types only.
 
 ## No CSS import required
 
