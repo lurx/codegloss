@@ -54,6 +54,8 @@ export type CodeGlossConfig = {
 	connections?: Connection[];
 	/** Show Run button (default: true when lang === "js") */
 	runnable?: boolean;
+	/** Named theme or inline theme object for syntax + chrome colors */
+	theme?: string;
 };
 
 export type RunResult = {

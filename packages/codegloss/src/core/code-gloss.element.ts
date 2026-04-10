@@ -1,3 +1,5 @@
+import { resolveTheme } from '../themes';
+import { buildThemeCss } from '../themes/theme-css.helpers';
 import {
 	CALLOUT_TRANSITION_MS,
 	COPY_FEEDBACK_MS,
@@ -33,7 +35,7 @@ const SafeHTMLElement: typeof HTMLElement =
 
 // Lazy-init a single constructable stylesheet shared across all instances.
 // Lazy because `new CSSStyleSheet()` doesn't exist during SSR.
-let sharedStylesheet: CSSStyleSheet | undefined = null;
+let sharedStylesheet: CSSStyleSheet | undefined;
 
 function getSharedStylesheet(): CSSStyleSheet {
 	if (!sharedStylesheet) {
@@ -45,13 +47,18 @@ function getSharedStylesheet(): CSSStyleSheet {
 }
 
 export class CodeGlossElement extends SafeHTMLElement {
-	/** Optional custom syntax highlighter — set as a property, not an attribute. */
-	highlight: Highlighter | undefined = null;
+	static get observedAttributes(): string[] {
+		return ['theme'];
+	}
 
-	private config: CodeGlossConfig | undefined = null;
-	private activeAnnotationId: string | undefined = null;
-	private connectionTooltip: ConnectionTooltipState | undefined = null;
-	private highlightedLines: string[] | undefined = null;
+	/** Optional custom syntax highlighter — set as a property, not an attribute. */
+	highlight: Highlighter | undefined;
+
+	private config: CodeGlossConfig | undefined;
+	private activeAnnotationId: string | undefined;
+	private connectionTooltip: ConnectionTooltipState | undefined;
+	private highlightedLines: string[] | undefined;
+	private themeStylesheet: CSSStyleSheet | undefined;
 
 	private readonly shadow: ShadowRoot;
 	private root!: HTMLDivElement;
@@ -63,9 +70,9 @@ export class CodeGlossElement extends SafeHTMLElement {
 	private popoverEl!: HTMLDivElement;
 	private readonly lineRefs = new Map<number, HTMLDivElement>();
 
-	private resizeTimer: ReturnType<typeof setTimeout> | undefined = null;
-	private copyTimer: ReturnType<typeof setTimeout> | undefined = null;
-	private animationFrameId: number | undefined = null;
+	private resizeTimer: ReturnType<typeof setTimeout> | undefined;
+	private copyTimer: ReturnType<typeof setTimeout> | undefined;
+	private animationFrameId: number | undefined;
 	private readonly resizeHandler = () => {
 		if (this.resizeTimer) clearTimeout(this.resizeTimer);
 		this.resizeTimer = setTimeout(() => this.redrawArcs(), RESIZE_DEBOUNCE_MS);
@@ -92,10 +99,26 @@ export class CodeGlossElement extends SafeHTMLElement {
 			return;
 		}
 
+		// Apply theme from attribute or JSON config
+		const themeName = this.getAttribute('theme') ?? this.config.theme;
+		if (themeName) {
+			this.applyTheme(themeName);
+		}
+
 		this.highlightedLines =
-			this.highlight?.(this.config.code, this.config.lang) ?? null;
+			this.highlight?.(this.config.code, this.config.lang) ?? undefined;
 		this.buildDom();
 		this.attachListeners();
+	}
+
+	attributeChangedCallback(
+		name: string,
+		_oldValue: string | undefined,
+		newValue: string | undefined,
+	): void {
+		if (name === 'theme') {
+			this.applyTheme(newValue);
+		}
 	}
 
 	disconnectedCallback(): void {
@@ -109,14 +132,39 @@ export class CodeGlossElement extends SafeHTMLElement {
 	private readConfig(): CodeGlossConfig | undefined {
 		const scriptElement = this.querySelector('script[type="application/json"]');
 
-		if (!scriptElement?.textContent) return null;
+		if (!scriptElement?.textContent) return undefined;
 
 		try {
 			return JSON.parse(scriptElement.textContent) as CodeGlossConfig;
 		} catch {
 			console.error('[code-gloss] failed to parse JSON config');
-			return null;
+			return undefined;
 		}
+	}
+
+	private applyTheme(themeName: string | undefined): void {
+		// Remove existing theme stylesheet if any
+		if (this.themeStylesheet) {
+			this.shadow.adoptedStyleSheets = this.shadow.adoptedStyleSheets.filter(
+				s => s !== this.themeStylesheet,
+			);
+			this.themeStylesheet = undefined;
+		}
+
+		if (!themeName) return;
+
+		const theme = resolveTheme(themeName);
+		if (!theme) return;
+
+		const css = buildThemeCss(theme.light, theme.dark);
+		if (!css) return;
+
+		this.themeStylesheet = new CSSStyleSheet();
+		this.themeStylesheet.replaceSync(css);
+		this.shadow.adoptedStyleSheets = [
+			...this.shadow.adoptedStyleSheets,
+			this.themeStylesheet,
+		];
 	}
 
 	private buildDom(): void {
@@ -263,11 +311,11 @@ export class CodeGlossElement extends SafeHTMLElement {
 	}
 
 	private findAnnotationOnLine(lineIdx: number): Annotation | undefined {
-		if (!this.config?.annotations || !this.activeAnnotationId) return null;
+		if (!this.config?.annotations || !this.activeAnnotationId) return undefined;
 		const ann = this.config.annotations.find(
 			a => a.id === this.activeAnnotationId && a.line === lineIdx,
 		);
-		return ann ?? null;
+		return ann ?? undefined;
 	}
 
 	private buildCallout(ann: Annotation): HTMLDivElement {
@@ -330,7 +378,7 @@ export class CodeGlossElement extends SafeHTMLElement {
 
 		this.popoverEl.addEventListener('toggle', event => {
 			if (event.newState === 'closed') {
-				this.connectionTooltip = null;
+				this.connectionTooltip = undefined;
 			}
 		});
 
@@ -339,14 +387,15 @@ export class CodeGlossElement extends SafeHTMLElement {
 	}
 
 	private handleAnnotationClick(annId: string): void {
-		this.activeAnnotationId = this.activeAnnotationId === annId ? null : annId;
+		this.activeAnnotationId =
+			this.activeAnnotationId === annId ? undefined : annId;
 		this.renderLines();
 		this.animateArcsThroughTransition();
 	}
 
 	private dismissCallout(): void {
-		if (this.activeAnnotationId === null) return;
-		this.activeAnnotationId = null;
+		if (this.activeAnnotationId === undefined) return;
+		this.activeAnnotationId = undefined;
 		this.renderLines();
 		this.animateArcsThroughTransition();
 	}
