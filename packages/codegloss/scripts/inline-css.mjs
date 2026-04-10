@@ -1,11 +1,14 @@
 #!/usr/bin/env node
 import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { dirname, resolve } from 'node:path';
+import path from 'node:path';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const cssPath = resolve(__dirname, '../src/core/code-gloss.css');
-const outPath = resolve(__dirname, '../src/core/code-gloss-styles.generated.ts');
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const cssPath = path.resolve(__dirname, '../src/core/code-gloss.css');
+const outPath = path.resolve(
+	__dirname,
+	'../src/core/code-gloss-styles.generated.ts',
+);
 
 const css = await readFile(cssPath, 'utf8');
 const out = `// AUTO-GENERATED from code-gloss.css — do not edit by hand.
