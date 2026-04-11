@@ -118,3 +118,68 @@ const outPath = path.resolve(
 );
 writeFileSync(outPath, JSON.stringify(result, null, 2));
 console.log(`[generate-usage-html] wrote ${outPath}`);
+
+// ── Homepage quick-start snippets ──────────────────────────────
+const HOMEPAGE_SNIPPETS = [
+	{
+		label: 'install',
+		lang: 'bash',
+		code: 'npm install codegloss',
+	},
+	{
+		label: 'config',
+		lang: 'js',
+		code: `import createMdx from '@next/mdx';
+import remarkCodegloss from 'codegloss/remark';
+
+const withMdx = createMdx({
+  options: {
+    remarkPlugins: [remarkCodegloss],
+  },
+});`,
+	},
+	{
+		label: 'mdx',
+		lang: 'md',
+		code: `\`\`\`js sandbox fibonacci.js
+function fibonacci(n) {
+  const memo = {};
+  // ...
+}
+\`\`\`
+
+\`\`\`json annotations
+{
+  "annotations": [{
+    "id": "a1",
+    "token": "memo",
+    "line": 1,
+    "occurrence": 0,
+    "title": "Cache",
+    "text": "Stores computed values."
+  }]
+}
+\`\`\``,
+	},
+];
+
+const homepageResult = {};
+
+for (const snippet of HOMEPAGE_SNIPPETS) {
+	const dark = await codeToHtml(snippet.code, {
+		lang: snippet.lang,
+		theme: 'github-dark',
+	});
+	const light = await codeToHtml(snippet.code, {
+		lang: snippet.lang,
+		theme: 'github-light',
+	});
+	homepageResult[snippet.label] = { dark, light };
+}
+
+const homepageOutPath = path.resolve(
+	import.meta.dirname,
+	'../components/homepage-snippets-html.generated.json',
+);
+writeFileSync(homepageOutPath, JSON.stringify(homepageResult, null, 2));
+console.log(`[generate-usage-html] wrote ${homepageOutPath}`);

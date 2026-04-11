@@ -12,9 +12,14 @@ const SIDEBAR = [
     { label: 'Examples', slug: 'examples' },
   ]},
   { title: 'Integrations', items: [
+    { label: 'React', slug: 'setup/react' },
+    { label: 'Vue / Nuxt', slug: 'setup/vue' },
+    { label: 'Svelte / SvelteKit', slug: 'setup/svelte' },
     { label: 'Next.js', slug: 'setup/nextjs' },
     { label: 'Docusaurus', slug: 'setup/docusaurus' },
     { label: 'Velite', slug: 'setup/velite' },
+    { label: 'Astro / Starlight', slug: 'setup/astro' },
+    { label: 'VitePress', slug: 'setup/vitepress' },
   ]},
 ] as const;
 

@@ -63,8 +63,8 @@ No CSS import needed. The Web Component bundles its own styles via Shadow DOM.
 Configure the remark plugin in `next.config.ts`:
 
 ````js
-const createMdx = require('@next/mdx');
-const remarkCodegloss = require('codegloss/remark');
+import createMdx from '@next/mdx';
+import remarkCodegloss from 'codegloss/remark';
 
 const nextConfig = {
   pageExtensions: ['ts', 'tsx', 'mdx'],
@@ -76,7 +76,7 @@ const withMdx = createMdx({
   },
 });
 
-module.exports = withMdx(nextConfig);
+export default withMdx(nextConfig);
 ````
 
 Now any `.mdx` file under `app/` can use the sandbox syntax:
@@ -108,8 +108,8 @@ The plugin auto-injects `import { CodeGloss } from 'codegloss/react'` into the M
 If you load MDX from a CMS or filesystem:
 
 ````js
-const { serialize } = require('next-mdx-remote/serialize');
-const remarkCodegloss = require('codegloss/remark');
+import { serialize } from 'next-mdx-remote/serialize';
+import remarkCodegloss from 'codegloss/remark';
 
 const source = await serialize(mdxContent, {
   mdxOptions: {
@@ -134,6 +134,8 @@ export function Post({ source }) {
 When loading the component this way, set `skipImport: true` on the remark plugin so it doesn't auto-inject an import (you're providing it via the components map):
 
 ````js
+import remarkCodegloss from 'codegloss/remark';
+
 const source = await serialize(mdxContent, {
   mdxOptions: {
     remarkPlugins: [[remarkCodegloss, { skipImport: true }]],

@@ -20,10 +20,10 @@ npm install codegloss velite
 Add `remark-codegloss` to your `velite.config.ts`. Use `skipImport: true` because the React wrapper is provided via the components map at render time:
 
 ````js
-const { defineConfig, s } = require('velite');
-const remarkCodegloss = require('codegloss/remark');
+import { defineConfig, s } from 'velite';
+import remarkCodegloss from 'codegloss/remark';
 
-module.exports = defineConfig({
+export default defineConfig({
   mdx: {
     remarkPlugins: [[remarkCodegloss, { skipImport: true }]],
   },

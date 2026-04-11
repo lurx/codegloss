@@ -23,10 +23,64 @@ That's it. One package — the web component, framework wrappers, remark plugin,
 
 See the [Remark Plugin docs](/docs/plugin) for output modes (`mdx` for React/MDX, `html` for plain markdown pipelines).
 
+## Here's what you get
+
+This is a live CodeGloss block — click any underlined token to expand its annotation, or click a connection arc in the gutter:
+
+```js sandbox greet.js
+function greet(name) {
+  const message = "Hello, " + name + "!";
+  console.log(message);
+  return message;
+}
+
+greet("world");
+```
+
+```json annotations
+{
+  "annotations": [
+    {
+      "id": "a1",
+      "token": "name",
+      "line": 0,
+      "occurrence": 0,
+      "title": "Parameter",
+      "text": "The input value passed to the function. Click this token to see how it flows through the code."
+    },
+    {
+      "id": "a2",
+      "token": "message",
+      "line": 1,
+      "occurrence": 0,
+      "title": "String concatenation",
+      "text": "Builds the greeting by combining static text with the name parameter."
+    },
+    {
+      "id": "a3",
+      "token": "greet(\"world\")",
+      "line": 6,
+      "occurrence": 0,
+      "title": "Function call",
+      "text": "Invokes the function with a concrete argument. The result is 'Hello, world!'."
+    }
+  ],
+  "connections": [
+    {
+      "from": "a1",
+      "to": "a2",
+      "color": "#534AB7",
+      "title": "Data flow",
+      "text": "The name parameter declared on line 1 is used to build the message on line 2."
+    }
+  ]
+}
+```
+
 ## Next steps
 
 - [Remark Plugin](/docs/plugin) — detection patterns, output modes, configuration
 - [Component API](/docs/api) — all props, types, and config file
 - [Styles & Theming](/docs/theming) — named themes, CSS variables, theme showcase
 - [Examples](/docs/examples) — live interactive demos
-- Integration guides: [Next.js](/docs/setup/nextjs), [Docusaurus](/docs/setup/docusaurus), [Velite](/docs/setup/velite)
+- Integration guides: [React](/docs/setup/react), [Vue](/docs/setup/vue), [Svelte](/docs/setup/svelte), [Next.js](/docs/setup/nextjs), [Docusaurus](/docs/setup/docusaurus), [Velite](/docs/setup/velite), [Astro](/docs/setup/astro), [VitePress](/docs/setup/vitepress)

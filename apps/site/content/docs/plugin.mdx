@@ -92,8 +92,8 @@ Individual code blocks can override the global default — the remark plugin onl
 #### Next.js with @next/mdx
 
 ````js
-const createMdx = require('@next/mdx');
-const remarkCodegloss = require('codegloss/remark');
+import createMdx from '@next/mdx';
+import remarkCodegloss from 'codegloss/remark';
 
 const withMdx = createMdx({
   options: {
@@ -105,9 +105,9 @@ const withMdx = createMdx({
 #### Docusaurus
 
 ````js
-const remarkCodegloss = require('codegloss/remark');
+import remarkCodegloss from 'codegloss/remark';
 
-module.exports = {
+export default {
   presets: [
     ['classic', {
       docs: {
@@ -123,10 +123,10 @@ module.exports = {
 #### Generic MDX pipeline
 
 ````js
-const { unified } = require('unified');
-const remarkParse = require('remark-parse');
-const remarkMdx = require('remark-mdx');
-const remarkCodegloss = require('codegloss/remark');
+import { unified } from 'unified';
+import remarkParse from 'remark-parse';
+import remarkMdx from 'remark-mdx';
+import remarkCodegloss from 'codegloss/remark';
 
 const processor = unified()
   .use(remarkParse)
@@ -139,11 +139,11 @@ const processor = unified()
 For pipelines that produce plain HTML (no JSX, no React):
 
 ````js
-const { unified } = require('unified');
-const remarkParse = require('remark-parse');
-const remarkRehype = require('remark-rehype');
-const rehypeStringify = require('rehype-stringify');
-const remarkCodegloss = require('codegloss/remark');
+import { unified } from 'unified';
+import remarkParse from 'remark-parse';
+import remarkRehype from 'remark-rehype';
+import rehypeStringify from 'rehype-stringify';
+import remarkCodegloss from 'codegloss/remark';
 
 const html = await unified()
   .use(remarkParse)

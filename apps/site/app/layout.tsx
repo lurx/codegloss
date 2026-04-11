@@ -4,6 +4,7 @@ import Link from 'next/link';
 
 import { Logo } from '@/components/logo.component';
 import { ThemeToggle } from '@/components/theme-toggle.component';
+import { Search } from '@/components/search.component';
 
 import './globals.css';
 
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
               codegloss
             </Link>
             <div className="nav-links">
+              <Search />
               <Link href="/docs/getting-started" className="nav-link">
                 Docs
               </Link>

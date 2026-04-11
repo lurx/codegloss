@@ -18,9 +18,9 @@ npm install codegloss
 Add `remark-codegloss` to your `docusaurus.config.js`. Use `skipImport: true` because we'll provide the component via Docusaurus's MDX components map (next step):
 
 ````js
-const remarkCodegloss = require('codegloss/remark');
+import remarkCodegloss from 'codegloss/remark';
 
-module.exports = {
+export default {
   presets: [
     ['classic', {
       docs: {
@@ -40,10 +40,10 @@ Swizzle MDX components to make CodeGloss available everywhere:
 
 ````js
 // src/theme/MDXComponents.js
-const MDXComponents = require('@theme-original/MDXComponents');
-const { CodeGloss } = require('codegloss/react');
+import MDXComponents from '@theme-original/MDXComponents';
+import { CodeGloss } from 'codegloss/react';
 
-module.exports = {
+export default {
   ...MDXComponents,
   CodeGloss,
 };

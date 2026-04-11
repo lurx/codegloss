@@ -27,21 +27,18 @@ CodeGloss is a Web Component (`<code-gloss>`) with a thin React wrapper at `code
 
 The element reads its config from a `<script type="application/json">` child. JSON keeps complex props (arrays, objects) clean — no attribute serialization headaches.
 
-## React wrapper
+## Framework wrappers
 
-````js
-import { CodeGloss } from 'codegloss/react';
+CodeGloss ships thin wrappers for popular frameworks. Each passes props to the same underlying `<code-gloss>` Web Component:
 
-<CodeGloss
-  code="..."
-  lang="js"
-  filename="example.js"
-  annotations={[...]}
-  connections={[...]}
-/>
-````
-
-The React wrapper is a thin JSX adapter. Under the hood it renders the same `<code-gloss>` custom element with a JSON config child.
+- [React](/docs/setup/react) — `codegloss/react`
+- [Vue / Nuxt](/docs/setup/vue) — `codegloss/vue`
+- [Svelte / SvelteKit](/docs/setup/svelte) — `codegloss/svelte`
+- [Next.js](/docs/setup/nextjs) — React wrapper + remark plugin
+- [Docusaurus](/docs/setup/docusaurus) — React wrapper + MDX components map
+- [Velite](/docs/setup/velite) — React wrapper + Velite content pipeline
+- [Astro / Starlight](/docs/setup/astro) — Web Component via HTML mode
+- [VitePress](/docs/setup/vitepress) — Vue wrapper
 
 ## Configuration
 
@@ -220,6 +217,17 @@ if (result) {
 ````
 
 > `loadConfig` uses Node.js `fs` APIs and is only available from `codegloss/config/node`. The browser-safe `codegloss/config` entry exports `defineConfig` and types only.
+
+## Accessibility
+
+The Web Component uses semantic HTML and includes built-in keyboard and screen reader support:
+
+- **Escape key** — pressing Escape dismisses the currently open annotation callout or connection popover
+- **Semantic buttons** — all interactive controls (copy, run, close) use native `<button>` elements with `type="button"`
+- **ARIA labels** — the copy button has `aria-label="Copy code"` (updates to `"Copied"` on click), and the callout close button has `aria-label="Close annotation"`
+- **Popover API** — connection popovers use the native HTML `popover="auto"` attribute, which integrates with browser accessibility features and dismisses on outside click or Escape
+- **Decorative SVG** — the gutter SVG for connection arcs is marked with `aria-hidden="true"` so screen readers skip it
+- **No focus traps** — interactive elements follow natural DOM tab order
 
 ## No CSS import required
 

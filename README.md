@@ -24,7 +24,7 @@ Interactive annotated code blocks for the web. Drop a `<code-gloss>` element on 
 ### Vanilla HTML
 
 ```html
-<script type="module" src="https://cdn.example.com/codegloss"></script>
+<script type="module" src="https://unpkg.com/codegloss/dist/index.js"></script>
 
 <code-gloss>
   <script type="application/json">
@@ -136,7 +136,7 @@ export default defineConfig({
 });
 ```
 
-The config file sets defaults for themes, connection arc styles, and more. See the [Component API docs](./apps/site/content/docs/api.mdx) for all options.
+The config file sets defaults for themes, connection arc styles, and more. See the [Component API docs](https://lurx.github.io/codegloss/docs/api/) for all options.
 
 ### Markdown / MDX
 
