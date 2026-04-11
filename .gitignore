@@ -10,6 +10,7 @@ build
 .claude
 .vscode
 *.generated.ts
+*.generated.json
 coverage
 test-results
 playwright-report

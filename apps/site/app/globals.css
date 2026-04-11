@@ -693,6 +693,67 @@ a:hover {
 	font-size: 0.75rem;
 }
 
+/* ─── Code block with copy button ─── */
+.code-block-wrapper {
+	position: relative;
+	margin-bottom: 1rem;
+}
+
+.code-block-wrapper pre {
+	margin: 0;
+}
+
+.code-block-copy {
+	position: absolute;
+	top: 0.5rem;
+	right: 0.5rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 26px;
+	height: 24px;
+	background: transparent;
+	border: 0.5px solid transparent;
+	border-radius: 4px;
+	color: var(--site-muted);
+	cursor: pointer;
+	padding: 0;
+	opacity: 0;
+	transition:
+		opacity 150ms ease,
+		color 120ms ease,
+		background 120ms ease,
+		border-color 120ms ease;
+}
+
+.code-block-wrapper:hover .code-block-copy {
+	opacity: 1;
+}
+
+.code-block-copy:hover {
+	color: var(--site-heading);
+	background: var(--site-active-bg);
+	border-color: var(--site-border);
+}
+
+/* ─── Syntax highlighting (shiki via @shikijs/rehype) ─── */
+.prose pre.shiki {
+	background: var(--site-pre-bg);
+	border: 1px solid var(--site-border);
+	border-radius: 8px;
+	padding: 1rem;
+	overflow-x: auto;
+	margin-bottom: 1rem;
+}
+
+.prose pre.shiki code {
+	background: none;
+	padding: 0;
+	font-family: var(--font-mono);
+	font-size: 0.75rem;
+	line-height: 1.7;
+}
+
 /* ─── Tabs ─── */
 .tabs {
 	display: flex;
@@ -726,6 +787,28 @@ a:hover {
 .tab-btn[data-active='true'] {
 	background: var(--site-bg);
 	color: var(--site-heading);
+}
+
+/* ─── Usage code blocks (pre-highlighted via Shiki) ─── */
+.usage-code-block pre {
+	background: var(--site-pre-bg);
+	border: 1px solid var(--site-border);
+	border-radius: 8px;
+	padding: 1rem;
+	overflow-x: auto;
+	font-family: var(--font-mono);
+	font-size: 0.75rem;
+	line-height: 1.7;
+	color: var(--site-pre-fg);
+	margin: 0;
+}
+
+.usage-code-block code {
+	background: none;
+	padding: 0;
+	font-family: inherit;
+	font-size: inherit;
+	line-height: inherit;
 }
 
 /* ─── MDX Tabs ─── */

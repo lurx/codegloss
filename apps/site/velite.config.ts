@@ -1,4 +1,5 @@
 import { defineConfig, s } from 'velite';
+import rehypeShiki from '@shikijs/rehype';
 import remarkCodegloss from 'codegloss/remark';
 import codeglossConfig from './codegloss.config';
 
@@ -10,6 +11,9 @@ const theme =
 export default defineConfig({
   mdx: {
     remarkPlugins: [[remarkCodegloss, { skipImport: true, theme }]],
+    rehypePlugins: [
+      [rehypeShiki, { theme: 'github-dark' }],
+    ],
   },
   collections: {
     docs: {

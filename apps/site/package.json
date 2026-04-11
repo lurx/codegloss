@@ -4,14 +4,17 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/generate-usage-html.mjs",
     "build": "next build",
     "start": "next start"
   },
   "dependencies": {
+    "@shikijs/rehype": "^4.0.2",
     "codegloss": "workspace:*",
     "next": "^15.3.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "shiki": "^4.0.2",
     "velite": "^0.3.1"
   },
   "devDependencies": {

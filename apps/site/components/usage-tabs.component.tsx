@@ -1,102 +1,121 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
+import { useSiteTheme } from '@/hooks/use-site-theme.hook';
+import { COPY_ICON, CHECK_ICON } from './code-block.component';
+import highlightedHtml from './usage-tabs-html.generated.json';
 
-const TABS = [
+type CodeBlockEntry = {
+	/** Key in the generated JSON */
+	htmlKey: string;
+	/** Optional label shown above the block */
+	label?: string;
+};
+
+type Tab = {
+	label: string;
+	content: string;
+	blocks: CodeBlockEntry[];
+};
+
+const TABS: Tab[] = [
 	{
-		label: 'Vanilla HTML',
-		content: `Drop a <script> tag and a <code-gloss> custom element with a JSON config child.
-
-Works in plain HTML pages, Hugo, Eleventy, Jekyll — anywhere you can drop a <script> tag.`,
-		code: `<script type="module" src="https://unpkg.com/codegloss/dist/index.js"></script>
-
-<code-gloss>
-  <script type="application/json">
-    {
-      "code": "function greet(name) {\\n  return 'Hello, ' + name;\\n}",
-      "lang": "js",
-      "filename": "greet.js",
-      "annotations": [
-        { "id": "a1", "token": "name", "line": 0, "occurrence": 0,
-          "title": "Parameter", "text": "The name to greet." }
-      ]
-    }
-  </script>
-</code-gloss>`,
+		label: 'MDX / Remark',
+		content:
+			'Use fenced code blocks with a sandbox tag. The remark plugin detects them and emits CodeGloss components at build time.',
+		blocks: [
+			{ htmlKey: 'MDX / Remark — Setup', label: 'Setup' },
+			{ htmlKey: 'MDX / Remark — Markdown', label: 'Markdown' },
+		],
 	},
 	{
 		label: 'React',
 		content:
 			'Import the wrapper and pass props. Works with React 16.14+. The React wrapper is a thin JSX adapter — zero React APIs beyond JSX itself.',
-		code: `import { CodeGloss } from 'codegloss/react';
-
-<CodeGloss
-  code="function greet(name) { return 'Hello, ' + name; }"
-  lang="js"
-  filename="greet.js"
-  annotations={[
-    { id: 'a1', token: 'name', line: 0, occurrence: 0,
-      title: 'Parameter', text: 'The name to greet.' },
-  ]}
-/>`,
-	},
-	{
-		label: 'MDX / Remark',
-		content:
-			'Use fenced code blocks with a sandbox tag. The remark plugin detects them and emits CodeGloss components at build time.',
-		code: `// Configure the plugin in your MDX pipeline:
-import remarkCodegloss from 'codegloss/remark';
-
-// Then write annotated code in MDX:
-
-\`\`\`js sandbox greet.js
-function greet(name) {
-  return "Hello, " + name + "!";
-}
-\`\`\`
-
-\`\`\`json annotations
-{
-  "annotations": [{
-    "id": "a1", "token": "name", "line": 0, "occurrence": 0,
-    "title": "Parameter", "text": "The name to greet."
-  }]
-}
-\`\`\``,
+		blocks: [{ htmlKey: 'React' }],
 	},
 	{
 		label: 'Vue',
 		content: 'Import the Vue 3 wrapper component.',
-		code: `<script setup lang="ts">
-import { CodeGloss } from 'codegloss/vue';
-</script>
-
-<template>
-  <CodeGloss
-    code="function greet(name) { return 'Hello, ' + name; }"
-    lang="js"
-    filename="greet.js"
-  />
-</template>`,
+		blocks: [{ htmlKey: 'Vue' }],
 	},
 	{
 		label: 'Svelte',
 		content: 'Import the Svelte wrapper component.',
-		code: `<script>
-  import CodeGloss from 'codegloss/svelte';
-</script>
-
-<CodeGloss
-  code={\`function greet(name) { return 'Hello, ' + name; }\`}
-  lang="js"
-  filename="greet.js"
-/>`,
+		blocks: [{ htmlKey: 'Svelte' }],
+	},
+	{
+		label: 'Vanilla HTML',
+		content:
+			'Drop a <script> tag and a <code-gloss> custom element with a JSON config child. Works in plain HTML pages, Hugo, Eleventy, Jekyll — anywhere you can drop a <script> tag.',
+		blocks: [{ htmlKey: 'Vanilla HTML' }],
 	},
 ];
 
+const htmlData = highlightedHtml as Record<
+	string,
+	Record<string, string>
+>;
+
+function CopyableBlock({
+	html,
+	label,
+}: {
+	html: string;
+	label?: string;
+}) {
+	const codeRef = useRef<HTMLDivElement>(null);
+	const [copied, setCopied] = useState(false);
+
+	const handleCopy = useCallback(() => {
+		const text = codeRef.current?.textContent ?? '';
+		void navigator.clipboard.writeText(text);
+		setCopied(true);
+		setTimeout(() => setCopied(false), 2000);
+	}, []);
+
+	return (
+		<div style={{ marginBottom: '0.75rem' }}>
+			{label && (
+				<div
+					style={{
+						fontSize: '0.6875rem',
+						fontWeight: 600,
+						textTransform: 'uppercase',
+						letterSpacing: '0.06em',
+						color: 'var(--site-muted)',
+						marginBottom: '0.375rem',
+					}}
+				>
+					{label}
+				</div>
+			)}
+			<div className="code-block-wrapper">
+				<div
+					ref={codeRef}
+					className="usage-code-block"
+					dangerouslySetInnerHTML={{ __html: html }}
+				/>
+				<button
+					type="button"
+					className="code-block-copy"
+					onClick={handleCopy}
+					aria-label={copied ? 'Copied' : 'Copy code'}
+					title={copied ? 'Copied!' : 'Copy code'}
+					dangerouslySetInnerHTML={{
+						__html: copied ? CHECK_ICON : COPY_ICON,
+					}}
+				/>
+			</div>
+		</div>
+	);
+}
+
 export function UsageTabs() {
 	const [active, setActive] = useState(0);
+	const siteTheme = useSiteTheme();
 	const tab = TABS[active];
+	const variant = siteTheme === 'dark' ? 'dark' : 'light';
 
 	return (
 		<div className="mdx-tabs">
@@ -113,24 +132,23 @@ export function UsageTabs() {
 				))}
 			</div>
 			<div className="mdx-tabs-panel">
-				<p style={{ color: 'var(--site-fg)', lineHeight: 1.72, fontSize: '0.9375rem', marginBottom: '1rem' }}>
-					{tab.content}
-				</p>
-				<pre
+				<p
 					style={{
-						background: 'var(--site-pre-bg)',
-						border: '1px solid var(--site-border)',
-						borderRadius: '8px',
-						padding: '1rem',
-						overflowX: 'auto',
-						fontFamily: 'var(--font-mono)',
-						fontSize: '0.75rem',
-						lineHeight: 1.7,
-						color: 'var(--site-pre-fg)',
+						color: 'var(--site-fg)',
+						lineHeight: 1.72,
+						fontSize: '0.9375rem',
+						marginBottom: '1rem',
 					}}
 				>
-					<code>{tab.code}</code>
-				</pre>
+					{tab.content}
+				</p>
+				{tab.blocks.map(block => (
+					<CopyableBlock
+						key={block.htmlKey}
+						html={htmlData[block.htmlKey]?.[variant] ?? ''}
+						label={tab.blocks.length > 1 ? block.label : undefined}
+					/>
+				))}
 			</div>
 		</div>
 	);

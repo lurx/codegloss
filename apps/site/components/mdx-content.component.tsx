@@ -6,6 +6,7 @@ import { CodeGloss } from 'codegloss/react';
 import { ThemeShowcase } from './theme-showcase.component';
 import { MdxTabs } from './mdx-tabs.component';
 import { UsageTabs } from './usage-tabs.component';
+import { CodeBlock } from './code-block.component';
 import { useSiteTheme } from '@/hooks/use-site-theme.hook';
 import codeglossConfig from '@/codegloss.config';
 
@@ -65,6 +66,7 @@ const MDX_COMPONENTS = {
   ThemeShowcase,
   MdxTabs,
   UsageTabs,
+  pre: CodeBlock,
 };
 
 type MdxContentProps = {
