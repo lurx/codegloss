@@ -22,6 +22,7 @@ import { escapeHtml } from './escape-html.util';
 import { injectAnnotationsIntoHtml } from './inject-annotations.helpers';
 import { readConfigFromHost } from './read-config.helpers';
 import { drawArcs } from './render/arcs.helpers';
+import type { AnnotationPosition } from './render/arcs.types';
 import { run } from './runners.helpers';
 import { buildLineHtmlFallback, findAnnotationHits } from './tokenize.helpers';
 import { codeGlossStyles } from './code-gloss-styles.generated';
@@ -74,6 +75,7 @@ export class CodeGlossElement extends SafeHTMLElement {
 	private root!: HTMLDivElement;
 	private codeArea!: HTMLDivElement;
 	private svgEl!: SVGSVGElement;
+	private rightSvgEl!: SVGSVGElement;
 	private preEl!: HTMLPreElement;
 	private outputEl!: HTMLDivElement;
 	private copyBtn!: HTMLButtonElement;
@@ -196,6 +198,14 @@ export class CodeGlossElement extends SafeHTMLElement {
 		this.svgEl.setAttribute('width', String(GUTTER_WIDTH));
 		this.svgEl.setAttribute('aria-hidden', 'true');
 		this.codeArea.append(this.svgEl);
+
+		this.rightSvgEl = document.createElementNS(
+			'http://www.w3.org/2000/svg',
+			'svg',
+		);
+		this.rightSvgEl.setAttribute('class', 'rightSvg');
+		this.rightSvgEl.setAttribute('aria-hidden', 'true');
+		this.codeArea.append(this.rightSvgEl);
 
 		this.preEl = document.createElement('pre');
 		this.preEl.className = 'pre';
@@ -487,23 +497,34 @@ export class CodeGlossElement extends SafeHTMLElement {
 		if (!this.config?.connections || this.config.connections.length === 0)
 			return;
 
-		const annotationYMap = new Map<string, number>();
+		const annotationPositions = new Map<string, AnnotationPosition>();
 		const annotations = this.config.annotations ?? [];
+		const codeAreaRect = this.codeArea.getBoundingClientRect();
 
 		for (const ann of annotations) {
 			const lineElement = this.lineRefs.get(ann.line);
-			if (lineElement) {
-				const midY = lineElement.offsetTop + lineElement.offsetHeight / 2;
-				annotationYMap.set(ann.id, midY);
-			}
+			if (!lineElement) continue;
+
+			const midY = lineElement.offsetTop + lineElement.offsetHeight / 2;
+			const lineContent = lineElement.querySelector<HTMLElement>('.lineContent');
+			// Every rendered line includes a .lineContent child — renderLines
+			// always appends it. The `?? 0` fallback is a defensive guard.
+			/* c8 ignore next */
+			const lineEndRight = lineContent?.getBoundingClientRect().right ?? 0;
+			const lineEndX =
+				lineEndRight - codeAreaRect.left + this.codeArea.scrollLeft;
+
+			annotationPositions.set(ann.id, { y: midY, lineEndX });
 		}
 
 		drawArcs({
-			svg: this.svgEl,
+			leftSvg: this.svgEl,
+			rightSvg: this.rightSvgEl,
 			height: this.codeArea.scrollHeight,
+			rightSvgWidth: this.codeArea.scrollWidth,
 			annotations,
 			connections: this.config.connections,
-			annotationYMap,
+			annotationPositions,
 			onConnectionClickAction: this.handleConnectionClick,
 			arcStyle: this.config.arcs,
 		});

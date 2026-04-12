@@ -3,65 +3,252 @@ import {
 	ARC_BEND,
 	ARC_X_STEP,
 	GUTTER_WIDTH,
+	RIGHT_ARC_BEND,
+	RIGHT_DOT_OFFSET,
 } from '../code-gloss.constants';
-import type { DrawArcsParameters } from './arcs.types';
+import type { Connection } from '../code-gloss.types';
+import type {
+	AnnotationPosition,
+	ArcStyleOverrides,
+	DrawArcsParameters,
+} from './arcs.types';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
+type ResolvedStyle = {
+	dotRadius: number;
+	dotOpacity: number;
+	strokeWidth: number;
+	strokeDasharray: string;
+	opacity: number;
+	arrowhead: boolean;
+};
+
+function resolveStyle(arcStyle: ArcStyleOverrides | undefined): ResolvedStyle {
+	return {
+		dotRadius: arcStyle?.dotRadius ?? 2.5,
+		dotOpacity: arcStyle?.dotOpacity ?? 0.8,
+		strokeWidth: arcStyle?.strokeWidth ?? 1.5,
+		strokeDasharray: arcStyle?.strokeDasharray ?? '4 3',
+		opacity: arcStyle?.opacity ?? 0.55,
+		arrowhead: arcStyle?.arrowhead ?? false,
+	};
+}
+
 export function drawArcs({
-	svg,
+	leftSvg,
+	rightSvg,
 	height,
+	rightSvgWidth,
 	connections,
-	annotationYMap,
+	annotationPositions,
 	onConnectionClickAction,
 	arcStyle,
 }: DrawArcsParameters): void {
-	const dotR = arcStyle?.dotRadius ?? 2.5;
-	const dotOp = arcStyle?.dotOpacity ?? 0.8;
-	const sw = arcStyle?.strokeWidth ?? 1.5;
-	const dash = arcStyle?.strokeDasharray ?? '4 3';
-	const arcOp = arcStyle?.opacity ?? 0.55;
+	const style = resolveStyle(arcStyle);
+
+	prepareSvg(leftSvg, GUTTER_WIDTH, height);
+	prepareSvg(rightSvg, rightSvgWidth, height);
+
+	const leftConnections: Connection[] = [];
+	const rightConnections: Connection[] = [];
+
+	for (const conn of connections) {
+		if (conn.side === 'right') {
+			rightConnections.push(conn);
+		} else {
+			leftConnections.push(conn);
+		}
+	}
+
+	for (const [idx, conn] of leftConnections.entries()) {
+		drawLeftArc({
+			svg: leftSvg,
+			conn,
+			idx,
+			style,
+			annotationPositions,
+			onConnectionClickAction,
+		});
+	}
+
+	for (const [idx, conn] of rightConnections.entries()) {
+		drawRightArc({
+			svg: rightSvg,
+			conn,
+			idx,
+			style,
+			annotationPositions,
+			onConnectionClickAction,
+		});
+	}
+}
+
+function prepareSvg(
+	svg: SVGSVGElement,
+	width: number,
+	height: number,
+): void {
 	svg.setAttribute('height', String(height));
-	svg.setAttribute('viewBox', `0 0 ${GUTTER_WIDTH} ${height}`);
+	svg.setAttribute('width', String(width));
+	svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
 
 	while (svg.firstChild) {
 		svg.firstChild.remove();
 	}
+}
 
-	for (const [idx, conn] of connections.entries()) {
-		const fromY = annotationYMap.get(conn.from);
-		const toY = annotationYMap.get(conn.to);
+type DrawSideParameters = {
+	svg: SVGSVGElement;
+	conn: Connection;
+	idx: number;
+	style: ResolvedStyle;
+	annotationPositions: Map<string, AnnotationPosition>;
+	onConnectionClickAction: (conn: Connection, event: MouseEvent) => void;
+};
 
-		if (fromY === undefined || toY === undefined) continue;
+function drawLeftArc({
+	svg,
+	conn,
+	idx,
+	style,
+	annotationPositions,
+	onConnectionClickAction,
+}: DrawSideParameters): void {
+	const from = annotationPositions.get(conn.from);
+	const to = annotationPositions.get(conn.to);
 
-		const xPos = ARC_BASE_X - idx * ARC_X_STEP;
-		const interactive = Boolean(conn.text);
-		const onClick = interactive
-			? (event: MouseEvent) => onConnectionClickAction(conn, event)
-			: null;
+	if (!from || !to) return;
 
-		const dot1 = createDot(xPos, fromY, conn.color, dotR, dotOp);
-		const dot2 = createDot(xPos, toY, conn.color, dotR, dotOp);
-		svg.append(dot1);
-		svg.append(dot2);
+	const xPos = ARC_BASE_X - idx * ARC_X_STEP;
+	const path = buildCubicPath(xPos, from.y, ARC_BEND, xPos, to.y);
 
-		const path = createArcPath(xPos, fromY, toY, conn.color, sw, dash, arcOp);
-		svg.append(path);
+	drawConnection({
+		svg,
+		conn,
+		style,
+		fromPoint: { x: xPos, y: from.y },
+		toPoint: { x: xPos, y: to.y },
+		path,
+		onConnectionClickAction,
+	});
+}
 
-		if (interactive && onClick) {
-			const hit = createHitTarget(xPos, fromY, toY);
-			hit.addEventListener('click', onClick);
-			svg.append(hit);
+function drawRightArc({
+	svg,
+	conn,
+	idx,
+	style,
+	annotationPositions,
+	onConnectionClickAction,
+}: DrawSideParameters): void {
+	const from = annotationPositions.get(conn.from);
+	const to = annotationPositions.get(conn.to);
 
-			dot1.style.cursor = 'pointer';
-			dot1.style.pointerEvents = 'auto';
-			dot1.addEventListener('click', onClick);
+	if (!from || !to) return;
 
-			dot2.style.cursor = 'pointer';
-			dot2.style.pointerEvents = 'auto';
-			dot2.addEventListener('click', onClick);
+	const fromX = from.lineEndX + RIGHT_DOT_OFFSET;
+	const toX = to.lineEndX + RIGHT_DOT_OFFSET;
+	const bendX = Math.max(fromX, toX) + RIGHT_ARC_BEND + idx * ARC_X_STEP;
+
+	const path = buildCubicPath(fromX, from.y, bendX, toX, to.y);
+
+	drawConnection({
+		svg,
+		conn,
+		style,
+		fromPoint: { x: fromX, y: from.y },
+		toPoint: { x: toX, y: to.y },
+		path,
+		onConnectionClickAction,
+	});
+}
+
+type Point = { x: number; y: number };
+
+type DrawConnectionParameters = {
+	svg: SVGSVGElement;
+	conn: Connection;
+	style: ResolvedStyle;
+	fromPoint: Point;
+	toPoint: Point;
+	path: string;
+	onConnectionClickAction: (conn: Connection, event: MouseEvent) => void;
+};
+
+function drawConnection({
+	svg,
+	conn,
+	style,
+	fromPoint,
+	toPoint,
+	path,
+	onConnectionClickAction,
+}: DrawConnectionParameters): void {
+	const interactive = Boolean(conn.text);
+	const onClick = interactive
+		? (event: MouseEvent) => onConnectionClickAction(conn, event)
+		: null;
+
+	const fromDot = createDot(
+		fromPoint.x,
+		fromPoint.y,
+		conn.color,
+		style.dotRadius,
+		style.dotOpacity,
+	);
+	svg.append(fromDot);
+
+	let toDot: SVGCircleElement | undefined;
+	if (!style.arrowhead) {
+		toDot = createDot(
+			toPoint.x,
+			toPoint.y,
+			conn.color,
+			style.dotRadius,
+			style.dotOpacity,
+		);
+		svg.append(toDot);
+	}
+
+	const arcPath = createArcPath(path, {
+		color: conn.color,
+		strokeWidth: style.strokeWidth,
+		strokeDasharray: style.strokeDasharray,
+		opacity: style.opacity,
+	});
+
+	if (style.arrowhead) {
+		attachArrowheadMarker(svg, arcPath, conn.color);
+	}
+
+	svg.append(arcPath);
+
+	if (interactive && onClick) {
+		const hit = createHitTarget(path);
+		hit.addEventListener('click', onClick);
+		svg.append(hit);
+
+		fromDot.style.cursor = 'pointer';
+		fromDot.style.pointerEvents = 'auto';
+		fromDot.addEventListener('click', onClick);
+
+		if (toDot) {
+			toDot.style.cursor = 'pointer';
+			toDot.style.pointerEvents = 'auto';
+			toDot.addEventListener('click', onClick);
 		}
 	}
+}
+
+function buildCubicPath(
+	fromX: number,
+	fromY: number,
+	controlX: number,
+	toX: number,
+	toY: number,
+): string {
+	return `M${fromX} ${fromY} C ${controlX} ${fromY} ${controlX} ${toY} ${toX} ${toY}`;
 }
 
 function createDot(
@@ -80,45 +267,70 @@ function createDot(
 	return circle;
 }
 
-function createArcPath(
-	xPos: number,
-	fromY: number,
-	toY: number,
-	color: string,
-	strokeWidth: number,
-	dasharray: string,
-	opacity: number,
-): SVGPathElement {
+type ArcPathStyle = {
+	color: string;
+	strokeWidth: number;
+	strokeDasharray: string;
+	opacity: number;
+};
+
+function createArcPath(d: string, style: ArcPathStyle): SVGPathElement {
 	const path = document.createElementNS(SVG_NS, 'path');
-	path.setAttribute(
-		'd',
-		`M${xPos} ${fromY} C ${ARC_BEND} ${fromY} ${ARC_BEND} ${toY} ${xPos} ${toY}`,
-	);
-	path.setAttribute('stroke', color);
-	path.setAttribute('stroke-width', String(strokeWidth));
-	if (dasharray !== 'none') {
-		path.setAttribute('stroke-dasharray', dasharray);
+	path.setAttribute('d', d);
+	path.setAttribute('stroke', style.color);
+	path.setAttribute('stroke-width', String(style.strokeWidth));
+	if (style.strokeDasharray !== 'none') {
+		path.setAttribute('stroke-dasharray', style.strokeDasharray);
 	}
 
-	path.setAttribute('opacity', String(opacity));
+	path.setAttribute('opacity', String(style.opacity));
 	path.setAttribute('fill', 'none');
 	return path;
 }
 
-function createHitTarget(
-	xPos: number,
-	fromY: number,
-	toY: number,
-): SVGPathElement {
+function createHitTarget(d: string): SVGPathElement {
 	const hit = document.createElementNS(SVG_NS, 'path');
-	hit.setAttribute(
-		'd',
-		`M${xPos} ${fromY} C ${ARC_BEND} ${fromY} ${ARC_BEND} ${toY} ${xPos} ${toY}`,
-	);
+	hit.setAttribute('d', d);
 	hit.setAttribute('stroke', 'transparent');
 	hit.setAttribute('stroke-width', '12');
 	hit.setAttribute('fill', 'none');
 	hit.style.cursor = 'pointer';
 	hit.style.pointerEvents = 'stroke';
 	return hit;
+}
+
+let arrowheadCounter = 0;
+
+function attachArrowheadMarker(
+	svg: SVGSVGElement,
+	path: SVGPathElement,
+	color: string,
+): void {
+	const defs = getOrCreateDefs(svg);
+	const markerId = `cg-arrowhead-${++arrowheadCounter}`;
+
+	const marker = document.createElementNS(SVG_NS, 'marker');
+	marker.setAttribute('id', markerId);
+	marker.setAttribute('viewBox', '0 0 8 8');
+	marker.setAttribute('refX', '7');
+	marker.setAttribute('refY', '4');
+	marker.setAttribute('markerWidth', '7');
+	marker.setAttribute('markerHeight', '7');
+	marker.setAttribute('orient', 'auto-start-reverse');
+
+	const tip = document.createElementNS(SVG_NS, 'path');
+	tip.setAttribute('d', 'M0 0 L8 4 L0 8 z');
+	tip.setAttribute('fill', color);
+	marker.append(tip);
+	defs.append(marker);
+
+	path.setAttribute('marker-end', `url(#${markerId})`);
+}
+
+function getOrCreateDefs(svg: SVGSVGElement): SVGDefsElement {
+	const existing = svg.querySelector('defs');
+	if (existing) return existing;
+	const defs = document.createElementNS(SVG_NS, 'defs');
+	svg.prepend(defs);
+	return defs;
 }

@@ -4,8 +4,14 @@ import {
 	ARC_BEND,
 	ARC_X_STEP,
 	GUTTER_WIDTH,
+	RIGHT_ARC_BEND,
+	RIGHT_DOT_OFFSET,
 } from '../../code-gloss.constants';
 import { drawArcs } from '../arcs.helpers';
+import type {
+	AnnotationPosition,
+	DrawArcsParameters,
+} from '../arcs.types';
 import type { Annotation, Connection } from '../../code-gloss.types';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -26,177 +32,412 @@ const conn = (overrides: Partial<Connection> = {}): Connection => ({
 	...overrides,
 });
 
-let svg: SVGSVGElement;
+const pos = (y: number, lineEndX = 100): AnnotationPosition => ({
+	y,
+	lineEndX,
+});
+
+let leftSvg: SVGSVGElement;
+let rightSvg: SVGSVGElement;
 
 beforeEach(() => {
-	svg = document.createElementNS(SVG_NS, 'svg');
+	leftSvg = document.createElementNS(SVG_NS, 'svg');
+	rightSvg = document.createElementNS(SVG_NS, 'svg');
+});
+
+const defaultParams = (
+	overrides: Partial<DrawArcsParameters> = {},
+): DrawArcsParameters => ({
+	leftSvg,
+	rightSvg,
+	height: 100,
+	rightSvgWidth: 400,
+	annotations: [],
+	connections: [],
+	annotationPositions: new Map(),
+	onConnectionClickAction() {
+		// Noop
+	},
+	...overrides,
 });
 
 describe('drawArcs', () => {
-	it('sets the height attribute and viewBox using the gutter width', () => {
-		drawArcs({
-			svg,
-			height: 200,
-			annotations: [],
-			connections: [],
-			annotationYMap: new Map(),
-			onConnectionClickAction() {
-				// Noop
-			},
-		});
+	it('sets height and viewBox on both SVGs', () => {
+		drawArcs(defaultParams({ height: 200, rightSvgWidth: 500 }));
 
-		expect(svg.getAttribute('height')).toBe('200');
-		expect(svg.getAttribute('viewBox')).toBe(`0 0 ${GUTTER_WIDTH} 200`);
+		expect(leftSvg.getAttribute('height')).toBe('200');
+		expect(leftSvg.getAttribute('viewBox')).toBe(`0 0 ${GUTTER_WIDTH} 200`);
+		expect(rightSvg.getAttribute('height')).toBe('200');
+		expect(rightSvg.getAttribute('viewBox')).toBe('0 0 500 200');
 	});
 
-	it('clears existing children before drawing', () => {
-		const stale = document.createElementNS(SVG_NS, 'circle');
-		svg.append(stale);
-		expect(svg.childNodes.length).toBe(1);
+	it('clears existing children from both SVGs before drawing', () => {
+		leftSvg.append(document.createElementNS(SVG_NS, 'circle'));
+		rightSvg.append(document.createElementNS(SVG_NS, 'rect'));
 
-		drawArcs({
-			svg,
-			height: 100,
-			annotations: [],
-			connections: [],
-			annotationYMap: new Map(),
-			onConnectionClickAction() {
-				// Noop
-			},
-		});
+		drawArcs(defaultParams());
 
-		expect(svg.childNodes.length).toBe(0);
+		expect(leftSvg.childNodes.length).toBe(0);
+		expect(rightSvg.childNodes.length).toBe(0);
 	});
 
-	it('skips a connection whose endpoints are missing from the y-map', () => {
-		drawArcs({
-			svg,
-			height: 100,
-			annotations: [ann('a'), ann('b')],
-			connections: [conn({ from: 'a', to: 'missing' })],
-			annotationYMap: new Map([['a', 10]]),
-			onConnectionClickAction() {
-				// Noop
-			},
+	describe('left-side (default)', () => {
+		it('skips a connection whose endpoints are missing', () => {
+			drawArcs(
+				defaultParams({
+					annotations: [ann('a'), ann('b')],
+					connections: [conn({ from: 'a', to: 'missing' })],
+					annotationPositions: new Map([['a', pos(10)]]),
+				}),
+			);
+
+			expect(leftSvg.childNodes.length).toBe(0);
 		});
 
-		expect(svg.childNodes.length).toBe(0);
+		it('renders two dots and one decorative arc for a non-interactive connection', () => {
+			drawArcs(
+				defaultParams({
+					annotations: [ann('a'), ann('b')],
+					connections: [conn({ from: 'a', to: 'b', color: '#0af' })],
+					annotationPositions: new Map([
+						['a', pos(10)],
+						['b', pos(50)],
+					]),
+				}),
+			);
+
+			expect(leftSvg.childNodes.length).toBe(3);
+
+			const circles = leftSvg.querySelectorAll('circle');
+			expect(circles).toHaveLength(2);
+			expect(circles[0].getAttribute('cx')).toBe(String(ARC_BASE_X));
+			expect(circles[0].getAttribute('cy')).toBe('10');
+			expect(circles[0].getAttribute('fill')).toBe('#0af');
+			expect(circles[1].getAttribute('cy')).toBe('50');
+
+			const path = leftSvg.querySelector('path');
+			expect(path?.getAttribute('d')).toBe(
+				`M${ARC_BASE_X} 10 C ${ARC_BEND} 10 ${ARC_BEND} 50 ${ARC_BASE_X} 50`,
+			);
+			expect(path?.getAttribute('stroke')).toBe('#0af');
+			expect(path?.getAttribute('opacity')).toBe('0.55');
+			expect(path?.getAttribute('fill')).toBe('none');
+		});
+
+		it('adds a hit target and click handlers for an interactive connection', () => {
+			const onClick = vi.fn();
+			const interactive = conn({ from: 'a', to: 'b', text: 'tooltip body' });
+
+			drawArcs(
+				defaultParams({
+					annotations: [ann('a'), ann('b')],
+					connections: [interactive],
+					annotationPositions: new Map([
+						['a', pos(10)],
+						['b', pos(50)],
+					]),
+					onConnectionClickAction: onClick,
+				}),
+			);
+
+			expect(leftSvg.childNodes.length).toBe(4);
+
+			const paths = leftSvg.querySelectorAll('path');
+			expect(paths).toHaveLength(2);
+			const hit = paths[1];
+			expect(hit.getAttribute('stroke')).toBe('transparent');
+			expect(hit.getAttribute('stroke-width')).toBe('12');
+			expect(hit.style.cursor).toBe('pointer');
+			expect(hit.style.pointerEvents).toBe('stroke');
+
+			const event = new MouseEvent('click', { bubbles: true });
+			hit.dispatchEvent(event);
+			expect(onClick).toHaveBeenCalledTimes(1);
+			expect(onClick).toHaveBeenCalledWith(interactive, event);
+
+			const circles = leftSvg.querySelectorAll('circle');
+			circles[0].dispatchEvent(new MouseEvent('click'));
+			circles[1].dispatchEvent(new MouseEvent('click'));
+			expect(onClick).toHaveBeenCalledTimes(3);
+			expect(circles[0].style.cursor).toBe('pointer');
+			expect(circles[0].style.pointerEvents).toBe('auto');
+		});
+
+		it('omits stroke-dasharray when arcStyle.strokeDasharray is "none"', () => {
+			drawArcs(
+				defaultParams({
+					annotations: [ann('a'), ann('b')],
+					connections: [conn({ from: 'a', to: 'b' })],
+					annotationPositions: new Map([
+						['a', pos(10)],
+						['b', pos(20)],
+					]),
+					arcStyle: { strokeDasharray: 'none' },
+				}),
+			);
+
+			expect(leftSvg.querySelector('path')?.hasAttribute('stroke-dasharray')).toBe(false);
+		});
+
+		it('offsets each subsequent arc horizontally by ARC_X_STEP', () => {
+			drawArcs(
+				defaultParams({
+					annotations: [ann('a'), ann('b'), ann('c'), ann('d')],
+					connections: [
+						conn({ from: 'a', to: 'b' }),
+						conn({ from: 'c', to: 'd' }),
+					],
+					annotationPositions: new Map([
+						['a', pos(10)],
+						['b', pos(20)],
+						['c', pos(30)],
+						['d', pos(40)],
+					]),
+				}),
+			);
+
+			const circles = leftSvg.querySelectorAll('circle');
+			expect(circles[0].getAttribute('cx')).toBe(String(ARC_BASE_X));
+			expect(circles[2].getAttribute('cx')).toBe(
+				String(ARC_BASE_X - ARC_X_STEP),
+			);
+		});
 	});
 
-	it('renders two dots and one decorative arc for a non-interactive connection', () => {
-		drawArcs({
-			svg,
-			height: 100,
-			annotations: [ann('a'), ann('b')],
-			connections: [conn({ from: 'a', to: 'b', color: '#0af' })],
-			annotationYMap: new Map([
-				['a', 10],
-				['b', 50],
-			]),
-			onConnectionClickAction() {
-				// Noop
-			},
+	describe('right-side', () => {
+		it('draws right-side connections into the right SVG, not the left', () => {
+			drawArcs(
+				defaultParams({
+					annotations: [ann('a'), ann('b')],
+					connections: [
+						conn({ from: 'a', to: 'b', color: '#0af', side: 'right' }),
+					],
+					annotationPositions: new Map([
+						['a', pos(10, 120)],
+						['b', pos(50, 180)],
+					]),
+				}),
+			);
+
+			expect(leftSvg.childNodes.length).toBe(0);
+			expect(rightSvg.childNodes.length).toBe(3);
 		});
 
-		// 2 dots + 1 path (no hit target since !interactive)
-		expect(svg.childNodes.length).toBe(3);
+		it('anchors each endpoint at its own line-end + RIGHT_DOT_OFFSET', () => {
+			drawArcs(
+				defaultParams({
+					annotations: [ann('a'), ann('b')],
+					connections: [conn({ from: 'a', to: 'b', side: 'right' })],
+					annotationPositions: new Map([
+						['a', pos(10, 120)],
+						['b', pos(50, 180)],
+					]),
+				}),
+			);
 
-		const circles = svg.querySelectorAll('circle');
-		expect(circles).toHaveLength(2);
-		expect(circles[0].getAttribute('cx')).toBe(String(ARC_BASE_X));
-		expect(circles[0].getAttribute('cy')).toBe('10');
-		expect(circles[0].getAttribute('fill')).toBe('#0af');
-		expect(circles[1].getAttribute('cy')).toBe('50');
+			const circles = rightSvg.querySelectorAll('circle');
+			expect(circles[0].getAttribute('cx')).toBe(String(120 + RIGHT_DOT_OFFSET));
+			expect(circles[0].getAttribute('cy')).toBe('10');
+			expect(circles[1].getAttribute('cx')).toBe(String(180 + RIGHT_DOT_OFFSET));
+			expect(circles[1].getAttribute('cy')).toBe('50');
+		});
 
-		const path = svg.querySelector('path');
-		expect(path?.getAttribute('d')).toBe(
-			`M${ARC_BASE_X} 10 C ${ARC_BEND} 10 ${ARC_BEND} 50 ${ARC_BASE_X} 50`,
-		);
-		expect(path?.getAttribute('stroke')).toBe('#0af');
-		expect(path?.getAttribute('opacity')).toBe('0.55');
-		expect(path?.getAttribute('fill')).toBe('none');
+		it('bends the arc to the right of the farthest endpoint', () => {
+			drawArcs(
+				defaultParams({
+					annotations: [ann('a'), ann('b')],
+					connections: [conn({ from: 'a', to: 'b', side: 'right' })],
+					annotationPositions: new Map([
+						['a', pos(10, 120)],
+						['b', pos(50, 180)],
+					]),
+				}),
+			);
+
+			const fromX = 120 + RIGHT_DOT_OFFSET;
+			const toX = 180 + RIGHT_DOT_OFFSET;
+			const bendX = toX + RIGHT_ARC_BEND;
+
+			expect(rightSvg.querySelector('path')?.getAttribute('d')).toBe(
+				`M${fromX} 10 C ${bendX} 10 ${bendX} 50 ${toX} 50`,
+			);
+		});
+
+		it('stacks multiple right-side arcs outward by ARC_X_STEP', () => {
+			drawArcs(
+				defaultParams({
+					annotations: [ann('a'), ann('b'), ann('c'), ann('d')],
+					connections: [
+						conn({ from: 'a', to: 'b', side: 'right' }),
+						conn({ from: 'c', to: 'd', side: 'right' }),
+					],
+					annotationPositions: new Map([
+						['a', pos(10, 120)],
+						['b', pos(20, 120)],
+						['c', pos(30, 120)],
+						['d', pos(40, 120)],
+					]),
+				}),
+			);
+
+			const paths = rightSvg.querySelectorAll('path');
+			expect(paths).toHaveLength(2);
+
+			const extract = (d: string): number => {
+				const match = /C (\d+(?:\.\d+)?)/.exec(d);
+				return match ? Number(match[1]) : 0;
+			};
+
+			const firstBend = extract(paths[0].getAttribute('d') ?? '');
+			const secondBend = extract(paths[1].getAttribute('d') ?? '');
+			expect(secondBend - firstBend).toBe(ARC_X_STEP);
+		});
+
+		it('skips a right-side connection whose endpoints are missing', () => {
+			drawArcs(
+				defaultParams({
+					annotations: [ann('a'), ann('b')],
+					connections: [conn({ from: 'a', to: 'missing', side: 'right' })],
+					annotationPositions: new Map([['a', pos(10, 120)]]),
+				}),
+			);
+
+			expect(rightSvg.childNodes.length).toBe(0);
+		});
+
+		it('partitions left and right connections independently', () => {
+			drawArcs(
+				defaultParams({
+					annotations: [ann('a'), ann('b'), ann('c'), ann('d')],
+					connections: [
+						conn({ from: 'a', to: 'b' }),
+						conn({ from: 'c', to: 'd', side: 'right' }),
+					],
+					annotationPositions: new Map([
+						['a', pos(10, 120)],
+						['b', pos(20, 120)],
+						['c', pos(30, 120)],
+						['d', pos(40, 120)],
+					]),
+				}),
+			);
+
+			expect(leftSvg.querySelectorAll('circle')).toHaveLength(2);
+			expect(rightSvg.querySelectorAll('circle')).toHaveLength(2);
+		});
 	});
 
-	it('adds a hit target and click handlers for an interactive connection', () => {
-		const onClick = vi.fn();
-		const interactive = conn({ from: 'a', to: 'b', text: 'tooltip body' });
+	describe('arrowhead', () => {
+		it('renders a dot for "from" and a marker-end arrowhead for "to"', () => {
+			drawArcs(
+				defaultParams({
+					annotations: [ann('a'), ann('b')],
+					connections: [conn({ from: 'a', to: 'b' })],
+					annotationPositions: new Map([
+						['a', pos(10)],
+						['b', pos(50)],
+					]),
+					arcStyle: { arrowhead: true },
+				}),
+			);
 
-		drawArcs({
-			svg,
-			height: 100,
-			annotations: [ann('a'), ann('b')],
-			connections: [interactive],
-			annotationYMap: new Map([
-				['a', 10],
-				['b', 50],
-			]),
-			onConnectionClickAction: onClick,
+			const circles = leftSvg.querySelectorAll('circle');
+			expect(circles).toHaveLength(1);
+
+			const marker = leftSvg.querySelector('marker');
+			expect(marker).toBeTruthy();
+			expect(marker?.getAttribute('orient')).toBe('auto-start-reverse');
+
+			// querySelector('path') would also match the marker's inner tip path;
+			// scope to paths that are direct SVG children instead.
+			const arcPath = leftSvg.querySelector<SVGPathElement>(':scope > path');
+			expect(arcPath?.getAttribute('marker-end')).toMatch(
+				/^url\(#cg-arrowhead-\d+\)$/,
+			);
 		});
 
-		// 2 dots + decorative path + hit target
-		expect(svg.childNodes.length).toBe(4);
+		it('paints the marker tip with the connection color', () => {
+			drawArcs(
+				defaultParams({
+					annotations: [ann('a'), ann('b')],
+					connections: [conn({ from: 'a', to: 'b', color: '#0af' })],
+					annotationPositions: new Map([
+						['a', pos(10)],
+						['b', pos(50)],
+					]),
+					arcStyle: { arrowhead: true },
+				}),
+			);
 
-		const paths = svg.querySelectorAll('path');
-		expect(paths).toHaveLength(2);
-		const hit = paths[1];
-		expect(hit.getAttribute('stroke')).toBe('transparent');
-		expect(hit.getAttribute('stroke-width')).toBe('12');
-		expect(hit.style.cursor).toBe('pointer');
-		expect(hit.style.pointerEvents).toBe('stroke');
-
-		const event = new MouseEvent('click', { bubbles: true });
-		hit.dispatchEvent(event);
-		expect(onClick).toHaveBeenCalledTimes(1);
-		expect(onClick).toHaveBeenCalledWith(interactive, event);
-
-		// Each dot is also clickable
-		const circles = svg.querySelectorAll('circle');
-		circles[0].dispatchEvent(new MouseEvent('click'));
-		circles[1].dispatchEvent(new MouseEvent('click'));
-		expect(onClick).toHaveBeenCalledTimes(3);
-		expect(circles[0].style.cursor).toBe('pointer');
-		expect(circles[0].style.pointerEvents).toBe('auto');
-	});
-
-	it('omits the stroke-dasharray attribute when arcStyle.strokeDasharray is "none"', () => {
-		drawArcs({
-			svg,
-			height: 100,
-			annotations: [ann('a'), ann('b')],
-			connections: [conn({ from: 'a', to: 'b' })],
-			annotationYMap: new Map([
-				['a', 10],
-				['b', 20],
-			]),
-			onConnectionClickAction() {
-				// Noop
-			},
-			arcStyle: { strokeDasharray: 'none' },
+			const tip = leftSvg.querySelector('marker path');
+			expect(tip?.getAttribute('fill')).toBe('#0af');
 		});
 
-		const path = svg.querySelector('path');
-		expect(path?.hasAttribute('stroke-dasharray')).toBe(false);
-	});
+		it('reuses a single <defs> when multiple arrowheaded arcs share an SVG', () => {
+			drawArcs(
+				defaultParams({
+					annotations: [ann('a'), ann('b'), ann('c'), ann('d')],
+					connections: [
+						conn({ from: 'a', to: 'b' }),
+						conn({ from: 'c', to: 'd' }),
+					],
+					annotationPositions: new Map([
+						['a', pos(10)],
+						['b', pos(20)],
+						['c', pos(30)],
+						['d', pos(40)],
+					]),
+					arcStyle: { arrowhead: true },
+				}),
+			);
 
-	it('offsets each subsequent arc horizontally by ARC_X_STEP', () => {
-		drawArcs({
-			svg,
-			height: 100,
-			annotations: [ann('a'), ann('b'), ann('c'), ann('d')],
-			connections: [conn({ from: 'a', to: 'b' }), conn({ from: 'c', to: 'd' })],
-			annotationYMap: new Map([
-				['a', 10],
-				['b', 20],
-				['c', 30],
-				['d', 40],
-			]),
-			onConnectionClickAction() {
-				// Noop
-			},
+			expect(leftSvg.querySelectorAll('defs')).toHaveLength(1);
+			expect(leftSvg.querySelectorAll('marker')).toHaveLength(2);
 		});
 
-		const circles = svg.querySelectorAll('circle');
-		expect(circles[0].getAttribute('cx')).toBe(String(ARC_BASE_X));
-		expect(circles[2].getAttribute('cx')).toBe(String(ARC_BASE_X - ARC_X_STEP));
+		it('wires the from-dot click handler but omits the to-dot when arrowhead replaces it', () => {
+			const onClick = vi.fn();
+
+			drawArcs(
+				defaultParams({
+					annotations: [ann('a'), ann('b')],
+					connections: [conn({ from: 'a', to: 'b', text: 'info' })],
+					annotationPositions: new Map([
+						['a', pos(10)],
+						['b', pos(50)],
+					]),
+					arcStyle: { arrowhead: true },
+					onConnectionClickAction: onClick,
+				}),
+			);
+
+			const circles = leftSvg.querySelectorAll('circle');
+			expect(circles).toHaveLength(1);
+			circles[0].dispatchEvent(new MouseEvent('click'));
+
+			const hit = leftSvg.querySelector<SVGPathElement>(
+				':scope > path[stroke="transparent"]',
+			);
+			hit?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+			expect(onClick).toHaveBeenCalledTimes(2);
+		});
+
+		it('applies the arrowhead to right-side arcs as well', () => {
+			drawArcs(
+				defaultParams({
+					annotations: [ann('a'), ann('b')],
+					connections: [conn({ from: 'a', to: 'b', side: 'right' })],
+					annotationPositions: new Map([
+						['a', pos(10, 120)],
+						['b', pos(50, 180)],
+					]),
+					arcStyle: { arrowhead: true },
+				}),
+			);
+
+			expect(rightSvg.querySelector('marker')).toBeTruthy();
+			expect(rightSvg.querySelectorAll('circle')).toHaveLength(1);
+		});
 	});
 });

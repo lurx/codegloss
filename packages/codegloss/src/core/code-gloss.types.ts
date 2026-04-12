@@ -24,6 +24,12 @@ export type Connection = {
 	title?: string;
 	/** Tooltip body shown when the arc is clicked. Without it, the arc isn't clickable. */
 	text?: string;
+	/**
+	 * Which side of the code block the arc renders on.
+	 * - `'left'` (default) — fixed-width gutter, mirrored between lines.
+	 * - `'right'` — dynamic-width gutter, arc anchors at each line's end.
+	 */
+	side?: 'left' | 'right';
 };
 
 /**
@@ -63,6 +69,11 @@ export type CodeGlossConfig = {
 		strokeWidth?: number;
 		strokeDasharray?: string;
 		opacity?: number;
+		/**
+		 * Draw an arrowhead at the `to` endpoint. The `from` endpoint always
+		 * renders as a plain dot. Default: false.
+		 */
+		arrowhead?: boolean;
 	};
 };
 

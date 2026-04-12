@@ -651,7 +651,7 @@ describe('CodeGlossElement', () => {
 			expect(drawArcsMock).toHaveBeenCalled();
 			const lastArgs = drawArcsMock.mock.calls.at(-1)![0];
 			expect(lastArgs.annotations).toEqual([]);
-			expect(lastArgs.annotationYMap.size).toBe(0);
+			expect(lastArgs.annotationPositions.size).toBe(0);
 		});
 
 		it('skips annotations whose line index is not in the rendered lineRefs', async () => {
@@ -667,8 +667,8 @@ describe('CodeGlossElement', () => {
 			await nextFrame();
 
 			const lastArgs = drawArcsMock.mock.calls.at(-1)![0];
-			expect(lastArgs.annotationYMap.has('a1')).toBe(true);
-			expect(lastArgs.annotationYMap.has('a2')).toBe(false);
+			expect(lastArgs.annotationPositions.has('a1')).toBe(true);
+			expect(lastArgs.annotationPositions.has('a2')).toBe(false);
 		});
 
 		it('exercises the defensive guards when config is unexpectedly null', () => {

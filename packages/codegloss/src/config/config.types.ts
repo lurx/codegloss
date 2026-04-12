@@ -11,6 +11,11 @@ export type CodeGlossArcStyle = {
 	strokeDasharray?: string;
 	/** Arc opacity (0–1). Default: 0.55 */
 	opacity?: number;
+	/**
+	 * Draw an arrowhead at the `to` endpoint of each connection arc. The
+	 * `from` endpoint always renders as a plain dot. Default: false.
+	 */
+	arrowhead?: boolean;
 };
 
 export type CodeGlossUserConfig = {
