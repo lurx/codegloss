@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback } from 'react';
+import { Plus } from 'lucide-react';
 import type { ConnectionsPanelProps } from './connections-panel.types';
 import { createBlankConnection } from './connections-panel.helpers';
 import { ConnectionRow } from './connection-row.component';
@@ -53,7 +54,7 @@ export function ConnectionsPanel({
 					onClick={handleAdd}
 					disabled={!canAdd}
 				>
-					+ Add
+					<Plus size={14} aria-hidden="true" /> Add
 				</button>
 			</div>
 			<div className={styles.list}>{renderList()}</div>

@@ -21,6 +21,9 @@
 }
 
 .addButton {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
 	background: var(--accent-subtle);
 	color: var(--accent-light);
 	border: 1px solid var(--accent);
@@ -127,11 +130,14 @@
 }
 
 .removeButton {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 	background: transparent;
 	color: var(--site-muted);
 	border: 1px solid var(--site-border);
 	border-radius: 6px;
-	padding: 4px 8px;
+	padding: 6px;
 	font-size: 1rem;
 	cursor: pointer;
 

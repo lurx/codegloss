@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo, useState } from 'react';
 import type { MouseEvent } from 'react';
+import { Check, Copy } from 'lucide-react';
 import type { ExportPanelProps } from './export-panel.types';
 import type { ExportFormat } from './export-panel.constants';
 import { EXPORT_FORMATS } from './export-panel.constants';
@@ -71,7 +72,15 @@ export function ExportPanel({ config }: Readonly<ExportPanelProps>) {
 					className={styles.copyButton}
 					onClick={handleCopy}
 				>
-					{copied ? 'Copied' : 'Copy'}
+					{copied ? (
+						<>
+							<Check size={14} aria-hidden="true" /> Copied
+						</>
+					) : (
+						<>
+							<Copy size={14} aria-hidden="true" /> Copy
+						</>
+					)}
 				</button>
 			</div>
 			<pre className={styles.output}>{output}</pre>

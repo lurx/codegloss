@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Redo2, Undo2, Upload } from 'lucide-react';
 import type { Annotation, Connection } from 'codegloss/react';
 import { useEditorState } from './hooks/use-editor-state';
 import { useCodeglossTheme } from './hooks/use-codegloss-theme';
@@ -107,7 +108,7 @@ export function EditorPage() {
 							disabled={!canUndo}
 							title="Undo (Cmd/Ctrl+Z)"
 						>
-							Undo
+							<Undo2 size={16} aria-hidden="true" /> Undo
 						</button>
 						<button
 							type="button"
@@ -116,14 +117,14 @@ export function EditorPage() {
 							disabled={!canRedo}
 							title="Redo (Cmd/Ctrl+Shift+Z)"
 						>
-							Redo
+							<Redo2 size={16} aria-hidden="true" /> Redo
 						</button>
 						<button
 							type="button"
 							className={styles.historyButton}
 							onClick={handleOpenImport}
 						>
-							Import…
+							<Upload size={16} aria-hidden="true" /> Import
 						</button>
 					</div>
 				</div>

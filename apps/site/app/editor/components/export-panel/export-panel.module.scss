@@ -37,6 +37,9 @@
 }
 
 .copyButton {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
 	background: var(--site-surface);
 	color: var(--site-fg);
 	border: 1px solid var(--site-border);

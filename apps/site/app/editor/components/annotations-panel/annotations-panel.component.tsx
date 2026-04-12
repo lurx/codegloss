@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { Plus } from 'lucide-react';
 import type { AnnotationsPanelProps } from './annotations-panel.types';
 import { createBlankAnnotation } from './annotations-panel.helpers';
 import { AnnotationRow } from './annotation-row.component';
@@ -78,7 +79,7 @@ export function AnnotationsPanel({
 					className={styles.addButton}
 					onClick={handleAdd}
 				>
-					+ Add
+					<Plus size={14} aria-hidden="true" /> Add
 				</button>
 			</div>
 			{dragFromId !== null && (

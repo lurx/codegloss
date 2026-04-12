@@ -2,6 +2,7 @@
 
 import { useCallback } from 'react';
 import type { ChangeEvent, PointerEvent as ReactPointerEvent } from 'react';
+import { Trash2 } from 'lucide-react';
 import type { Annotation } from 'codegloss/react';
 import type { AnnotationRowProps } from './annotations-panel.types';
 import { IssueList } from '../issue-list';
@@ -115,7 +116,7 @@ export function AnnotationRow({
 					onClick={handleRemove}
 					aria-label="Remove annotation"
 				>
-					×
+					<Trash2 size={14} aria-hidden="true" />
 				</button>
 			</div>
 			<div className={styles.grid2}>

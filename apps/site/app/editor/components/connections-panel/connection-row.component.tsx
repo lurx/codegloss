@@ -2,6 +2,7 @@
 
 import { useCallback } from 'react';
 import type { ChangeEvent } from 'react';
+import { Trash2 } from 'lucide-react';
 import type { Connection } from 'codegloss/react';
 import type { ConnectionRowProps } from './connections-panel.types';
 import { IssueList } from '../issue-list';
@@ -91,7 +92,7 @@ export function ConnectionRow({
 					onClick={handleRemove}
 					aria-label="Remove connection"
 				>
-					×
+					<Trash2 size={14} aria-hidden="true" />
 				</button>
 			</div>
 			<div className={styles.rowHeader}>
