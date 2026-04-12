@@ -20,6 +20,7 @@ import {
 } from './code-gloss.strings';
 import { escapeHtml } from './escape-html.util';
 import { injectAnnotationsIntoHtml } from './inject-annotations.helpers';
+import { readConfigFromHost } from './read-config.helpers';
 import { drawArcs } from './render/arcs.helpers';
 import { run } from './runners.helpers';
 import { buildLineHtmlFallback, findAnnotationHits } from './tokenize.helpers';
@@ -100,7 +101,7 @@ export class CodeGlossElement extends SafeHTMLElement {
 	}
 
 	connectedCallback(): void {
-		this.config = this.readConfig();
+		this.config = readConfigFromHost(this);
 
 		if (!this.config) {
 			this.shadow.innerHTML = FALLBACK_ERROR_HTML;
@@ -137,18 +138,6 @@ export class CodeGlossElement extends SafeHTMLElement {
 		if (this.animationFrameId) cancelAnimationFrame(this.animationFrameId);
 	}
 
-	private readConfig(): CodeGlossConfig | undefined {
-		const scriptElement = this.querySelector('script[type="application/json"]');
-
-		if (!scriptElement?.textContent) return undefined;
-
-		try {
-			return JSON.parse(scriptElement.textContent) as CodeGlossConfig;
-		} catch {
-			console.error('[code-gloss] failed to parse JSON config');
-			return undefined;
-		}
-	}
 
 	private applyTheme(themeName: string | undefined): void {
 		// Remove existing theme stylesheet if any
