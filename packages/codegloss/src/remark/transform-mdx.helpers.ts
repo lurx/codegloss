@@ -1,10 +1,5 @@
 import type { MdxJsxFlowElement, MdxJsxAttribute } from 'mdast-util-mdx-jsx';
-import type { DetectedPair } from './detect.helpers';
-
-type AnnotationsData = {
-	annotations?: unknown[];
-	connections?: unknown[];
-};
+import type { AnnotationsData, DetectedPair } from './remark.types';
 
 function jsxAttribute(name: string, value: string): MdxJsxAttribute {
 	return { type: 'mdxJsxAttribute', name, value };

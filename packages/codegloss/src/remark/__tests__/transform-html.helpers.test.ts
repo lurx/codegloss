@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { buildCodeGlossHtmlNode } from '../transform-html.helpers';
-import type { DetectedPair } from '../detect.helpers';
+import type { DetectedPair } from '../remark.types';
 
 const pair = (overrides: Partial<DetectedPair> = {}): DetectedPair => ({
 	lang: 'js',

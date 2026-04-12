@@ -1,10 +1,5 @@
 import type { Html } from 'mdast';
-import type { DetectedPair } from './detect.helpers';
-
-type AnnotationsData = {
-	annotations?: unknown[];
-	connections?: unknown[];
-};
+import type { AnnotationsData, DetectedPair } from './remark.types';
 
 /**
  * Builds a raw HTML mdast node containing a `<code-gloss>` custom element

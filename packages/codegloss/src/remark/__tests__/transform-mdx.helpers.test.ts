@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { MdxJsxAttribute } from 'mdast-util-mdx-jsx';
 import { buildCodeGlossMdxNode } from '../transform-mdx.helpers';
-import type { DetectedPair } from '../detect.helpers';
+import type { DetectedPair } from '../remark.types';
 
 const pair = (overrides: Partial<DetectedPair> = {}): DetectedPair => ({
 	lang: 'js',

@@ -1,16 +1,5 @@
 import type { Root, RootContent } from 'mdast';
-
-type MdxjsEsm = {
-	type: 'mdxjsEsm';
-	value: string;
-	data?: {
-		estree?: {
-			type: 'Program';
-			sourceType: 'module';
-			body: unknown[];
-		};
-	};
-};
+import type { MdxjsEsm } from './remark.types';
 
 const CODEGLOSS_IMPORT = "import { CodeGloss } from 'codegloss/react'";
 
