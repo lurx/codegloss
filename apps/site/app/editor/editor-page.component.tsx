@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useMemo } from 'react';
-import type { Annotation } from 'codegloss/react';
+import type { Annotation, Connection } from 'codegloss/react';
 import { useEditorState } from './hooks/use-editor-state';
 import { useCodeglossTheme } from './hooks/use-codegloss-theme';
 import { CodePane } from './components/code-pane';
@@ -35,6 +35,18 @@ export function EditorPage() {
 	const theme = useCodeglossTheme();
 
 	const validation = useMemo(() => validateConfig(config), [config]);
+
+	const handleConnect = useCallback(
+		(fromId: string, toId: string) => {
+			const connection: Connection = {
+				from: fromId,
+				to: toId,
+				color: '#6c5ce7',
+			};
+			addConnectionAction(connection);
+		},
+		[addConnectionAction],
+	);
 
 	const handleTokenPick = useCallback(
 		(pick: TokenPick) => {
@@ -85,6 +97,7 @@ export function EditorPage() {
 						onAddAction={addAnnotationAction}
 						onUpdateAction={updateAnnotationAction}
 						onRemoveAction={removeAnnotationAction}
+						onConnectAction={handleConnect}
 					/>
 					<ConnectionsPanel
 						connections={config.connections}

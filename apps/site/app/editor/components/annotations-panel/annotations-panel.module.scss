@@ -67,6 +67,60 @@
 	gap: 8px;
 }
 
+.dragHandle {
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	background: var(--site-border-strong);
+	border: 2px solid var(--site-surface-raised);
+	cursor: grab;
+	flex: 0 0 auto;
+
+	&:hover {
+		background: var(--accent);
+	}
+
+	&:active {
+		cursor: grabbing;
+	}
+}
+
+.dragHandleActive,
+.dragHandleTarget {
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	border: 2px solid var(--site-surface-raised);
+	cursor: grab;
+	flex: 0 0 auto;
+	box-shadow: 0 0 0 3px var(--accent-subtle);
+
+	&:active {
+		cursor: grabbing;
+	}
+}
+
+.dragHandleActive {
+	background: var(--accent);
+}
+
+.dragHandleTarget {
+	background: var(--site-border-strong);
+
+	&:hover {
+		background: var(--accent-light);
+	}
+}
+
+.dragHint {
+	font-size: 11px;
+	color: var(--accent-light);
+	padding: 4px 10px;
+	background: var(--accent-subtle);
+	border: 1px solid var(--accent);
+	border-radius: 6px;
+}
+
 .idInput {
 	flex: 0 0 80px;
 }
