@@ -718,8 +718,13 @@ export class CodeGlossElement extends SafeHTMLElement {
 		drawArcs({
 			leftSvg: this.svgEl,
 			rightSvg: this.rightSvgEl,
-			height: this.codeArea.scrollHeight,
-			rightSvgWidth: this.codeArea.scrollWidth,
+			// Measure the `.pre` directly rather than `codeArea.scroll*` —
+			// the SVGs are absolute children of `codeArea`, so reading
+			// scrollHeight / scrollWidth would fold their own dimensions
+			// back in and create a feedback loop that leaves stale height
+			// when an inline callout is opened and then dismissed.
+			height: this.preEl.offsetHeight,
+			rightSvgWidth: this.preEl.scrollWidth,
 			annotations,
 			connections: this.config.connections,
 			annotationPositions,
