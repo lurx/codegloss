@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import type { ChangeEvent } from 'react';
 import type { Annotation } from 'codegloss/react';
 import type { AnnotationRowProps } from './annotations-panel.types';
+import { IssueList } from '../issue-list';
 import styles from './annotations-panel.module.scss';
 
 function parseIntSafe(value: string): number {
@@ -14,6 +15,7 @@ function parseIntSafe(value: string): number {
 export function AnnotationRow({
 	index,
 	value,
+	issues,
 	onUpdateAction,
 	onRemoveAction,
 }: Readonly<AnnotationRowProps>) {
@@ -141,6 +143,7 @@ export function AnnotationRow({
 					defaultOpen
 				</label>
 			</div>
+			<IssueList issues={issues} />
 		</div>
 	);
 }

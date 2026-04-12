@@ -4,12 +4,14 @@ import { useCallback } from 'react';
 import type { ChangeEvent } from 'react';
 import type { Connection } from 'codegloss/react';
 import type { ConnectionRowProps } from './connections-panel.types';
+import { IssueList } from '../issue-list';
 import styles from './connections-panel.module.scss';
 
 export function ConnectionRow({
 	index,
 	value,
 	annotations,
+	issues,
 	onUpdateAction,
 	onRemoveAction,
 }: Readonly<ConnectionRowProps>) {
@@ -134,6 +136,7 @@ export function ConnectionRow({
 					defaultOpen
 				</label>
 			</div>
+			<IssueList issues={issues} />
 		</div>
 	);
 }

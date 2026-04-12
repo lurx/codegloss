@@ -8,6 +8,7 @@ import styles from './annotations-panel.module.scss';
 
 export function AnnotationsPanel({
 	annotations,
+	issues,
 	onAddAction,
 	onUpdateAction,
 	onRemoveAction,
@@ -26,6 +27,7 @@ export function AnnotationsPanel({
 				key={`${annotation.id}-${i}`}
 				index={i}
 				value={annotation}
+				issues={issues[i] ?? []}
 				onUpdateAction={onUpdateAction}
 				onRemoveAction={onRemoveAction}
 			/>

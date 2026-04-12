@@ -9,6 +9,7 @@ import styles from './connections-panel.module.scss';
 export function ConnectionsPanel({
 	connections,
 	annotations,
+	issues,
 	onAddAction,
 	onUpdateAction,
 	onRemoveAction,
@@ -35,6 +36,7 @@ export function ConnectionsPanel({
 				index={i}
 				value={connection}
 				annotations={annotations}
+				issues={issues[i] ?? []}
 				onUpdateAction={onUpdateAction}
 				onRemoveAction={onRemoveAction}
 			/>
