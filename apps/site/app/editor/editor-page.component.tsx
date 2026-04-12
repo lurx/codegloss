@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { Annotation, Connection } from 'codegloss/react';
 import { useEditorState } from './hooks/use-editor-state';
 import { useCodeglossTheme } from './hooks/use-codegloss-theme';
@@ -11,7 +11,7 @@ import { PreviewPane } from './components/preview-pane';
 import { AnnotationsPanel } from './components/annotations-panel';
 import { ConnectionsPanel } from './components/connections-panel';
 import { ExportPanel } from './components/export-panel';
-import { ImportPanel } from './components/import-panel';
+import { ImportDialog } from './components/import-dialog';
 import { SettingsPanel } from './components/settings-panel';
 import { validateConfig } from './helpers/validate-config.helpers';
 import { nextAutoId } from './components/annotations-panel/annotations-panel.helpers';
@@ -39,8 +39,12 @@ export function EditorPage() {
 	} = useEditorState();
 
 	const theme = useCodeglossTheme();
+	const [importOpen, setImportOpen] = useState(false);
 
 	const validation = useMemo(() => validateConfig(config), [config]);
+
+	const handleOpenImport = useCallback(() => setImportOpen(true), []);
+	const handleCloseImport = useCallback(() => setImportOpen(false), []);
 
 	useEffect(() => {
 		const handler = (event: KeyboardEvent) => {
@@ -114,6 +118,13 @@ export function EditorPage() {
 						>
 							Redo
 						</button>
+						<button
+							type="button"
+							className={styles.historyButton}
+							onClick={handleOpenImport}
+						>
+							Import…
+						</button>
 					</div>
 				</div>
 				<p className={styles.subtitle}>
@@ -166,8 +177,13 @@ export function EditorPage() {
 
 			<div className={styles.export}>
 				<ExportPanel config={config} />
-				<ImportPanel onImportAction={replaceConfigAction} />
 			</div>
+
+			<ImportDialog
+				open={importOpen}
+				onCloseAction={handleCloseImport}
+				onImportAction={replaceConfigAction}
+			/>
 		</main>
 	);
 }
