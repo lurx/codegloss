@@ -1,0 +1,13 @@
+import type { EditorConfig } from '../../hooks/use-editor-state';
+
+export function serializeConfig(config: EditorConfig): string {
+	const payload: Record<string, unknown> = {
+		code: config.code,
+		lang: config.lang,
+	};
+	if (config.filename) payload.filename = config.filename;
+	if (typeof config.runnable === 'boolean') payload.runnable = config.runnable;
+	if (config.annotations.length > 0) payload.annotations = config.annotations;
+	if (config.connections.length > 0) payload.connections = config.connections;
+	return JSON.stringify(payload, null, 2);
+}

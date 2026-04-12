@@ -1,0 +1,8 @@
+.root {
+	min-height: 0;
+	overflow: auto;
+	padding: 16px;
+	background: var(--site-surface);
+	border: 1px solid var(--site-border);
+	border-radius: 8px;
+}

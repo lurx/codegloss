@@ -1,0 +1,49 @@
+.root {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.heading {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--site-heading);
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+}
+
+.copyButton {
+	background: var(--site-surface);
+	color: var(--site-fg);
+	border: 1px solid var(--site-border);
+	border-radius: 6px;
+	padding: 4px 10px;
+	font-size: 12px;
+	cursor: pointer;
+
+	&:hover {
+		border-color: var(--accent);
+	}
+}
+
+.output {
+	background: var(--site-pre-bg);
+	color: var(--site-pre-fg);
+	border: 1px solid var(--site-border);
+	border-radius: 8px;
+	padding: 10px;
+	font-family: var(--font-mono);
+	font-size: 12px;
+	line-height: 1.5;
+	max-height: 280px;
+	overflow: auto;
+	margin: 0;
+	white-space: pre;
+}
