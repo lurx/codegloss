@@ -5,8 +5,6 @@ import type {
 	Connection,
 } from '../core/code-gloss.types';
 
-export type CodeGlossProps = CodeGlossConfig;
-
 /**
  * Stateless Vue 3 wrapper around the `<code-gloss>` custom element. Renders
  * the WC with a `<script type="application/json">` child containing the

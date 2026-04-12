@@ -1,7 +1,8 @@
 import { createSSRApp, h } from 'vue';
 import { renderToString } from 'vue/server-renderer';
 import { describe, expect, it } from 'vitest';
-import { CodeGloss, type CodeGlossProps } from '../code-gloss.component';
+import { CodeGloss } from '../code-gloss.component';
+import type { CodeGlossProps } from '../code-gloss.types';
 
 const SCRIPT_RE =
 	/<code-gloss><script type="application\/json">(.*?)<\/script><\/code-gloss>/s;
