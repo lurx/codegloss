@@ -4,9 +4,12 @@ import Link from 'next/link';
 import { Logo } from '@/components/logo.component';
 import { ThemeToggle } from '@/components/theme-toggle.component';
 import { Search } from '@/components/search.component';
+import { COLOR_SCHEME_STORAGE_KEY } from '@/components/theme-toggle.constants';
 import type { RootLayoutProps } from './layout.types';
 
 import './globals.css';
+
+const COLOR_SCHEME_BOOT_SCRIPT = `(function(){try{var t=localStorage.getItem('${COLOR_SCHEME_STORAGE_KEY}');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;else if(window.matchMedia('(prefers-color-scheme:light)').matches)document.documentElement.dataset.theme='light';}catch(e){}})();`;
 
 export const metadata: Metadata = {
   title: 'codegloss — annotated code, explained',
@@ -20,7 +23,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('codegloss-color-scheme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;else if(window.matchMedia('(prefers-color-scheme:light)').matches)document.documentElement.dataset.theme='light';}catch(e){}})();`,
+            __html: COLOR_SCHEME_BOOT_SCRIPT,
           }}
         />
       </head>
