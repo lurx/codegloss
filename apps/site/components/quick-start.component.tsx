@@ -4,11 +4,10 @@ import { useRef, useCallback } from 'react';
 import { useSiteTheme } from '@/hooks';
 import { CopyCodeButton } from './copy-code-button.component';
 import highlightedHtml from './homepage-snippets-html.generated.json';
+import type { HighlightedHtmlMap } from './highlighted-html.types';
+import type { HighlightedBlockProps } from './quick-start.types';
 
-const htmlData = highlightedHtml as Record<
-	string,
-	Record<string, string>
->;
+const htmlData = highlightedHtml as HighlightedHtmlMap;
 
 const STEPS = [
 	{ num: '1', label: 'Install', snippetKey: 'install' },
@@ -16,7 +15,7 @@ const STEPS = [
 	{ num: '3', label: 'Write annotated code in MDX', snippetKey: 'mdx' },
 ] as const;
 
-function HighlightedBlock({ html }: { html: string }) {
+function HighlightedBlock({ html }: HighlightedBlockProps) {
 	const codeRef = useRef<HTMLDivElement>(null);
 
 	const getText = useCallback(() => codeRef.current?.textContent ?? '', []);
@@ -35,7 +34,6 @@ function HighlightedBlock({ html }: { html: string }) {
 
 export function QuickStart() {
 	const siteTheme = useSiteTheme();
-	const variant = siteTheme === 'dark' ? 'dark' : 'light';
 
 	return (
 		<section className="quickstart fade-in fade-in-delay-3">
@@ -46,7 +44,7 @@ export function QuickStart() {
 					<div className="step-content">
 						<div className="step-label">{step.label}</div>
 						<HighlightedBlock
-							html={htmlData[step.snippetKey]?.[variant] ?? ''}
+							html={htmlData[step.snippetKey]?.[siteTheme] ?? ''}
 						/>
 					</div>
 				</div>

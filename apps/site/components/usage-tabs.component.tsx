@@ -4,10 +4,8 @@ import { useCallback, useRef, useState, type MouseEvent } from 'react';
 import { useSiteTheme } from '@/hooks';
 import { CopyCodeButton } from './copy-code-button.component';
 import highlightedHtml from './usage-tabs-html.generated.json';
-import type {
-	CopyableBlockProps,
-	HighlightedHtmlMap,
-} from './usage-tabs.types';
+import type { CopyableBlockProps } from './usage-tabs.types';
+import type { HighlightedHtmlMap } from './highlighted-html.types';
 import { TABS } from './usage-tabs.data';
 import {
 	BLOCK_LABEL_STYLE,

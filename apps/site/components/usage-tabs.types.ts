@@ -15,5 +15,3 @@ export type CopyableBlockProps = {
 	html: string;
 	label?: string;
 };
-
-export type HighlightedHtmlMap = Record<string, Record<string, string>>;
