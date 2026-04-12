@@ -1,0 +1,176 @@
+---
+title: Remark Plugin
+sidebar_position: 2
+---
+
+# Remark Plugin
+
+`remark-codegloss` is a unified remark plugin that transforms annotated fenced code blocks into CodeGloss instances at build time.
+
+It supports two output modes:
+
+- **`mdx`** (default) — emits `<CodeGloss />` MDX JSX. Use with MDX pipelines: `@next/mdx`, `next-mdx-remote`, Velite, Docusaurus.
+- **`html`** — emits a raw `<code-gloss>` HTML node with the config in a `<script type="application/json">` child. Use with plain markdown pipelines (`remark-rehype` → `rehype-stringify`) or anywhere outside of MDX.
+
+## How it works
+
+The plugin walks the markdown AST looking for a specific pattern:
+
+1. A fenced code block with `sandbox` in its metadata
+2. Optionally followed by a `json annotations` code block
+
+When it finds a match, it:
+
+- Replaces both blocks with a single CodeGloss node (JSX or HTML, depending on `output` mode)
+- Parses the annotations JSON and passes it as configuration
+- In `mdx` mode, auto-injects `import { CodeGloss } from 'codegloss/react'` (skippable via `skipImport`)
+
+## Detection pattern
+
+The code block metadata must match this format:
+
+````
+```{lang} sandbox {filename?}
+````
+
+- **`lang`** (required) — the language identifier (`js`, `ts`, `py`, `css`, etc.)
+- **`sandbox`** (required) — the keyword that triggers detection
+- **`filename`** (optional) — displayed in the toolbar
+
+### Annotations block
+
+The annotations block must immediately follow the sandbox block:
+
+````
+```json annotations
+{
+  "annotations": [...],
+  "connections": [...]
+}
+```
+````
+
+If no annotations block follows, the component renders the code without annotations.
+
+## Options
+
+````ts
+type RemarkCodeglossOptions = {
+  /**
+   * Output mode. Default: 'mdx'.
+   * - 'mdx': emits CodeGloss MDX JSX (use with MDX pipelines)
+   * - 'html': emits a raw <code-gloss> HTML node (use with plain markdown pipelines)
+   */
+  output?: 'mdx' | 'html';
+  /**
+   * (mdx mode only) Skip injecting `import { CodeGloss } from 'codegloss/react'`.
+   * Set true when CodeGloss is provided via a custom MDX components map.
+   */
+  skipImport?: boolean;
+  /**
+   * Default theme applied to all code blocks unless the block specifies its own.
+   * Accepts a bundled theme name (e.g. 'github-dark', 'dracula').
+   */
+  theme?: string;
+};
+````
+
+### Applying a global theme
+
+Pass a `theme` option to apply a default theme to all code blocks processed by the plugin:
+
+````js
+remarkCodegloss({ theme: 'github-dark' })
+````
+
+Individual code blocks can override the global default — the remark plugin only injects the theme when the block doesn't specify its own.
+
+## Configuration examples
+
+### MDX mode (default)
+
+#### Next.js with @next/mdx
+
+````js
+import createMdx from '@next/mdx';
+import remarkCodegloss from 'codegloss/remark';
+
+const withMdx = createMdx({
+  options: {
+    remarkPlugins: [remarkCodegloss],
+  },
+});
+````
+
+#### Docusaurus
+
+````js
+import remarkCodegloss from 'codegloss/remark';
+
+export default {
+  presets: [
+    ['classic', {
+      docs: {
+        remarkPlugins: [[remarkCodegloss, { skipImport: true }]],
+      },
+    }],
+  ],
+};
+````
+
+`skipImport: true` is recommended in Docusaurus because the component is provided via the swizzled MDX components map (see the [Docusaurus setup guide](/docs/setup/docusaurus)).
+
+#### Generic MDX pipeline
+
+````js
+import { unified } from 'unified';
+import remarkParse from 'remark-parse';
+import remarkMdx from 'remark-mdx';
+import remarkCodegloss from 'codegloss/remark';
+
+const processor = unified()
+  .use(remarkParse)
+  .use(remarkMdx)
+  .use(remarkCodegloss);
+````
+
+### HTML mode (plain markdown)
+
+For pipelines that produce plain HTML (no JSX, no React):
+
+````js
+import { unified } from 'unified';
+import remarkParse from 'remark-parse';
+import remarkRehype from 'remark-rehype';
+import rehypeStringify from 'rehype-stringify';
+import remarkCodegloss from 'codegloss/remark';
+
+const html = await unified()
+  .use(remarkParse)
+  .use(remarkCodegloss, { output: 'html' })
+  .use(remarkRehype, { allowDangerousHtml: true })
+  .use(rehypeStringify, { allowDangerousHtml: true })
+  .process(markdownSource);
+````
+
+The output is a raw `<code-gloss>` element with the config in a `<script type="application/json">` child:
+
+````html
+<code-gloss><script type="application/json">{"code":"...","lang":"js",...}</script></code-gloss>
+````
+
+You're responsible for loading the `codegloss` runtime in your HTML page so the custom element gets registered:
+
+````html
+<script type="module" src="https://unpkg.com/codegloss/dist/index.js"></script>
+````
+
+This pattern works with `marked`, `markdown-it`, and any static site generator that goes through remark.
+
+## Edge cases
+
+- **Invalid JSON** — if the annotations block contains malformed JSON, the plugin logs a warning and renders the code block without annotations
+- **Missing annotations block** — the sandbox block renders as a CodeGloss instance with just the code, no annotations
+- **Duplicate imports** — in `mdx` mode, the plugin checks for existing CodeGloss imports before injecting one
+- **Nested blocks** — the plugin traverses child nodes recursively, so sandbox blocks inside blockquotes or other containers are detected
+- **Script tag escaping** — in `html` mode, the JSON payload escapes `</script` sequences to prevent breaking out of the script tag

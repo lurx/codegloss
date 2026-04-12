@@ -1,0 +1,95 @@
+---
+title: VitePress
+sidebar_position: 7
+---
+
+# VitePress
+
+CodeGloss works with [VitePress](https://vitepress.dev/) via the Vue wrapper. Register the component globally and use it in any markdown page.
+
+## Install
+
+````
+npm install codegloss vue
+````
+
+## Register the component
+
+Create a custom theme that registers the Vue wrapper globally:
+
+````ts
+// docs/.vitepress/theme/index.ts
+import DefaultTheme from 'vitepress/theme';
+import { CodeGloss } from 'codegloss/vue';
+import type { Theme } from 'vitepress';
+
+export default {
+  extends: DefaultTheme,
+  enhanceApp({ app }) {
+    app.component('CodeGloss', CodeGloss);
+  },
+} satisfies Theme;
+````
+
+## Configure the Vue compiler
+
+Tell Vue to treat `<code-gloss>` as a custom element so it doesn't emit unknown-component warnings:
+
+````ts
+// docs/.vitepress/config.ts
+import { defineConfig } from 'vitepress';
+
+export default defineConfig({
+  vue: {
+    template: {
+      compilerOptions: {
+        isCustomElement: (tag) => tag === 'code-gloss',
+      },
+    },
+  },
+});
+````
+
+## Use in markdown pages
+
+Drop `<CodeGloss />` directly in any `.md` file:
+
+````md
+<CodeGloss
+  code="function fib(n) {
+  return n < 2 ? n : fib(n - 1) + fib(n - 2);
+}"
+  lang="js"
+  filename="fib.js"
+  :annotations="[
+    { id: 'a1', token: 'fib', line: 0, occurrence: 0,
+      title: 'Recursion', text: 'Calls itself with smaller inputs.' }
+  ]"
+/>
+````
+
+The `:annotations` prefix uses Vue's `v-bind` shorthand to pass the array as a JavaScript expression rather than a string.
+
+## No CSS import needed
+
+The Web Component bundles its styles via Shadow DOM. VitePress pages pick them up automatically when the custom element upgrades on the client.
+
+## Dark mode
+
+CodeGloss respects `prefers-color-scheme: dark` automatically. To follow VitePress's theme toggle (which sets `.dark` on the `<html>` element), override the CSS variables:
+
+````css
+/* docs/.vitepress/theme/custom.css */
+.dark code-gloss {
+  --cg-bg: #1e1e1e;
+  --cg-border: #3a3a3a;
+  --cg-text: #e0e0e0;
+  --cg-muted: #999;
+  --cg-line-num: #555;
+  --cg-toolbar-bg: #2a2a2a;
+  --cg-badge-bg: #3a3a3a;
+  --cg-ann-bg: rgba(174, 169, 236, 0.12);
+  --cg-ann-border: #afa9ec;
+  --cg-ann-hover: rgba(174, 169, 236, 0.22);
+}
+````

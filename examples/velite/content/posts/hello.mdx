@@ -1,0 +1,30 @@
+---
+title: Hello from Velite
+---
+
+# Hello from Velite
+
+This MDX file is compiled by Velite. The sandbox fence below is rewritten into
+a `<CodeGloss />` component by `remark-codegloss` (registered in
+`velite.config.ts` with `skipImport: true`).
+
+```js sandbox fib.js
+function fib(n) {
+  return n < 2 ? n : fib(n - 1) + fib(n - 2);
+}
+```
+
+```json annotations
+{
+  "annotations": [
+    {
+      "id": "a1",
+      "token": "fib",
+      "line": 0,
+      "occurrence": 0,
+      "title": "Recursion",
+      "text": "Calls itself with smaller inputs."
+    }
+  ]
+}
+```

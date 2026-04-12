@@ -1,0 +1,15 @@
+dist
+out
+build
+.next
+.velite
+.svelte-kit
+.docusaurus
+.astro
+coverage
+test-results
+playwright-report
+pnpm-lock.yaml
+*.generated.ts
+test/e2e/fixtures/codegloss
+test/e2e/fixtures/vendor

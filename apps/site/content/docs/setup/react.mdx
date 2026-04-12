@@ -1,0 +1,80 @@
+---
+title: React
+sidebar_position: 0
+---
+
+# React
+
+CodeGloss ships a thin React wrapper at `codegloss/react`. It works with React 16.14+ and renders the same `<code-gloss>` Web Component under the hood.
+
+## Install
+
+````
+npm install codegloss
+````
+
+`codegloss` declares `react` as an **optional** peer dependency with a permissive range (`>=16.14.0`) — npm/pnpm/yarn won't error on any modern React version.
+
+## Usage
+
+Import and use it as a regular component. The `'use client'` directive is needed in Next.js App Router because the component is interactive:
+
+````tsx
+'use client';
+
+import { CodeGloss } from 'codegloss/react';
+
+export function Example() {
+  return (
+    <CodeGloss
+      code={`function greet(name) {
+  return 'Hello, ' + name;
+}`}
+      lang="js"
+      filename="greet.js"
+      annotations={[
+        {
+          id: 'a1',
+          token: 'name',
+          line: 0,
+          occurrence: 0,
+          title: 'Parameter',
+          text: 'The name to greet.',
+        },
+      ]}
+      connections={[]}
+    />
+  );
+}
+````
+
+## Props
+
+The React wrapper accepts the same props as the Web Component's JSON config:
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `code` | `string` | Raw source code to display |
+| `lang` | `string` | Language identifier (`js`, `ts`, `py`, etc.) |
+| `filename` | `string?` | Filename shown in the toolbar |
+| `annotations` | `Annotation[]?` | Token-level annotations |
+| `connections` | `Connection[]?` | Visual arcs between annotations |
+| `runnable` | `boolean?` | Show the Run button (default: `true` if `lang === 'js'`) |
+| `theme` | `string?` | Named theme (`github-dark`, `dracula`, etc.) |
+| `arcs` | `object?` | Arc style overrides |
+
+See [Component API](/docs/api) for full type definitions.
+
+## How it works
+
+The wrapper is a stateless adapter — zero React hooks, zero state. It serializes props into a `<script type="application/json">` child of the underlying `<code-gloss>` custom element. The Web Component reads the JSON and renders everything inside Shadow DOM.
+
+## No CSS import needed
+
+The Web Component bundles its styles via Shadow DOM. There's nothing to import in your stylesheet.
+
+## MDX integration
+
+For markdown-driven content, use the [Remark Plugin](/docs/plugin) instead of (or alongside) direct React usage. The plugin transforms fenced code blocks into `<CodeGloss />` components at build time, so you don't need to write JSX for every code example.
+
+See the [Next.js](/docs/setup/nextjs) guide for full setup instructions with `@next/mdx` or `next-mdx-remote`.

@@ -1,0 +1,25 @@
+# codegloss · Next.js static export
+
+The same MDX setup as `nextjs-app`, but with `output: 'export'` so the build
+produces a static `out/` directory you can host on any CDN.
+
+```js sandbox fib.js
+function fib(n) {
+  return n < 2 ? n : fib(n - 1) + fib(n - 2);
+}
+```
+
+```json annotations
+{
+  "annotations": [
+    {
+      "id": "a1",
+      "token": "fib",
+      "line": 0,
+      "occurrence": 0,
+      "title": "Recursion",
+      "text": "Calls itself with smaller inputs."
+    }
+  ]
+}
+```

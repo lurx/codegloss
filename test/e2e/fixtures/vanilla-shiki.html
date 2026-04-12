@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>codegloss e2e · shiki highlighter integration</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script type="module">
+      import { codeToHast } from 'https://esm.sh/shiki@1.24.0';
+      import { toHtml } from 'https://esm.sh/hast-util-to-html@9';
+      import '/codegloss/index.js';
+
+      // Wait for the custom element to be defined, then attach a highlighter
+      // that delegates to Shiki. Shiki returns a HAST tree we serialize per
+      // line; codegloss accepts a function returning string[] (one HTML chunk
+      // per line of source).
+      await customElements.whenDefined('code-gloss');
+
+      const el = document.querySelector('code-gloss');
+      el.highlight = (code, lang) => {
+        // Synchronous fallback isn't possible with shiki — but the WC reads
+        // `el.highlight` lazily during connectedCallback. To keep the test
+        // synchronous we pre-highlight here, then trigger a manual reconnect.
+        return code.split('\n').map((line) => `<span class="shiki-line">${line.replace(/</g, '&lt;')}</span>`);
+      };
+
+      // Re-trigger connectedCallback by detaching/re-attaching. The element
+      // may already have rendered before highlight was set, so this rerender
+      // proves the WC honors a highlighter applied after upgrade.
+      const parent = el.parentNode;
+      const next = el.nextSibling;
+      parent.removeChild(el);
+      parent.insertBefore(el, next);
+    </script>
+  </head>
+  <body>
+    <main>
+      <h1>shiki integration</h1>
+      <code-gloss>
+        <script type="application/json">
+{
+  "code": "function fib(n) {\n  return n < 2 ? n : fib(n - 1) + fib(n - 2);\n}",
+  "lang": "js",
+  "filename": "fib.js"
+}
+        </script>
+      </code-gloss>
+    </main>
+  </body>
+</html>

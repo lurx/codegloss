@@ -1,0 +1,148 @@
+---
+title: Next.js
+sidebar_position: 1
+---
+
+# Next.js
+
+CodeGloss works with Next.js in two ways:
+
+1. **Direct React usage** — import `CodeGloss` from `codegloss/react` and use it as a regular component
+2. **Authoring in MDX** — install `remark-codegloss` and use the fenced code block syntax
+
+## Install
+
+For direct React usage:
+
+````
+npm install codegloss
+````
+
+For MDX authoring (also installs the remark plugin):
+
+````
+npm install codegloss @next/mdx @mdx-js/loader
+````
+
+`codegloss` declares `react` as an **optional** peer dependency with a permissive range (`>=16.14.0`) — npm/pnpm/yarn won't error on any modern React version.
+
+## Direct React usage (no MDX)
+
+Just import and use it. The `'use client'` directive is needed because the component is interactive:
+
+````tsx
+'use client';
+
+import { CodeGloss } from 'codegloss/react';
+
+export function Example() {
+  return (
+    <CodeGloss
+      code="function greet(name) {\n  return 'Hello, ' + name;\n}"
+      lang="js"
+      filename="greet.js"
+      annotations={[
+        {
+          id: 'a1',
+          token: 'name',
+          line: 0,
+          occurrence: 0,
+          title: 'Parameter',
+          text: 'The name to greet.',
+        },
+      ]}
+    />
+  );
+}
+````
+
+No CSS import needed. The Web Component bundles its own styles via Shadow DOM.
+
+## MDX authoring with @next/mdx
+
+Configure the remark plugin in `next.config.ts`:
+
+````js
+import createMdx from '@next/mdx';
+import remarkCodegloss from 'codegloss/remark';
+
+const nextConfig = {
+  pageExtensions: ['ts', 'tsx', 'mdx'],
+};
+
+const withMdx = createMdx({
+  options: {
+    remarkPlugins: [remarkCodegloss],
+  },
+});
+
+export default withMdx(nextConfig);
+````
+
+Now any `.mdx` file under `app/` can use the sandbox syntax:
+
+`````
+```js sandbox example.js
+const x = 42;
+console.log(x);
+```
+
+```json annotations
+{
+  "annotations": [{
+    "id": "a1",
+    "token": "42",
+    "line": 0,
+    "occurrence": 0,
+    "title": "The answer",
+    "text": "A constant value."
+  }]
+}
+```
+`````
+
+The plugin auto-injects `import { CodeGloss } from 'codegloss/react'` into the MDX file at build time. You don't need to import anything yourself.
+
+## With next-mdx-remote
+
+If you load MDX from a CMS or filesystem:
+
+````js
+import { serialize } from 'next-mdx-remote/serialize';
+import remarkCodegloss from 'codegloss/remark';
+
+const source = await serialize(mdxContent, {
+  mdxOptions: {
+    remarkPlugins: [remarkCodegloss],
+  },
+});
+````
+
+In your render component, pass `CodeGloss` via the components map:
+
+````tsx
+'use client';
+
+import { MDXRemote } from 'next-mdx-remote';
+import { CodeGloss } from 'codegloss/react';
+
+export function Post({ source }) {
+  return <MDXRemote {...source} components={{ CodeGloss }} />;
+}
+````
+
+When loading the component this way, set `skipImport: true` on the remark plugin so it doesn't auto-inject an import (you're providing it via the components map):
+
+````js
+import remarkCodegloss from 'codegloss/remark';
+
+const source = await serialize(mdxContent, {
+  mdxOptions: {
+    remarkPlugins: [[remarkCodegloss, { skipImport: true }]],
+  },
+});
+````
+
+## Static export
+
+CodeGloss is fully compatible with `output: 'export'` for static sites. This very documentation site uses Next.js with static export and ships to GitHub Pages.

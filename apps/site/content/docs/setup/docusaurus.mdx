@@ -1,0 +1,82 @@
+---
+title: Docusaurus
+sidebar_position: 2
+---
+
+# Docusaurus
+
+Set up CodeGloss with [Docusaurus](https://docusaurus.io/) v3.
+
+## Install
+
+````
+npm install codegloss
+````
+
+## Configure the remark plugin
+
+Add `remark-codegloss` to your `docusaurus.config.js`. Use `skipImport: true` because we'll provide the component via Docusaurus's MDX components map (next step):
+
+````js
+import remarkCodegloss from 'codegloss/remark';
+
+export default {
+  presets: [
+    ['classic', {
+      docs: {
+        remarkPlugins: [[remarkCodegloss, { skipImport: true }]],
+      },
+      blog: {
+        remarkPlugins: [[remarkCodegloss, { skipImport: true }]],
+      },
+    }],
+  ],
+};
+````
+
+## Register the component
+
+Swizzle MDX components to make CodeGloss available everywhere:
+
+````js
+// src/theme/MDXComponents.js
+import MDXComponents from '@theme-original/MDXComponents';
+import { CodeGloss } from 'codegloss/react';
+
+export default {
+  ...MDXComponents,
+  CodeGloss,
+};
+````
+
+That's it. Every `js sandbox` block in your docs and blog now renders as an interactive CodeGloss instance.
+
+## No CSS import needed
+
+CodeGloss bundles its styles via Shadow DOM — there's nothing to import in your custom CSS file. This is a change from older versions: if you used to do `@import 'codegloss/dist/index.css'`, you can remove that line.
+
+## Dark mode
+
+CodeGloss respects `prefers-color-scheme: dark` automatically. To follow the Docusaurus theme toggle (which sets `data-theme="dark"` on the `<html>` element), override the CSS variables on the `code-gloss` element:
+
+````css
+/* src/css/custom.css */
+[data-theme='dark'] code-gloss {
+  --cg-bg: #1e1e1e;
+  --cg-border: #3a3a3a;
+  --cg-text: #e0e0e0;
+  --cg-muted: #999;
+  --cg-line-num: #555;
+  --cg-toolbar-bg: #2a2a2a;
+  --cg-badge-bg: #3a3a3a;
+  --cg-ann-bg: rgba(174, 169, 236, 0.12);
+  --cg-ann-border: #afa9ec;
+  --cg-ann-hover: rgba(174, 169, 236, 0.22);
+}
+````
+
+These variables propagate into the Shadow DOM through `:host` inheritance.
+
+## Why use the React subpath?
+
+The `codegloss/react` subpath is a thin JSX wrapper around the underlying Web Component. Docusaurus runs on React, so importing the React wrapper is the most natural fit. Under the hood, both the React wrapper and the vanilla Web Component render the same `<code-gloss>` element with a Shadow DOM tree.
