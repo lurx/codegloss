@@ -1,7 +1,5 @@
 import React from 'react';
-import type { CodeGlossConfig } from '../core/code-gloss.types';
-
-export type CodeGlossProps = CodeGlossConfig;
+import type { CodeGlossProps } from './code-gloss.types';
 
 export function CodeGloss(props: CodeGlossProps): React.ReactElement {
 	const { theme, ...configProps } = props;
