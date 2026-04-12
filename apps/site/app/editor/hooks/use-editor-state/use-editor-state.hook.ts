@@ -1,9 +1,40 @@
-import { useCallback, useReducer } from 'react';
+import { useCallback, useEffect, useReducer, useRef } from 'react';
 import type {
 	EditorAction,
+	EditorConfig,
 	EditorState,
 	UseEditorStateResult,
 } from './use-editor-state.types';
+
+const STORAGE_KEY = 'codegloss:editor:draft';
+
+function loadPersistedConfig(): EditorConfig | null {
+	if (typeof window === 'undefined') return null;
+	try {
+		const raw = window.localStorage.getItem(STORAGE_KEY);
+		if (!raw) return null;
+		const parsed = JSON.parse(raw) as EditorConfig;
+		if (typeof parsed.code !== 'string' || typeof parsed.lang !== 'string') {
+			return null;
+		}
+		return {
+			...parsed,
+			annotations: Array.isArray(parsed.annotations) ? parsed.annotations : [],
+			connections: Array.isArray(parsed.connections) ? parsed.connections : [],
+		};
+	} catch {
+		return null;
+	}
+}
+
+function writePersistedConfig(config: EditorConfig): void {
+	if (typeof window === 'undefined') return;
+	try {
+		window.localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+	} catch {
+		// swallow — quota or disabled storage
+	}
+}
 
 const INITIAL_CODE = `function greet(name) {
   const message = "Hello, " + name;
@@ -85,6 +116,18 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
 
 export function useEditorState(): UseEditorStateResult {
 	const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
+	const hydratedRef = useRef(false);
+
+	useEffect(() => {
+		const persisted = loadPersistedConfig();
+		if (persisted) dispatch({ kind: 'replaceConfig', value: persisted });
+		hydratedRef.current = true;
+	}, []);
+
+	useEffect(() => {
+		if (!hydratedRef.current) return;
+		writePersistedConfig(state.config);
+	}, [state.config]);
 
 	const replaceConfigAction = useCallback<
 		UseEditorStateResult['replaceConfigAction']
