@@ -101,9 +101,13 @@
     "vue": "^3.5.13"
   },
   "scripts": {
-    "prebuild": "node scripts/inline-css.mjs",
+    "generate:styles": "node scripts/inline-css.mjs",
+    "prebuild": "pnpm run generate:styles",
     "build": "tsup",
-    "dev": "node scripts/inline-css.mjs && tsup --watch",
+    "dev": "pnpm run generate:styles && tsup --watch",
+    "pretest": "pnpm run generate:styles",
+    "pretest:watch": "pnpm run generate:styles",
+    "pretest:coverage": "pnpm run generate:styles",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
