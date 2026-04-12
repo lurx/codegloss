@@ -7,8 +7,12 @@
 
 .fieldRow {
 	display: grid;
-	grid-template-columns: 1fr 1fr auto;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
 	gap: 8px;
+
+	@media (max-width: 560px) {
+		grid-template-columns: minmax(0, 1fr);
+	}
 }
 
 .field {
@@ -46,6 +50,8 @@
 .codeArea {
 	flex: 1;
 	min-height: 240px;
+	width: 100%;
+	box-sizing: border-box;
 	background: var(--site-surface);
 	color: var(--site-fg);
 	border: 1px solid var(--site-border);
