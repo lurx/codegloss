@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import type { DocsLayoutProps } from './docs-layout.types';
+import type { DocsLayoutProps, SidebarSection } from './docs-layout.types';
 
 const SIDEBAR = [
   { title: 'Overview', items: [
@@ -22,7 +22,7 @@ const SIDEBAR = [
     { label: 'Svelte / SvelteKit', slug: 'setup/svelte' },
     { label: 'Astro / Starlight', slug: 'setup/astro' },
   ]},
-] as const;
+] as const satisfies readonly SidebarSection[];
 
 export function DocsLayout({ children }: DocsLayoutProps) {
   const pathname = usePathname();

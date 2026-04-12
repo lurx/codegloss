@@ -5,7 +5,7 @@ import { useSiteTheme } from '@/hooks';
 import { CopyCodeButton } from './copy-code-button.component';
 import highlightedHtml from './homepage-snippets-html.generated.json';
 import type { HighlightedHtmlMap } from './highlighted-html.types';
-import type { HighlightedBlockProps } from './quick-start.types';
+import type { HighlightedBlockProps, Step } from './quick-start.types';
 
 const htmlData = highlightedHtml as HighlightedHtmlMap;
 
@@ -13,7 +13,7 @@ const STEPS = [
 	{ num: '1', label: 'Install', snippetKey: 'install' },
 	{ num: '2', label: 'Configure your MDX pipeline', snippetKey: 'config' },
 	{ num: '3', label: 'Write annotated code in MDX', snippetKey: 'mdx' },
-] as const;
+] as const satisfies readonly Step[];
 
 function HighlightedBlock({ html }: HighlightedBlockProps) {
 	const codeRef = useRef<HTMLDivElement>(null);
