@@ -1,0 +1,75 @@
+.root {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.heading {
+	font-size: 1.0625rem;
+	font-weight: 600;
+	color: var(--site-heading);
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+}
+
+.section {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	background: var(--site-surface);
+	border: 1px solid var(--site-border);
+	border-radius: 8px;
+	padding: 10px;
+}
+
+.sectionTitle {
+	font-size: 1rem;
+	color: var(--site-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.grid2 {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 6px;
+}
+
+.field {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	font-size: 1rem;
+	color: var(--site-muted);
+}
+
+.input,
+.select {
+	background: var(--site-bg);
+	color: var(--site-fg);
+	border: 1px solid var(--site-border);
+	border-radius: 6px;
+	padding: 4px 6px;
+	font-family: var(--font-mono);
+	font-size: 1rem;
+	width: 100%;
+	min-width: 0;
+
+	&:focus {
+		outline: none;
+		border-color: var(--accent);
+	}
+}
+
+.toggleRow {
+	display: flex;
+	gap: 12px;
+	font-size: 1rem;
+	color: var(--site-fg);
+}

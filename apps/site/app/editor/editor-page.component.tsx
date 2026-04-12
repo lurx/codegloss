@@ -12,6 +12,7 @@ import { AnnotationsPanel } from './components/annotations-panel';
 import { ConnectionsPanel } from './components/connections-panel';
 import { ExportPanel } from './components/export-panel';
 import { ImportPanel } from './components/import-panel';
+import { SettingsPanel } from './components/settings-panel';
 import { validateConfig } from './helpers/validate-config.helpers';
 import { nextAutoId } from './components/annotations-panel/annotations-panel.helpers';
 import styles from './editor-page.module.scss';
@@ -20,6 +21,7 @@ export function EditorPage() {
 	const {
 		config,
 		replaceConfigAction,
+		patchConfigAction,
 		setCodeAction,
 		setLangAction,
 		setFilenameAction,
@@ -112,6 +114,7 @@ export function EditorPage() {
 
 			<div className={styles.right}>
 				<PreviewPane config={config} />
+				<SettingsPanel config={config} onPatchAction={patchConfigAction} />
 			</div>
 
 			<div className={styles.export}>
