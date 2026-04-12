@@ -12,6 +12,7 @@
     "test:coverage": "pnpm --filter ./packages/codegloss test:coverage",
     "test:examples": "pnpm --filter './examples/*' test",
     "test:e2e": "pnpm build:packages && pnpm --filter @codegloss/e2e test",
+    "test:e2e-site": "pnpm --filter @codegloss/e2e-site test",
     "lint": "xo",
     "lint:fix": "xo --fix",
     "format": "prettier --write .",

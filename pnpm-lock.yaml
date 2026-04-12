@@ -425,6 +425,15 @@ importers:
         specifier: ^14.1.1
         version: 14.1.1
 
+  test/e2e-site:
+    devDependencies:
+      '@axe-core/playwright':
+        specifier: ^4.11.1
+        version: 4.11.1(playwright-core@1.59.1)
+      '@playwright/test':
+        specifier: ^1.49.0
+        version: 1.59.1
+
 packages:
 
   '@algolia/abtesting@1.16.1':
