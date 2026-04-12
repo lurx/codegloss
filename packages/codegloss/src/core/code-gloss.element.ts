@@ -3,9 +3,21 @@ import { buildThemeCss } from '../themes/theme-css.helpers';
 import {
 	CALLOUT_TRANSITION_MS,
 	COPY_FEEDBACK_MS,
+	CUSTOM_ELEMENT_NAME,
 	GUTTER_WIDTH,
 	RESIZE_DEBOUNCE_MS,
 } from './code-gloss.constants';
+import {
+	CHECK_ICON,
+	COPIED_LABEL,
+	COPIED_TITLE,
+	COPY_ICON,
+	COPY_LABEL,
+	FALLBACK_ERROR_HTML,
+	OUTPUT_LABEL,
+	RUN_AGAIN_LABEL,
+	RUN_LABEL,
+} from './code-gloss.strings';
 import { escapeHtml } from './escape-html.util';
 import { injectAnnotationsIntoHtml } from './inject-annotations.helpers';
 import { drawArcs } from './render/arcs.helpers';
@@ -20,9 +32,6 @@ import type {
 	Highlighter,
 	RunResult,
 } from './code-gloss.types';
-
-const COPY_ICON = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
-const CHECK_ICON = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
 
 // SSR-safe HTMLElement stub. The real class is only ever instantiated in
 // the browser (via customElements.define inside defineCodeGloss).
@@ -94,8 +103,7 @@ export class CodeGlossElement extends SafeHTMLElement {
 		this.config = this.readConfig();
 
 		if (!this.config) {
-			this.shadow.innerHTML =
-				'<div style="color:#c00;font-family:monospace;font-size:12px">[code-gloss] missing or invalid config</div>';
+			this.shadow.innerHTML = FALLBACK_ERROR_HTML;
 			return;
 		}
 
@@ -253,8 +261,8 @@ export class CodeGlossElement extends SafeHTMLElement {
 		this.copyBtn = document.createElement('button');
 		this.copyBtn.type = 'button';
 		this.copyBtn.className = 'copyButton';
-		this.copyBtn.setAttribute('aria-label', 'Copy code');
-		this.copyBtn.title = 'Copy code';
+		this.copyBtn.setAttribute('aria-label', COPY_LABEL);
+		this.copyBtn.title = COPY_LABEL;
 		this.copyBtn.innerHTML = COPY_ICON;
 		right.append(this.copyBtn);
 
@@ -263,7 +271,7 @@ export class CodeGlossElement extends SafeHTMLElement {
 			const runBtn = document.createElement('button');
 			runBtn.type = 'button';
 			runBtn.className = 'runButton';
-			runBtn.textContent = '▶ Run';
+			runBtn.textContent = RUN_LABEL;
 			runBtn.addEventListener('click', () => this.handleRun(runBtn));
 			right.append(runBtn);
 		}
@@ -425,13 +433,13 @@ export class CodeGlossElement extends SafeHTMLElement {
 		if (!this.config) return;
 		void navigator.clipboard.writeText(this.config.code);
 		this.copyBtn.innerHTML = CHECK_ICON;
-		this.copyBtn.setAttribute('aria-label', 'Copied');
-		this.copyBtn.title = 'Copied!';
+		this.copyBtn.setAttribute('aria-label', COPIED_LABEL);
+		this.copyBtn.title = COPIED_TITLE;
 		if (this.copyTimer) clearTimeout(this.copyTimer);
 		this.copyTimer = setTimeout(() => {
 			this.copyBtn.innerHTML = COPY_ICON;
-			this.copyBtn.setAttribute('aria-label', 'Copy code');
-			this.copyBtn.title = 'Copy code';
+			this.copyBtn.setAttribute('aria-label', COPY_LABEL);
+			this.copyBtn.title = COPY_LABEL;
 		}, COPY_FEEDBACK_MS);
 	}
 
@@ -439,7 +447,7 @@ export class CodeGlossElement extends SafeHTMLElement {
 		if (!this.config) return;
 		const result = run(this.config.lang, this.config.code);
 		this.renderOutput(result);
-		runBtn.textContent = '↻ Run again';
+		runBtn.textContent = RUN_AGAIN_LABEL;
 	}
 
 	private renderOutput(result: RunResult): void {
@@ -448,7 +456,7 @@ export class CodeGlossElement extends SafeHTMLElement {
 
 		const label = document.createElement('span');
 		label.className = 'outputLabel';
-		label.textContent = 'Output';
+		label.textContent = OUTPUT_LABEL;
 		this.outputEl.append(label);
 
 		for (const line of result.lines) {
@@ -525,7 +533,7 @@ export class CodeGlossElement extends SafeHTMLElement {
 
 export function defineCodeGloss(): void {
 	if (typeof customElements === 'undefined') return;
-	if (!customElements.get('code-gloss')) {
-		customElements.define('code-gloss', CodeGlossElement);
+	if (!customElements.get(CUSTOM_ELEMENT_NAME)) {
+		customElements.define(CUSTOM_ELEMENT_NAME, CodeGlossElement);
 	}
 }
