@@ -94,6 +94,12 @@
 	color: var(--site-fg);
 }
 
+.preview {
+	max-height: 320px;
+	overflow: auto;
+	border-radius: 6px;
+}
+
 .configHeader {
 	display: flex;
 	align-items: center;

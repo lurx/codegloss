@@ -12,6 +12,7 @@ import {
 } from './settings-dialog.helpers';
 import { exportConfigFile } from '../../helpers/export-config-file.helpers';
 import { HighlightedCode } from '../highlighted-code';
+import { PreviewPane } from '../preview-pane';
 import styles from './settings-dialog.module.scss';
 
 const COPIED_RESET_MS = 1200;
@@ -214,6 +215,13 @@ export function SettingsDialog({
 					/>{' '}
 					popover by default
 				</label>
+			</div>
+
+			<div className={styles.section}>
+				<span className={styles.sectionTitle}>Preview</span>
+				<div className={styles.preview}>
+					<PreviewPane config={config} />
+				</div>
 			</div>
 
 			<div className={styles.section}>
