@@ -168,7 +168,9 @@ delegate(
 
 ## Data Flow — Right-side arrows
 
-Connections can render on the right side of the code block via `"side": "right"`, anchored at each line's end rather than in the fixed gutter. Combined with `"arcs": { "arrowhead": true }`, right-side arcs become explicit flow indicators — the arrow points at the `to` endpoint.
+Connections can render on the right side of the code block via [`"side": "right"`](/docs/api#connection), anchored at each line's end rather than in the fixed gutter. Combined with [`"arcs": { "arrowhead": true }`](/docs/api#arc-style-options), arcs become explicit flow indicators — the arrow points at the `to` endpoint, the `from` endpoint stays a dot.
+
+`arrowhead` is set **per block**, not per connection — the example below applies arrowheads to all three arcs, the two left-side ones (`q1→q2`, `q4→q2`) as well as the single right-side one (`q3→q5`).
 
 ```ts sandbox fetch-queue.ts
 async function processQueue(ids) {

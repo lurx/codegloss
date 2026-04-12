@@ -58,12 +58,12 @@ The React wrapper accepts the same props as the Web Component's JSON config:
 | `lang` | `string` | Language identifier (`js`, `ts`, `py`, etc.) |
 | `filename` | `string?` | Filename shown in the toolbar |
 | `annotations` | `Annotation[]?` | Token-level annotations |
-| `connections` | `Connection[]?` | Visual arcs between annotations |
+| `connections` | `Connection[]?` | Visual arcs between annotations. Each connection accepts an optional `side: 'left' \| 'right'` (default `'left'`). |
 | `runnable` | `boolean?` | Show the Run button (default: `true` if `lang === 'js'`) |
 | `theme` | `string?` | Named theme (`github-dark`, `dracula`, etc.) |
-| `arcs` | `object?` | Arc style overrides |
+| `arcs` | `object?` | Arc style overrides, including `arrowhead: true` for marker-end arrows at each `to` endpoint. |
 
-See [Component API](/docs/api) for full type definitions.
+See [Component API](/docs/api) for full type definitions and [Arc style options](/docs/api#arc-style-options) for every `arcs` field.
 
 ## How it works
 

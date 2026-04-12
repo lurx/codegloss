@@ -80,21 +80,24 @@ Clicking an annotated token expands an inline callout row directly below the lin
 
 ### Connection
 
-Draws a visual arc between two annotations in the line number gutter.
+Draws a visual arc between two annotations.
 
 ````ts
 type Connection = {
-  from: string;   // Source annotation ID
-  to: string;     // Target annotation ID
-  color: string;  // Hex color, e.g. "#534AB7"
-  title?: string; // Popover heading shown on click
-  text?: string;  // Popover body. Without it, the arc is not clickable.
+  from: string;              // Source annotation ID
+  to: string;                // Target annotation ID
+  color: string;             // Hex color, e.g. "#534AB7"
+  title?: string;            // Popover heading shown on click
+  text?: string;             // Popover body. Without it, the arc is not clickable.
+  side?: 'left' | 'right';   // Which side to render on. Default: 'left'.
 };
 ````
 
 When a connection has `text`, the arc and its endpoint dots become clickable. Clicking opens a popover (using the native [Popover API](https://developer.chrome.com/blog/introducing-popover-api)) with the title and text — useful for explaining *why* two pieces of code are related.
 
-Arcs render as dashed Bezier curves with dots at each endpoint. Multiple connections are offset horizontally to avoid overlap.
+Arcs render as dashed Bezier curves with dots at each endpoint. Multiple connections on the same side are offset to avoid overlap.
+
+**Sides.** `side: 'left'` (the default) renders the arc in the fixed 44-px left gutter, mirrored between the two annotation lines. `side: 'right'` anchors each endpoint at the rendered end of its line's text, so source and target dots sit at different X coordinates. Right-side arcs bend outward from the line ends and stack outward when multiple right-side arcs share lines. See [Examples → Data Flow](/docs/examples#data-flow--right-side-arrows) for a live demo.
 
 ## Custom syntax highlighting
 
@@ -186,6 +189,9 @@ Arcs are the Bezier curves drawn in the line number gutter connecting related an
 | `strokeWidth` | `number` | `1.5` | Arc stroke width in px |
 | `strokeDasharray` | `string` | `'4 3'` | SVG dash pattern, or `'none'` for solid |
 | `opacity` | `number` | `0.55` | Arc opacity (0–1) |
+| `arrowhead` | `boolean` | `false` | When `true`, the `to` endpoint renders as a colored SVG marker-end arrowhead instead of a dot. The `from` endpoint always stays a plain dot. |
+
+Arrowheads apply to both left- and right-side arcs and are per-block, not per-connection — setting `arrowhead: true` affects every connection rendered into the block.
 
 Arc styles can also be set per-block via the JSON config:
 
@@ -195,8 +201,11 @@ Arc styles can also be set per-block via the JSON config:
     {
       "code": "...",
       "lang": "js",
-      "arcs": { "strokeDasharray": "none", "opacity": 0.8 },
-      "connections": [...]
+      "arcs": { "strokeDasharray": "none", "arrowhead": true },
+      "connections": [
+        { "from": "a", "to": "b", "color": "#534AB7" },
+        { "from": "a", "to": "c", "color": "#00b894", "side": "right" }
+      ]
     }
   </script>
 </code-gloss>

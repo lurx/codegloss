@@ -104,6 +104,25 @@ code-gloss {
 
 Dark mode activates automatically via `prefers-color-scheme: dark`. To force a theme regardless of OS preference, use a named theme or override the variables on the host element directly.
 
+## Arc styles
+
+Arc visuals — dot radius, stroke width, dash pattern, opacity, and the optional arrowhead — are configured via `arcs` rather than CSS variables, since they're SVG attributes baked into each draw.
+
+````ts
+// codegloss.config.ts
+import { defineConfig } from 'codegloss/config';
+
+export default defineConfig({
+  theme: 'github-dark',
+  arcs: {
+    arrowhead: true,
+    strokeDasharray: 'none',
+  },
+});
+````
+
+Per-block overrides use the same shape on the JSON annotations block (remark pipelines) or the `arcs` prop (React / Vue / Svelte wrappers). See [Arc style options](/docs/api#arc-style-options) for the full field list.
+
 ## External highlighter interaction
 
 When using a custom `highlight` function (Shiki, Prism, etc.), the **syntax token colors** from the theme are unused — the external tool owns the token markup. Only the **chrome** portion of the theme applies (background, borders, annotations, toolbar).
