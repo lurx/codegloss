@@ -7,7 +7,7 @@ import { ThemeShowcase } from './theme-showcase.component';
 import { MdxTabs } from './mdx-tabs.component';
 import { UsageTabs } from './usage-tabs.component';
 import { CodeBlock } from './code-block.component';
-import { useSiteTheme } from '@/hooks/use-site-theme.hook';
+import { useSiteTheme } from '@/hooks';
 import codeglossConfig from '@/codegloss.config';
 
 import type { CodeGlossProps } from 'codegloss/react';

@@ -1,13 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import type { SiteTheme } from './use-site-theme.types';
 
 /**
  * Observes the `data-theme` attribute on `<html>` and returns the
  * current site color scheme. Reacts to changes from ThemeToggle.
  */
-export function useSiteTheme(): 'light' | 'dark' {
-	const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+export function useSiteTheme(): SiteTheme {
+	const [theme, setTheme] = useState<SiteTheme>('dark');
 
 	useEffect(() => {
 		const update = () => {

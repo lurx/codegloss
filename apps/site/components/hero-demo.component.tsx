@@ -2,7 +2,7 @@
 
 import { CodeGloss } from 'codegloss/react';
 import type { Annotation, Connection } from 'codegloss/react';
-import { useSiteTheme } from '@/hooks/use-site-theme.hook';
+import { useSiteTheme } from '@/hooks';
 import codeglossConfig from '@/codegloss.config';
 
 const CODE = `function fibonacci(n) {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
-import { useSiteTheme } from '@/hooks/use-site-theme.hook';
+import { useSiteTheme } from '@/hooks';
 import { CopyCodeButton } from './copy-code-button.component';
 import highlightedHtml from './usage-tabs-html.generated.json';
 import type { CopyableBlockProps, Tab } from './usage-tabs.types';
