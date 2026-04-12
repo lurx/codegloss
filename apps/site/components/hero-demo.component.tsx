@@ -18,7 +18,7 @@ const CODE = `function fibonacci(n) {
   return fib(n);
 }`;
 
-const ANNOTATIONS: Annotation[] = [
+const ANNOTATIONS = [
 	{
 		id: 'a1',
 		token: 'memo',
@@ -51,12 +51,12 @@ const ANNOTATIONS: Annotation[] = [
 		title: 'Recursive descent',
 		text: 'Splits the problem into overlapping subproblems.',
 	},
-];
+] satisfies Annotation[];
 
-const CONNECTIONS: Connection[] = [
+const CONNECTIONS = [
 	{ from: 'a1', to: 'a2', color: '#6c5ce7' },
 	{ from: 'a3', to: 'a2', color: '#00b894' },
-];
+] satisfies Connection[];
 
 const LIGHT_THEME = String(codeglossConfig.theme ?? '');
 const DARK_THEME = String(
