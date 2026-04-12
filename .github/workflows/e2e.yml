@@ -39,7 +39,7 @@ jobs:
         run: pnpm --filter @codegloss/e2e exec playwright install --with-deps ${{ matrix.browser }}
 
       - name: Run E2E tests
-        run: pnpm --filter @codegloss/e2e test -- --project=${{ matrix.browser }}
+        run: pnpm --filter @codegloss/e2e test --project=${{ matrix.browser }}
 
       - name: Upload traces on failure
         if: failure()
