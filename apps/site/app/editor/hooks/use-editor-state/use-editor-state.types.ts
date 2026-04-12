@@ -16,10 +16,15 @@ export type EditorConfig = Required<
 };
 
 export type EditorState = {
-	config: EditorConfig;
+	past: EditorConfig[];
+	present: EditorConfig;
+	future: EditorConfig[];
 };
 
 export type EditorAction =
+	| { kind: 'hydrate'; value: EditorConfig }
+	| { kind: 'undo' }
+	| { kind: 'redo' }
 	| { kind: 'replaceConfig'; value: EditorConfig }
 	| { kind: 'patchConfig'; value: Partial<EditorConfig> }
 	| { kind: 'setCode'; value: string }
@@ -35,6 +40,10 @@ export type EditorAction =
 
 export type UseEditorStateResult = {
 	config: EditorConfig;
+	canUndo: boolean;
+	canRedo: boolean;
+	undoAction: () => void;
+	redoAction: () => void;
 	replaceConfigAction: (value: EditorConfig) => void;
 	patchConfigAction: (value: Partial<EditorConfig>) => void;
 	setCodeAction: (value: string) => void;

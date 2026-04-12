@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
 import type {
 	EditorAction,
 	EditorConfig,
@@ -7,6 +7,7 @@ import type {
 } from './use-editor-state.types';
 
 const STORAGE_KEY = 'codegloss:editor:draft';
+const MAX_HISTORY = 20;
 
 function loadPersistedConfig(): EditorConfig | null {
 	if (typeof window === 'undefined') return null;
@@ -42,76 +43,108 @@ const INITIAL_CODE = `function greet(name) {
   return message;
 }`;
 
-const INITIAL_STATE = {
-	config: {
-		code: INITIAL_CODE,
-		lang: 'js',
-		filename: 'greet.js',
-		runnable: true,
-		annotations: [],
-		connections: [],
-	},
-} satisfies EditorState;
+const INITIAL_PRESENT: EditorConfig = {
+	code: INITIAL_CODE,
+	lang: 'js',
+	filename: 'greet.js',
+	runnable: true,
+	annotations: [],
+	connections: [],
+};
 
-function reducer(state: EditorState, action: EditorAction): EditorState {
-	const { config } = state;
+const INITIAL_STATE: EditorState = {
+	past: [],
+	present: INITIAL_PRESENT,
+	future: [],
+};
+
+function applyToPresent(
+	present: EditorConfig,
+	action: EditorAction,
+): EditorConfig {
 	switch (action.kind) {
 		case 'replaceConfig':
-			return { config: action.value };
+			return action.value;
 		case 'patchConfig':
-			return { config: { ...config, ...action.value } };
+			return { ...present, ...action.value };
 		case 'setCode':
-			return { config: { ...config, code: action.value } };
+			return { ...present, code: action.value };
 		case 'setLang':
-			return { config: { ...config, lang: action.value } };
+			return { ...present, lang: action.value };
 		case 'setFilename':
-			return { config: { ...config, filename: action.value } };
+			return { ...present, filename: action.value };
 		case 'setRunnable':
-			return { config: { ...config, runnable: action.value } };
+			return { ...present, runnable: action.value };
 		case 'addAnnotation':
 			return {
-				config: {
-					...config,
-					annotations: [...config.annotations, action.value],
-				},
+				...present,
+				annotations: [...present.annotations, action.value],
 			};
 		case 'updateAnnotation': {
-			const annotations = config.annotations.slice();
+			const annotations = present.annotations.slice();
 			annotations[action.index] = action.value;
-			return { config: { ...config, annotations } };
+			return { ...present, annotations };
 		}
 		case 'removeAnnotation': {
-			const removed = config.annotations[action.index];
-			const annotations = config.annotations.filter(
+			const removed = present.annotations[action.index];
+			const annotations = present.annotations.filter(
 				(_, i) => i !== action.index,
 			);
 			const connections = removed
-				? config.connections.filter(
+				? present.connections.filter(
 						(c) => c.from !== removed.id && c.to !== removed.id,
 					)
-				: config.connections;
-			return { config: { ...config, annotations, connections } };
+				: present.connections;
+			return { ...present, annotations, connections };
 		}
 		case 'addConnection':
 			return {
-				config: {
-					...config,
-					connections: [...config.connections, action.value],
-				},
+				...present,
+				connections: [...present.connections, action.value],
 			};
 		case 'updateConnection': {
-			const connections = config.connections.slice();
+			const connections = present.connections.slice();
 			connections[action.index] = action.value;
-			return { config: { ...config, connections } };
+			return { ...present, connections };
 		}
 		case 'removeConnection':
 			return {
-				config: {
-					...config,
-					connections: config.connections.filter((_, i) => i !== action.index),
-				},
+				...present,
+				connections: present.connections.filter((_, i) => i !== action.index),
 			};
+		case 'hydrate':
+		case 'undo':
+		case 'redo':
+			return present;
 	}
+}
+
+function reducer(state: EditorState, action: EditorAction): EditorState {
+	if (action.kind === 'hydrate') {
+		return { past: [], present: action.value, future: [] };
+	}
+	if (action.kind === 'undo') {
+		if (state.past.length === 0) return state;
+		const previous = state.past[state.past.length - 1];
+		return {
+			past: state.past.slice(0, -1),
+			present: previous,
+			future: [state.present, ...state.future],
+		};
+	}
+	if (action.kind === 'redo') {
+		if (state.future.length === 0) return state;
+		const [next, ...rest] = state.future;
+		return {
+			past: [...state.past, state.present],
+			present: next,
+			future: rest,
+		};
+	}
+	const nextPresent = applyToPresent(state.present, action);
+	if (nextPresent === state.present) return state;
+	const nextPast = [...state.past, state.present].slice(-MAX_HISTORY);
+	return { past: nextPast, present: nextPresent, future: [] };
 }
 
 export function useEditorState(): UseEditorStateResult {
@@ -120,15 +153,17 @@ export function useEditorState(): UseEditorStateResult {
 
 	useEffect(() => {
 		const persisted = loadPersistedConfig();
-		if (persisted) dispatch({ kind: 'replaceConfig', value: persisted });
+		if (persisted) dispatch({ kind: 'hydrate', value: persisted });
 		hydratedRef.current = true;
 	}, []);
 
 	useEffect(() => {
 		if (!hydratedRef.current) return;
-		writePersistedConfig(state.config);
-	}, [state.config]);
+		writePersistedConfig(state.present);
+	}, [state.present]);
 
+	const undoAction = useCallback(() => dispatch({ kind: 'undo' }), []);
+	const redoAction = useCallback(() => dispatch({ kind: 'redo' }), []);
 	const replaceConfigAction = useCallback<
 		UseEditorStateResult['replaceConfigAction']
 	>((value) => dispatch({ kind: 'replaceConfig', value }), []);
@@ -172,19 +207,47 @@ export function useEditorState(): UseEditorStateResult {
 		[],
 	);
 
-	return {
-		config: state.config,
-		replaceConfigAction,
-		patchConfigAction,
-		setCodeAction,
-		setLangAction,
-		setFilenameAction,
-		setRunnableAction,
-		addAnnotationAction,
-		updateAnnotationAction,
-		removeAnnotationAction,
-		addConnectionAction,
-		updateConnectionAction,
-		removeConnectionAction,
-	};
+	const canUndo = state.past.length > 0;
+	const canRedo = state.future.length > 0;
+
+	return useMemo(
+		() => ({
+			config: state.present,
+			canUndo,
+			canRedo,
+			undoAction,
+			redoAction,
+			replaceConfigAction,
+			patchConfigAction,
+			setCodeAction,
+			setLangAction,
+			setFilenameAction,
+			setRunnableAction,
+			addAnnotationAction,
+			updateAnnotationAction,
+			removeAnnotationAction,
+			addConnectionAction,
+			updateConnectionAction,
+			removeConnectionAction,
+		}),
+		[
+			state.present,
+			canUndo,
+			canRedo,
+			undoAction,
+			redoAction,
+			replaceConfigAction,
+			patchConfigAction,
+			setCodeAction,
+			setLangAction,
+			setFilenameAction,
+			setRunnableAction,
+			addAnnotationAction,
+			updateAnnotationAction,
+			removeAnnotationAction,
+			addConnectionAction,
+			updateConnectionAction,
+			removeConnectionAction,
+		],
+	);
 }
