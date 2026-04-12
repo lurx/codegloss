@@ -82,8 +82,7 @@
 	position: sticky;
 	top: calc(3.5rem + 16px);
 	align-self: start;
-	max-height: calc(100vh - 3.5rem - 32px);
-	overflow: auto;
+	height: calc(100vh - 3.5rem - 32px);
 }
 
 .panels {
@@ -114,7 +113,6 @@
 
 	.right {
 		position: static;
-		max-height: none;
-		overflow: visible;
+		height: auto;
 	}
 }
