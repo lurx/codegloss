@@ -2,19 +2,12 @@
 
 import { useMemo } from 'react';
 import { CodeGloss } from 'codegloss/react';
-import { useSiteTheme } from '@/hooks';
-import codeglossConfig from '@/codegloss.config';
 import type { PreviewPaneProps } from './preview-pane.types';
+import { useCodeglossTheme } from '../../hooks/use-codegloss-theme';
 import styles from './preview-pane.module.scss';
 
-const LIGHT_THEME = String(codeglossConfig.theme ?? '');
-const DARK_THEME = String(
-	codeglossConfig.darkTheme ?? codeglossConfig.theme ?? '',
-);
-
 export function PreviewPane({ config }: Readonly<PreviewPaneProps>) {
-	const siteTheme = useSiteTheme();
-	const theme = siteTheme === 'dark' ? DARK_THEME : LIGHT_THEME;
+	const theme = useCodeglossTheme();
 
 	const remountKey = useMemo(
 		() => JSON.stringify({ ...config, theme }),
