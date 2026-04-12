@@ -6,6 +6,7 @@ import { Check, Copy } from 'lucide-react';
 import type { ExportPanelProps } from './export-panel.types';
 import type { ExportFormat } from './export-panel.constants';
 import { EXPORT_FORMATS } from './export-panel.constants';
+import { HighlightedCode } from '../highlighted-code';
 import styles from './export-panel.module.scss';
 
 const COPIED_RESET_MS = 1200;
@@ -19,10 +20,12 @@ export function ExportPanel({ config }: Readonly<ExportPanelProps>) {
 	const [active, setActive] = useState<ExportFormat>('json');
 	const [copied, setCopied] = useState(false);
 
-	const output = useMemo(() => {
-		const entry = EXPORT_FORMATS.find((f) => f.id === active);
-		return entry ? entry.render(config) : '';
-	}, [active, config]);
+	const activeEntry = EXPORT_FORMATS.find((f) => f.id === active);
+	const activeLang = activeEntry?.lang ?? 'json';
+	const output = useMemo(
+		() => (activeEntry ? activeEntry.render(config) : ''),
+		[activeEntry, config],
+	);
 
 	const handleCopy = useCallback(async () => {
 		try {
@@ -83,7 +86,7 @@ export function ExportPanel({ config }: Readonly<ExportPanelProps>) {
 					)}
 				</button>
 			</div>
-			<pre className={styles.output}>{output}</pre>
+			<HighlightedCode code={output} lang={activeLang} />
 		</div>
 	);
 }

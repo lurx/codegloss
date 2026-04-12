@@ -1,7 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ChangeEvent, SyntheticEvent } from 'react';
+import { Check, Copy } from 'lucide-react';
 import type { SettingsDialogProps } from './settings-dialog.types';
 import { AUTO_THEME_VALUE, THEME_OPTIONS } from './settings-dialog.constants';
 import {
@@ -9,7 +10,11 @@ import {
 	patchArcs,
 	patchCallouts,
 } from './settings-dialog.helpers';
+import { exportConfigFile } from '../../helpers/export-config-file.helpers';
+import { HighlightedCode } from '../highlighted-code';
 import styles from './settings-dialog.module.scss';
+
+const COPIED_RESET_MS = 1200;
 
 export function SettingsDialog({
 	open,
@@ -18,8 +23,21 @@ export function SettingsDialog({
 	onPatchAction,
 }: Readonly<SettingsDialogProps>) {
 	const dialogRef = useRef<HTMLDialogElement | null>(null);
+	const [copied, setCopied] = useState(false);
 	const arcs = config.arcs ?? {};
 	const callouts = config.callouts ?? {};
+
+	const configFile = useMemo(() => exportConfigFile(config), [config]);
+
+	const handleCopyConfig = useCallback(async () => {
+		try {
+			await navigator.clipboard.writeText(configFile);
+			setCopied(true);
+			window.setTimeout(() => setCopied(false), COPIED_RESET_MS);
+		} catch {
+			setCopied(false);
+		}
+	}, [configFile]);
 
 	useEffect(() => {
 		const dialog = dialogRef.current;
@@ -196,6 +214,28 @@ export function SettingsDialog({
 					/>{' '}
 					popover by default
 				</label>
+			</div>
+
+			<div className={styles.section}>
+				<div className={styles.configHeader}>
+					<span className={styles.sectionTitle}>codegloss.config.ts</span>
+					<button
+						type="button"
+						className={styles.copyButton}
+						onClick={handleCopyConfig}
+					>
+						{copied ? (
+							<>
+								<Check size={14} aria-hidden="true" /> Copied
+							</>
+						) : (
+							<>
+								<Copy size={14} aria-hidden="true" /> Copy
+							</>
+						)}
+					</button>
+				</div>
+				<HighlightedCode code={configFile} lang="ts" />
 			</div>
 
 			<div className={styles.footer}>

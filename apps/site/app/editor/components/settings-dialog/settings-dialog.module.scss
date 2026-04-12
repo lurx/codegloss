@@ -94,6 +94,45 @@
 	color: var(--site-fg);
 }
 
+.configHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.copyButton {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	background: var(--site-bg);
+	color: var(--site-fg);
+	border: 1px solid var(--site-border);
+	border-radius: 6px;
+	padding: 4px 10px;
+	font-size: 1rem;
+	cursor: pointer;
+
+	&:hover {
+		border-color: var(--accent);
+	}
+}
+
+.configOutput {
+	background: var(--site-pre-bg);
+	color: var(--site-pre-fg);
+	border: 1px solid var(--site-border);
+	border-radius: 6px;
+	padding: 10px;
+	font-family: var(--font-mono);
+	font-size: 1rem;
+	line-height: 1.5;
+	max-height: 220px;
+	overflow: auto;
+	margin: 0;
+	white-space: pre;
+}
+
 .footer {
 	display: flex;
 	justify-content: flex-end;

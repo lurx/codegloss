@@ -1,0 +1,34 @@
+.root {
+	font-family: var(--font-mono);
+	font-size: 1rem;
+	line-height: 1.5;
+	margin: 0;
+
+	:global(pre.shiki) {
+		margin: 0;
+		padding: 10px;
+		border-radius: 6px;
+		background: var(--site-pre-bg) !important;
+		overflow: auto;
+		max-height: 320px;
+	}
+
+	:global(pre.shiki code) {
+		font-family: inherit;
+	}
+}
+
+.fallback {
+	font-family: var(--font-mono);
+	font-size: 1rem;
+	line-height: 1.5;
+	background: var(--site-pre-bg);
+	color: var(--site-pre-fg);
+	border: 1px solid var(--site-border);
+	border-radius: 6px;
+	padding: 10px;
+	max-height: 320px;
+	overflow: auto;
+	margin: 0;
+	white-space: pre;
+}
