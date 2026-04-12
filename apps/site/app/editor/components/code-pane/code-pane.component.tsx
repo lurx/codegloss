@@ -69,6 +69,7 @@ export function CodePane({
 				value={code}
 				onChange={handleCodeChange}
 				spellCheck={false}
+				aria-label="Code"
 			/>
 		</div>
 	);
