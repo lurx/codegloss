@@ -19,14 +19,14 @@ export function detectSandboxPair(
 	children: unknown[],
 	index: number,
 ): DetectedPair | undefined {
-	const node = children[index] as Code;
+	const node = children[index] as Code | undefined;
 
-	if (node.type !== 'code') return null;
+	if (node?.type !== 'code') return undefined;
 
 	const langMeta = [node.lang, node.meta].filter(Boolean).join(' ');
 	const match = SANDBOX_PATTERN.exec(langMeta);
 
-	if (!match) return null;
+	if (!match) return undefined;
 
 	const lang = match[1];
 	const filename = match[2] || undefined;

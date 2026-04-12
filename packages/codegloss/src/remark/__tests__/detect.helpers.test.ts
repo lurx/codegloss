@@ -16,20 +16,20 @@ const paragraph: Paragraph = {
 };
 
 describe('detectSandboxPair', () => {
-	it('returns null for a non-code node', () => {
-		expect(detectSandboxPair([paragraph], 0)).toBeNull();
+	it('returns undefined for a non-code node', () => {
+		expect(detectSandboxPair([paragraph], 0)).toBeUndefined();
 	});
 
-	it('returns null for a plain code fence with no sandbox marker', () => {
+	it('returns undefined for a plain code fence with no sandbox marker', () => {
 		expect(
 			detectSandboxPair([code({ lang: 'js', value: 'let x = 1' })], 0),
-		).toBeNull();
+		).toBeUndefined();
 	});
 
-	it('returns null when the lang is sandbox-shaped but missing the sandbox keyword', () => {
+	it('returns undefined when the lang is sandbox-shaped but missing the sandbox keyword', () => {
 		expect(
 			detectSandboxPair([code({ lang: 'js', meta: 'foo' })], 0),
-		).toBeNull();
+		).toBeUndefined();
 	});
 
 	it('detects a sandbox fence with no filename and no annotations', () => {
