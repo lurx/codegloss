@@ -39,6 +39,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
               <Link href="/docs/getting-started" className="nav-link">
                 Docs
               </Link>
+              <Link href="/editor" className="nav-link">
+                Editor
+              </Link>
               <a
                 href="https://github.com/lurx/codegloss"
                 target="_blank"
