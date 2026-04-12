@@ -51,7 +51,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             </div>
           </div>
         </nav>
-        <div style={{ paddingTop: '3.5rem' }}>{children}</div>
+        <div className="nav-offset">{children}</div>
       </body>
     </html>
   );
