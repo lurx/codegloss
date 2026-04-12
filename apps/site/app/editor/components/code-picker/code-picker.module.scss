@@ -4,7 +4,7 @@
 	border-radius: 8px;
 	padding: 12px;
 	font-family: var(--font-mono);
-	font-size: 13px;
+	font-size: 1.0625rem;
 	line-height: 1.55;
 	overflow: auto;
 	max-height: 320px;
@@ -20,7 +20,7 @@
 
 .heading {
 	font-family: var(--font-sans);
-	font-size: 12px;
+	font-size: 1rem;
 	font-weight: 600;
 	color: var(--site-heading);
 	letter-spacing: 0.02em;
@@ -29,7 +29,7 @@
 
 .hint {
 	font-family: var(--font-sans);
-	font-size: 11px;
+	font-size: 1rem;
 	color: var(--site-muted);
 }
 
@@ -61,7 +61,7 @@
 .error {
 	color: var(--site-muted);
 	font-family: var(--font-sans);
-	font-size: 12px;
+	font-size: 1rem;
 	padding: 8px 0;
 }
 

@@ -23,7 +23,7 @@
 	border: 1px solid transparent;
 	border-bottom-color: var(--site-border);
 	padding: 4px 10px;
-	font-size: 12px;
+	font-size: 1rem;
 	cursor: pointer;
 	font-family: var(--font-sans);
 	border-radius: 6px 6px 0 0;
@@ -42,7 +42,7 @@
 	border: 1px solid var(--site-border);
 	border-radius: 6px;
 	padding: 4px 10px;
-	font-size: 12px;
+	font-size: 1rem;
 	cursor: pointer;
 
 	&:hover {
@@ -57,7 +57,7 @@
 	border-radius: 8px;
 	padding: 10px;
 	font-family: var(--font-mono);
-	font-size: 12px;
+	font-size: 1rem;
 	line-height: 1.5;
 	max-height: 280px;
 	overflow: auto;

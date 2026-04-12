@@ -15,7 +15,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
-	font-size: 12px;
+	font-size: 1rem;
 	color: var(--site-muted);
 }
 
@@ -26,7 +26,7 @@
 	border-radius: 6px;
 	padding: 6px 8px;
 	font-family: var(--font-sans);
-	font-size: 13px;
+	font-size: 1.0625rem;
 
 	&:focus {
 		outline: none;
@@ -40,7 +40,7 @@
 	gap: 6px;
 	align-self: flex-end;
 	color: var(--site-fg);
-	font-size: 13px;
+	font-size: 1.0625rem;
 }
 
 .codeArea {
@@ -52,7 +52,7 @@
 	border-radius: 8px;
 	padding: 12px;
 	font-family: var(--font-mono);
-	font-size: 13px;
+	font-size: 1.0625rem;
 	line-height: 1.55;
 	resize: vertical;
 

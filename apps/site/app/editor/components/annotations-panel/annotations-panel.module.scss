@@ -13,7 +13,7 @@
 }
 
 .heading {
-	font-size: 13px;
+	font-size: 1.0625rem;
 	font-weight: 600;
 	color: var(--site-heading);
 	letter-spacing: 0.02em;
@@ -26,7 +26,7 @@
 	border: 1px solid var(--accent);
 	border-radius: 6px;
 	padding: 4px 10px;
-	font-size: 12px;
+	font-size: 1rem;
 	cursor: pointer;
 
 	&:hover {
@@ -44,7 +44,7 @@
 
 .empty {
 	color: var(--site-muted);
-	font-size: 12px;
+	font-size: 1rem;
 	padding: 16px;
 	text-align: center;
 	border: 1px dashed var(--site-border);
@@ -113,7 +113,7 @@
 }
 
 .dragHint {
-	font-size: 11px;
+	font-size: 1rem;
 	color: var(--accent-light);
 	padding: 4px 10px;
 	background: var(--accent-subtle);
@@ -139,7 +139,7 @@
 	border: 1px solid var(--site-border);
 	border-radius: 6px;
 	padding: 4px 8px;
-	font-size: 12px;
+	font-size: 1rem;
 	cursor: pointer;
 
 	&:hover {
@@ -161,7 +161,7 @@
 	border-radius: 6px;
 	padding: 4px 6px;
 	font-family: var(--font-mono);
-	font-size: 12px;
+	font-size: 1rem;
 	width: 100%;
 	min-width: 0;
 
@@ -178,7 +178,7 @@
 	border-radius: 6px;
 	padding: 4px 6px;
 	font-family: var(--font-sans);
-	font-size: 12px;
+	font-size: 1rem;
 	width: 100%;
 	min-width: 0;
 	resize: vertical;
@@ -193,6 +193,6 @@
 .toggleRow {
 	display: flex;
 	gap: 12px;
-	font-size: 12px;
+	font-size: 1rem;
 	color: var(--site-muted);
 }
