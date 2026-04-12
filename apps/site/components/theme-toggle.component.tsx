@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Sun, Moon } from 'lucide-react';
-
-type ColorScheme = 'light' | 'dark';
+import type { ColorScheme } from './theme-toggle.types';
 
 const STORAGE_KEY = 'codegloss-color-scheme';
 

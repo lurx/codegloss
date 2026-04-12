@@ -1,6 +1,4 @@
-type LogoProps = {
-  size?: number;
-};
+import type { LogoProps } from './logo.types';
 
 export function Logo({ size = 28 }: LogoProps) {
   return (

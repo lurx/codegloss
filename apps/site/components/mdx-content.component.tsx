@@ -11,6 +11,7 @@ import { useSiteTheme } from '@/hooks/use-site-theme.hook';
 import codeglossConfig from '@/codegloss.config';
 
 import type { CodeGlossProps } from 'codegloss/react';
+import type { MdxContentProps } from './mdx-content.types';
 
 function CodeGlossWithTabs(props: CodeGlossProps) {
   const [tab, setTab] = useState<'sandbox' | 'source'>('sandbox');
@@ -67,10 +68,6 @@ const MDX_COMPONENTS = {
   MdxTabs,
   UsageTabs,
   pre: CodeBlock,
-};
-
-type MdxContentProps = {
-  code: string;
 };
 
 function useMDXComponent(code: string) {

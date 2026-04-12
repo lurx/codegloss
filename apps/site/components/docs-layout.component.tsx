@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import type { DocsLayoutProps } from './docs-layout.types';
 
 const SIDEBAR = [
   { title: 'Overview', items: [
@@ -22,10 +23,6 @@ const SIDEBAR = [
     { label: 'Astro / Starlight', slug: 'setup/astro' },
   ]},
 ] as const;
-
-type DocsLayoutProps = {
-  children: React.ReactNode;
-};
 
 export function DocsLayout({ children }: DocsLayoutProps) {
   const pathname = usePathname();

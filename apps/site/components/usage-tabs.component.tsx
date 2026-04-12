@@ -4,19 +4,7 @@ import { useState, useRef, useCallback } from 'react';
 import { useSiteTheme } from '@/hooks/use-site-theme.hook';
 import { CopyCodeButton } from './copy-code-button.component';
 import highlightedHtml from './usage-tabs-html.generated.json';
-
-type CodeBlockEntry = {
-	/** Key in the generated JSON */
-	htmlKey: string;
-	/** Optional label shown above the block */
-	label?: string;
-};
-
-type Tab = {
-	label: string;
-	content: string;
-	blocks: CodeBlockEntry[];
-};
+import type { CopyableBlockProps, Tab } from './usage-tabs.types';
 
 const TABS: Tab[] = [
 	{
@@ -57,13 +45,7 @@ const htmlData = highlightedHtml as Record<
 	Record<string, string>
 >;
 
-function CopyableBlock({
-	html,
-	label,
-}: {
-	html: string;
-	label?: string;
-}) {
+function CopyableBlock({ html, label }: CopyableBlockProps) {
 	const codeRef = useRef<HTMLDivElement>(null);
 
 	const getText = useCallback(() => codeRef.current?.textContent ?? '', []);

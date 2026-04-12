@@ -1,15 +1,7 @@
 'use client';
 
-import { useState, type ReactNode } from 'react';
-
-type TabItem = {
-	label: string;
-	children: ReactNode;
-};
-
-type MdxTabsProps = {
-	items: TabItem[];
-};
+import { useState } from 'react';
+import type { MdxTabsProps } from './mdx-tabs.types';
 
 export function MdxTabs({ items }: MdxTabsProps) {
 	const [active, setActive] = useState(0);

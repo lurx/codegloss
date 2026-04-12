@@ -1,12 +1,8 @@
 'use client';
 
-import { useRef, type ReactNode } from 'react';
+import { useRef } from 'react';
 import { CopyCodeButton } from './copy-code-button.component';
-
-type CodeBlockProps = {
-	children: ReactNode;
-	className?: string;
-};
+import type { CodeBlockProps } from './code-block.types';
 
 export function CodeBlock({ children, ...rest }: CodeBlockProps) {
 	const preRef = useRef<HTMLPreElement>(null);
