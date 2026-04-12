@@ -1,5 +1,6 @@
 # codegloss
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=lurx_codegloss&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=lurx_codegloss)
 [![Unit tests](https://github.com/lurx/codegloss/actions/workflows/unit.yml/badge.svg)](https://github.com/lurx/codegloss/actions/workflows/unit.yml)
 [![Integration tests](https://github.com/lurx/codegloss/actions/workflows/integration.yml/badge.svg)](https://github.com/lurx/codegloss/actions/workflows/integration.yml)
 [![codecov](https://codecov.io/gh/lurx/codegloss/branch/main/graph/badge.svg)](https://codecov.io/gh/lurx/codegloss)
