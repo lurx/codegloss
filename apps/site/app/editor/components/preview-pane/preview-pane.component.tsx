@@ -7,7 +7,8 @@ import { useCodeglossTheme } from '../../hooks/use-codegloss-theme';
 import styles from './preview-pane.module.scss';
 
 export function PreviewPane({ config }: Readonly<PreviewPaneProps>) {
-	const theme = useCodeglossTheme();
+	const siteTheme = useCodeglossTheme();
+	const theme = config.theme || siteTheme;
 
 	const remountKey = useMemo(
 		() => JSON.stringify({ ...config, theme }),
@@ -24,6 +25,8 @@ export function PreviewPane({ config }: Readonly<PreviewPaneProps>) {
 				runnable={config.runnable}
 				annotations={config.annotations}
 				connections={config.connections}
+				arcs={config.arcs}
+				callouts={config.callouts}
 				theme={theme}
 			/>
 		</div>

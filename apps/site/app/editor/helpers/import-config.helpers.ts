@@ -7,6 +7,9 @@ type RawPayload = {
 	lang?: unknown;
 	filename?: unknown;
 	runnable?: unknown;
+	theme?: unknown;
+	arcs?: unknown;
+	callouts?: unknown;
 	annotations?: unknown;
 	connections?: unknown;
 };
@@ -35,6 +38,15 @@ function coerceConfig(raw: RawPayload): EditorConfig {
 		filename: typeof raw.filename === 'string' ? raw.filename : undefined,
 		runnable:
 			typeof raw.runnable === 'boolean' ? raw.runnable : undefined,
+		theme: typeof raw.theme === 'string' ? raw.theme : undefined,
+		arcs:
+			raw.arcs && typeof raw.arcs === 'object'
+				? (raw.arcs as EditorConfig['arcs'])
+				: undefined,
+		callouts:
+			raw.callouts && typeof raw.callouts === 'object'
+				? (raw.callouts as EditorConfig['callouts'])
+				: undefined,
 		annotations,
 		connections,
 	};
@@ -62,6 +74,8 @@ function parseMdx(input: string): EditorConfig {
 		filename: filename?.trim() || undefined,
 		annotations: annotationsPayload.annotations,
 		connections: annotationsPayload.connections,
+		arcs: annotationsPayload.arcs,
+		callouts: annotationsPayload.callouts,
 	});
 }
 
@@ -162,6 +176,9 @@ function parseJsx(input: string): EditorConfig {
 		lang: pickString('lang'),
 		filename: pickString('filename'),
 		runnable: resolveRunnable(attrs),
+		theme: pickString('theme'),
+		arcs: pickJson('arcs'),
+		callouts: pickJson('callouts'),
 		annotations: pickJson('annotations'),
 		connections: pickJson('connections'),
 	});

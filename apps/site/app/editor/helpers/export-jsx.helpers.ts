@@ -16,6 +16,13 @@ export function exportJsx(config: EditorConfig): string {
 	if (typeof config.runnable === 'boolean') {
 		attrs.push(config.runnable ? 'runnable' : 'runnable={false}');
 	}
+	if (config.theme) attrs.push(`theme=${formatString(config.theme)}`);
+	if (config.arcs && Object.keys(config.arcs).length > 0) {
+		attrs.push(`arcs=${formatExpression(config.arcs)}`);
+	}
+	if (config.callouts && Object.keys(config.callouts).length > 0) {
+		attrs.push(`callouts=${formatExpression(config.callouts)}`);
+	}
 	if (config.annotations.length > 0) {
 		attrs.push(`annotations=${formatExpression(config.annotations)}`);
 	}

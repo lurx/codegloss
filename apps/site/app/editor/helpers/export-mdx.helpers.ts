@@ -11,6 +11,12 @@ export function exportMdx(config: EditorConfig): string {
 	if (config.connections.length > 0) {
 		annotationsPayload.connections = config.connections;
 	}
+	if (config.arcs && Object.keys(config.arcs).length > 0) {
+		annotationsPayload.arcs = config.arcs;
+	}
+	if (config.callouts && Object.keys(config.callouts).length > 0) {
+		annotationsPayload.callouts = config.callouts;
+	}
 
 	const sections = [firstFence, config.code, '```'];
 

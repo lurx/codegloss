@@ -27,6 +27,8 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
 	switch (action.kind) {
 		case 'replaceConfig':
 			return { config: action.value };
+		case 'patchConfig':
+			return { config: { ...config, ...action.value } };
 		case 'setCode':
 			return { config: { ...config, code: action.value } };
 		case 'setLang':
@@ -87,6 +89,9 @@ export function useEditorState(): UseEditorStateResult {
 	const replaceConfigAction = useCallback<
 		UseEditorStateResult['replaceConfigAction']
 	>((value) => dispatch({ kind: 'replaceConfig', value }), []);
+	const patchConfigAction = useCallback<
+		UseEditorStateResult['patchConfigAction']
+	>((value) => dispatch({ kind: 'patchConfig', value }), []);
 	const setCodeAction = useCallback(
 		(value: string) => dispatch({ kind: 'setCode', value }),
 		[],
@@ -127,6 +132,7 @@ export function useEditorState(): UseEditorStateResult {
 	return {
 		config: state.config,
 		replaceConfigAction,
+		patchConfigAction,
 		setCodeAction,
 		setLangAction,
 		setFilenameAction,

@@ -1,10 +1,16 @@
 import type { Annotation, CodeGlossConfig, Connection } from 'codegloss/react';
 
+export type ArcsStyle = NonNullable<CodeGlossConfig['arcs']>;
+export type CalloutsStyle = NonNullable<CodeGlossConfig['callouts']>;
+
 export type EditorConfig = Required<
 	Pick<CodeGlossConfig, 'code' | 'lang'>
 > & {
 	filename?: string;
 	runnable?: boolean;
+	theme?: string;
+	arcs?: ArcsStyle;
+	callouts?: CalloutsStyle;
 	annotations: Annotation[];
 	connections: Connection[];
 };
@@ -15,6 +21,7 @@ export type EditorState = {
 
 export type EditorAction =
 	| { kind: 'replaceConfig'; value: EditorConfig }
+	| { kind: 'patchConfig'; value: Partial<EditorConfig> }
 	| { kind: 'setCode'; value: string }
 	| { kind: 'setLang'; value: string }
 	| { kind: 'setFilename'; value: string }
@@ -29,6 +36,7 @@ export type EditorAction =
 export type UseEditorStateResult = {
 	config: EditorConfig;
 	replaceConfigAction: (value: EditorConfig) => void;
+	patchConfigAction: (value: Partial<EditorConfig>) => void;
 	setCodeAction: (value: string) => void;
 	setLangAction: (value: string) => void;
 	setFilenameAction: (value: string) => void;
