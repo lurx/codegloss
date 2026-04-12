@@ -8,6 +8,7 @@ import { ThemeShowcase } from './theme-showcase.component';
 import { MdxTabs } from './mdx-tabs.component';
 import { UsageTabs } from './usage-tabs.component';
 import { CodeBlock } from './code-block.component';
+import { DocLink } from './doc-link.component';
 import { useSiteTheme } from '@/hooks';
 import type {
   CodeGlossTab,
@@ -26,6 +27,7 @@ const MDX_COMPONENTS = {
   MdxTabs,
   UsageTabs,
   pre: CodeBlock,
+  a: DocLink,
 };
 
 function CodeGlossWithTabs(props: CodeGlossProps) {
