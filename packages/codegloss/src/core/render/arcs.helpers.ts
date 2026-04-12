@@ -4,30 +4,9 @@ import {
 	ARC_X_STEP,
 	GUTTER_WIDTH,
 } from '../code-gloss.constants';
-import type { Annotation, Connection } from '../code-gloss.types';
+import type { DrawArcsParameters } from './arcs.types';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
-
-export type ArcStyleOverrides = {
-	dotRadius?: number;
-	dotOpacity?: number;
-	strokeWidth?: number;
-	strokeDasharray?: string;
-	opacity?: number;
-};
-
-type DrawArcsParameters = {
-	svg: SVGSVGElement;
-	height: number;
-	annotations: Annotation[];
-	connections: Connection[];
-	/** Map from annotation id → vertical position (px) within the code area */
-	annotationYMap: Map<string, number>;
-	/** Click handler invoked when an interactive arc/dot is clicked */
-	onConnectionClick: (conn: Connection, event: MouseEvent) => void;
-	/** Optional style overrides for arcs */
-	arcStyle?: ArcStyleOverrides;
-};
 
 export function drawArcs({
 	svg,

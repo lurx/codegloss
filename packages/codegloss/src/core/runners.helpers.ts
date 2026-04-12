@@ -1,6 +1,5 @@
 import type { RunResult } from './code-gloss.types';
-
-type Runner = (code: string) => RunResult;
+import type { Runner } from './runners.types';
 
 const runners: Record<string, Runner> = {
 	js(code) {
