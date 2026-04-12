@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { Search as SearchIcon } from 'lucide-react';
 import type { SearchEntry, SearchResult } from './search.types';
@@ -66,8 +67,15 @@ export function Search() {
 		if (open) {
 			setQuery('');
 			setActiveIndex(0);
+			document.body.style.overflow = 'hidden';
 			setTimeout(() => inputRef.current?.focus(), 0);
+		} else {
+			document.body.style.overflow = '';
 		}
+
+		return () => {
+			document.body.style.overflow = '';
+		};
 	}, [open]);
 
 	const results = query.length >= 2 ? searchDocs(query, index) : [];
@@ -110,7 +118,7 @@ export function Search() {
 				</kbd>
 			</button>
 
-			{open && (
+			{open && createPortal(
 				<div
 					className="search-overlay"
 					onClick={() => setOpen(false)}
@@ -160,7 +168,8 @@ export function Search() {
 							</div>
 						)}
 					</div>
-				</div>
+				</div>,
+				document.body,
 			)}
 		</>
 	);

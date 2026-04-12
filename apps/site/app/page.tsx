@@ -13,6 +13,7 @@ const FEATURES = [
 ];
 
 const FRAMEWORKS = [
+  { label: 'Markdown', href: '/docs/usage/markdown' },
   { label: 'React', href: '/docs/setup/react' },
   { label: 'Vue', href: '/docs/setup/vue' },
   { label: 'Svelte', href: '/docs/setup/svelte' },

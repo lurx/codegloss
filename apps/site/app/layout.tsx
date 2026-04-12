@@ -32,7 +32,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <nav className="nav">
           <div className="nav-inner">
             <Link href="/" className="nav-logo">
-              <Logo size={24} />
+              <Logo size={32} />
               codegloss
             </Link>
             <div className="nav-links">
