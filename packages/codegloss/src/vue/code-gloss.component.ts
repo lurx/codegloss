@@ -4,6 +4,7 @@ import type {
 	CodeGlossConfig,
 	Connection,
 } from '../core/code-gloss.types';
+import { stripUndefined } from '../core/strip-undefined.util';
 
 /**
  * Stateless Vue 3 wrapper around the `<code-gloss>` custom element. Renders
@@ -44,10 +45,7 @@ export const CodeGloss = defineComponent({
 			};
 			// Strip undefined keys so the serialized payload matches the React
 			// wrapper byte-for-byte for the common case.
-			const cleaned = Object.fromEntries(
-				Object.entries(payload).filter(([, v]) => v !== undefined),
-			);
-			const json = JSON.stringify(cleaned);
+			const json = JSON.stringify(stripUndefined(payload));
 
 			return h('code-gloss', { theme: props.theme }, [
 				h('script', {
