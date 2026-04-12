@@ -14,6 +14,10 @@ export type DetectedPair = {
 export type AnnotationsData = {
 	annotations?: unknown[];
 	connections?: unknown[];
+	/** Arc style overrides. Forwarded verbatim as an `arcs` prop. */
+	arcs?: Record<string, unknown>;
+	/** Callout behavior overrides. Forwarded verbatim as a `callouts` prop. */
+	callouts?: Record<string, unknown>;
 };
 
 export type MdxjsEsm = {

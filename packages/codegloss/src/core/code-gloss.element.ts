@@ -20,8 +20,10 @@ import {
 } from './code-gloss.strings';
 import { escapeHtml } from './escape-html.util';
 import { injectAnnotationsIntoHtml } from './inject-annotations.helpers';
+import { measureTextRight } from './measure-line-end.helpers';
 import { readConfigFromHost } from './read-config.helpers';
 import { drawArcs } from './render/arcs.helpers';
+import type { AnnotationPosition } from './render/arcs.types';
 import { run } from './runners.helpers';
 import { buildLineHtmlFallback, findAnnotationHits } from './tokenize.helpers';
 import { codeGlossStyles } from './code-gloss-styles.generated';
@@ -74,10 +76,13 @@ export class CodeGlossElement extends SafeHTMLElement {
 	private root!: HTMLDivElement;
 	private codeArea!: HTMLDivElement;
 	private svgEl!: SVGSVGElement;
+	private rightSvgEl!: SVGSVGElement;
 	private preEl!: HTMLPreElement;
 	private outputEl!: HTMLDivElement;
 	private copyBtn!: HTMLButtonElement;
 	private popoverEl!: HTMLDivElement;
+	private annotationPopoverEl!: HTMLDivElement;
+	private annotationPopoverState: { annId: string; top: number; left: number } | undefined;
 	private readonly lineRefs = new Map<number, HTMLDivElement>();
 
 	private resizeTimer: ReturnType<typeof setTimeout> | undefined;
@@ -116,8 +121,39 @@ export class CodeGlossElement extends SafeHTMLElement {
 
 		this.highlightedLines =
 			this.highlight?.(this.config.code, this.config.lang) ?? undefined;
+		this.primeInlineDefaultOpen();
 		this.buildDom();
 		this.attachListeners();
+		this.applyFloatingDefaultOpens();
+	}
+
+	/**
+	 * If an annotation is marked `defaultOpen: true` and is in the inline
+	 * callout mode, set it as active *before* the initial renderLines so
+	 * the callout is included in the first paint. Runs pre-DOM-build so
+	 * we don't do a wasted second render.
+	 *
+	 * Last-wins: if multiple annotations are marked, the last one in the
+	 * array takes effect (CSS-cascade style).
+	 */
+	private primeInlineDefaultOpen(): void {
+		const ann = this.findLastDefaultOpenAnnotation();
+		if (!ann) return;
+		if (this.shouldUsePopoverFor(ann)) return;
+		this.activeAnnotationId = ann.id;
+	}
+
+	/**
+	 * Opens the winning popover annotation and winning connection
+	 * pre-open after the DOM is laid out and arcs are drawn. Annotation
+	 * and connection popovers are independent surfaces, so one of each
+	 * can land open.
+	 */
+	private applyFloatingDefaultOpens(): void {
+		requestAnimationFrame(() => {
+			this.openDefaultAnnotationPopoverIfAny();
+			this.openDefaultConnectionIfAny();
+		});
 	}
 
 	attributeChangedCallback(
@@ -197,6 +233,14 @@ export class CodeGlossElement extends SafeHTMLElement {
 		this.svgEl.setAttribute('aria-hidden', 'true');
 		this.codeArea.append(this.svgEl);
 
+		this.rightSvgEl = document.createElementNS(
+			'http://www.w3.org/2000/svg',
+			'svg',
+		);
+		this.rightSvgEl.setAttribute('class', 'rightSvg');
+		this.rightSvgEl.setAttribute('aria-hidden', 'true');
+		this.codeArea.append(this.rightSvgEl);
+
 		this.preEl = document.createElement('pre');
 		this.preEl.className = 'pre';
 		this.codeArea.append(this.preEl);
@@ -214,6 +258,11 @@ export class CodeGlossElement extends SafeHTMLElement {
 		this.popoverEl.className = 'connectionTooltip';
 		this.popoverEl.setAttribute('popover', 'auto');
 		this.root.append(this.popoverEl);
+
+		this.annotationPopoverEl = document.createElement('div');
+		this.annotationPopoverEl.className = 'annotationPopover';
+		this.annotationPopoverEl.setAttribute('popover', 'auto');
+		this.root.append(this.annotationPopoverEl);
 
 		this.shadow.append(this.root);
 
@@ -382,7 +431,7 @@ export class CodeGlossElement extends SafeHTMLElement {
 
 			const { annId } = mark.dataset;
 
-			if (annId) this.handleAnnotationClick(annId);
+			if (annId) this.handleAnnotationClick(annId, event);
 		});
 
 		this.copyBtn.addEventListener('click', () => this.handleCopy());
@@ -393,15 +442,173 @@ export class CodeGlossElement extends SafeHTMLElement {
 			}
 		});
 
+		this.annotationPopoverEl.addEventListener('toggle', event => {
+			if (event.newState === 'closed') {
+				this.annotationPopoverState = undefined;
+			}
+		});
+
 		window.addEventListener('resize', this.resizeHandler);
 		document.addEventListener('keydown', this.keyHandler);
 	}
 
-	private handleAnnotationClick(annId: string): void {
+	private handleAnnotationClick(annId: string, event: MouseEvent): void {
+		const annotation = this.config?.annotations?.find(a => a.id === annId);
+		if (!annotation) return;
+
+		if (this.shouldUsePopoverFor(annotation)) {
+			this.toggleAnnotationPopover(annotation, event);
+			return;
+		}
+
+		// Inline callout mode — inline and annotation-popover are mutually
+		// exclusive for the same session, so close any open popover first.
+		this.closeAnnotationPopover();
 		this.activeAnnotationId =
 			this.activeAnnotationId === annId ? undefined : annId;
 		this.renderLines();
 		this.animateArcsThroughTransition();
+	}
+
+	private shouldUsePopoverFor(annotation: Annotation): boolean {
+		return annotation.popover ?? this.config?.callouts?.popover ?? false;
+	}
+
+	private toggleAnnotationPopover(
+		annotation: Annotation,
+		event: MouseEvent,
+	): void {
+		// Close the inline callout if one is showing — inline + popover are
+		// mutually exclusive for annotations.
+		if (this.activeAnnotationId !== undefined) {
+			this.activeAnnotationId = undefined;
+			this.renderLines();
+		}
+
+		if (this.annotationPopoverState?.annId === annotation.id) {
+			this.closeAnnotationPopover();
+			return;
+		}
+
+		this.annotationPopoverState = {
+			annId: annotation.id,
+			top: event.clientY,
+			left: event.clientX,
+		};
+		this.renderAnnotationPopover();
+		this.annotationPopoverEl.showPopover();
+	}
+
+	private renderAnnotationPopover(): void {
+		// Defensive: callers (toggleAnnotationPopover) already verified both;
+		// kept as a guard in case a future caller forgets.
+		/* c8 ignore next */
+		if (!this.annotationPopoverState || !this.config?.annotations) return;
+
+		const annotation = this.config.annotations.find(
+			a => a.id === this.annotationPopoverState!.annId,
+		);
+		/* c8 ignore next */
+		if (!annotation) return;
+
+		const { top, left } = this.annotationPopoverState;
+		this.annotationPopoverEl.style.top = `${top}px`;
+		this.annotationPopoverEl.style.left = `${left}px`;
+
+		let inner = `<div class="annotationPopoverTitle">${escapeHtml(annotation.title)}</div>`;
+		if (annotation.text) {
+			inner += `<div class="annotationPopoverBody">${escapeHtml(annotation.text)}</div>`;
+		}
+
+		this.annotationPopoverEl.innerHTML = inner;
+	}
+
+	private closeAnnotationPopover(): void {
+		if (!this.annotationPopoverState) return;
+		this.annotationPopoverEl.hidePopover();
+		this.annotationPopoverState = undefined;
+	}
+
+	private findLastDefaultOpenAnnotation(): Annotation | undefined {
+		const anns = this.config?.annotations;
+		if (!anns) return undefined;
+		for (let i = anns.length - 1; i >= 0; i--) {
+			if (anns[i].defaultOpen) return anns[i];
+		}
+		return undefined;
+	}
+
+	private findLastDefaultOpenConnection(): Connection | undefined {
+		const conns = this.config?.connections;
+		if (!conns) return undefined;
+		for (let i = conns.length - 1; i >= 0; i--) {
+			if (conns[i].defaultOpen) return conns[i];
+		}
+		return undefined;
+	}
+
+	private openDefaultAnnotationPopoverIfAny(): void {
+		const ann = this.findLastDefaultOpenAnnotation();
+		if (!ann || !this.shouldUsePopoverFor(ann)) return;
+
+		const mark = this.preEl.querySelector<HTMLElement>(
+			`mark[data-ann-id="${ann.id}"]`,
+		);
+		if (!mark) return;
+
+		const rect = mark.getBoundingClientRect();
+		this.annotationPopoverState = {
+			annId: ann.id,
+			top: rect.top + rect.height / 2,
+			left: rect.right,
+		};
+		this.renderAnnotationPopover();
+		this.annotationPopoverEl.showPopover();
+	}
+
+	private openDefaultConnectionIfAny(): void {
+		const conn = this.findLastDefaultOpenConnection();
+		if (!conn?.text) return;
+
+		const { top, left } = this.computeConnectionAnchor(conn);
+		this.connectionTooltip = { connection: conn, top, left };
+		this.renderConnectionPopover();
+		this.popoverEl.showPopover();
+	}
+
+	/**
+	 * Picks a reasonable viewport anchor for a pre-opened arc popover:
+	 * the midpoint between the two annotation lines, offset into the
+	 * gutter so it doesn't overlap the code.
+	 */
+	private computeConnectionAnchor(conn: Connection): {
+		top: number;
+		left: number;
+	} {
+		// This only runs from openDefaultConnectionIfAny, which already
+		// proved the config + connection exist. A block with connections
+		// but no annotations is nonsensical but guarded against anyway.
+		/* c8 ignore next */
+		const annotations = this.config?.annotations ?? [];
+		const fromLine = this.lineRefs.get(
+			annotations.find(a => a.id === conn.from)?.line ?? -1,
+		);
+		const toLine = this.lineRefs.get(
+			annotations.find(a => a.id === conn.to)?.line ?? -1,
+		);
+		const fromRect = fromLine?.getBoundingClientRect();
+		const toRect = toLine?.getBoundingClientRect();
+		const codeAreaRect = this.codeArea.getBoundingClientRect();
+
+		const midY =
+			fromRect && toRect
+				? (fromRect.top + fromRect.height / 2 + toRect.top + toRect.height / 2) / 2
+				: codeAreaRect.top + codeAreaRect.height / 2;
+
+		const left =
+			conn.side === 'right' ? codeAreaRect.right : codeAreaRect.left;
+
+		return { top: midY, left };
 	}
 
 	private dismissCallout(): void {
@@ -487,23 +694,40 @@ export class CodeGlossElement extends SafeHTMLElement {
 		if (!this.config?.connections || this.config.connections.length === 0)
 			return;
 
-		const annotationYMap = new Map<string, number>();
+		const annotationPositions = new Map<string, AnnotationPosition>();
 		const annotations = this.config.annotations ?? [];
+		const codeAreaRect = this.codeArea.getBoundingClientRect();
 
 		for (const ann of annotations) {
 			const lineElement = this.lineRefs.get(ann.line);
-			if (lineElement) {
-				const midY = lineElement.offsetTop + lineElement.offsetHeight / 2;
-				annotationYMap.set(ann.id, midY);
-			}
+			if (!lineElement) continue;
+
+			const midY = lineElement.offsetTop + lineElement.offsetHeight / 2;
+			const lineContent = lineElement.querySelector<HTMLElement>('.lineContent');
+			// .lineContent is a flex:1 box that stretches to fill the row, so
+			// its own bounding rect doesn't mark where text actually ends.
+			// A Range over its children gives us the true text extent.
+			/* c8 ignore next */
+			const textRight = lineContent ? measureTextRight(lineContent) : 0;
+			const lineEndX =
+				textRight - codeAreaRect.left + this.codeArea.scrollLeft;
+
+			annotationPositions.set(ann.id, { y: midY, lineEndX });
 		}
 
 		drawArcs({
-			svg: this.svgEl,
-			height: this.codeArea.scrollHeight,
+			leftSvg: this.svgEl,
+			rightSvg: this.rightSvgEl,
+			// Measure the `.pre` directly rather than `codeArea.scroll*` —
+			// the SVGs are absolute children of `codeArea`, so reading
+			// scrollHeight / scrollWidth would fold their own dimensions
+			// back in and create a feedback loop that leaves stale height
+			// when an inline callout is opened and then dismissed.
+			height: this.preEl.offsetHeight,
+			rightSvgWidth: this.preEl.scrollWidth,
 			annotations,
 			connections: this.config.connections,
-			annotationYMap,
+			annotationPositions,
 			onConnectionClickAction: this.handleConnectionClick,
 			arcStyle: this.config.arcs,
 		});

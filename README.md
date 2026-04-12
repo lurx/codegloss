@@ -1,11 +1,20 @@
 # codegloss
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=lurx_codegloss&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=lurx_codegloss)
 [![Unit tests](https://github.com/lurx/codegloss/actions/workflows/unit.yml/badge.svg)](https://github.com/lurx/codegloss/actions/workflows/unit.yml)
 [![Integration tests](https://github.com/lurx/codegloss/actions/workflows/integration.yml/badge.svg)](https://github.com/lurx/codegloss/actions/workflows/integration.yml)
 [![codecov](https://codecov.io/gh/lurx/codegloss/branch/main/graph/badge.svg)](https://codecov.io/gh/lurx/codegloss)
 [![XO code style](https://shields.io/badge/code_style-5ed9c7?logo=xo&labelColor=gray&logoSize=auto)](https://github.com/xojs/xo)
 
 Interactive annotated code blocks for the web. Drop a `<code-gloss>` element on any page — vanilla HTML, React, Vue, Svelte, Next.js, Astro, VitePress, Docusaurus, or plain markdown — and get clickable token annotations, connection arcs, copy buttons, and an in-place JS runner.
+
+**Highlights**
+
+- **Annotations** — click any highlighted token for context. Render inline by default or as a floating popover via `annotation.popover: true` / `callouts.popover: true` on the block.
+- **Connection arcs** — visual arcs between related annotations. Render in the fixed left gutter (default) or on the right with `connection.side: 'right'`, anchored at each line's text end. Turn on marker-end arrowheads with `arcs.arrowhead: true`.
+- **Pre-opened callouts** — set `defaultOpen: true` on an annotation or connection to surface it on first render (walkthrough style). At most one of each per block; last-wins cascade if multiple are marked.
+- **Framework-agnostic** — one Web Component, thin wrappers for React, Vue, and Svelte, and a remark plugin that covers MDX and plain markdown pipelines.
+- **Themeable** — 9 bundled light/dark themes plus full CSS variable overrides; auto-swaps via `prefers-color-scheme`.
 
 ## Entry points
 
@@ -150,10 +159,17 @@ function fib(n) { return n < 2 ? n : fib(n-1) + fib(n-2); }
   "annotations": [
     { "id": "a1", "token": "fib", "line": 0, "occurrence": 0,
       "title": "Recursion", "text": "Calls itself with smaller inputs." }
-  ]
+  ],
+  "connections": [
+    { "from": "a1", "to": "a1", "color": "#534AB7", "side": "right" }
+  ],
+  "arcs":    { "arrowhead": true },
+  "callouts": { "popover": true }
 }
 ```
 ````
+
+The annotations block accepts four top-level keys: `annotations`, `connections`, `arcs` (per-block arc-style overrides like `arrowhead`), and `callouts` (per-block callout behavior like `popover`). Each is forwarded verbatim as its own prop on the emitted component.
 
 Wire up `codegloss/remark` in your unified pipeline (default `output: 'mdx'` for MDX, `output: 'html'` for plain markdown).
 

@@ -53,6 +53,50 @@ describe('buildCodeGlossMdxNode', () => {
 		expect(findAttr(attrs, 'filename')?.value).toBe('fib.js');
 	});
 
+	it('forwards an arcs object as a JSX expression attribute', () => {
+		const node = buildCodeGlossMdxNode(
+			pair({
+				annotationsJson: '{"annotations":[],"arcs":{"arrowhead":true}}',
+			}),
+		);
+		const attrs = node.attributes as MdxJsxAttribute[];
+		expect(expressionValue(findAttr(attrs, 'arcs'))).toBe(
+			'{"arrowhead":true}',
+		);
+	});
+
+	it('forwards a callouts object as a JSX expression attribute', () => {
+		const node = buildCodeGlossMdxNode(
+			pair({
+				annotationsJson: '{"annotations":[],"callouts":{"popover":true}}',
+			}),
+		);
+		const attrs = node.attributes as MdxJsxAttribute[];
+		expect(expressionValue(findAttr(attrs, 'callouts'))).toBe(
+			'{"popover":true}',
+		);
+	});
+
+	it('ignores a callouts field that is not an object', () => {
+		const node = buildCodeGlossMdxNode(
+			pair({
+				annotationsJson: '{"annotations":[],"callouts":42}',
+			}),
+		);
+		const attrs = node.attributes as MdxJsxAttribute[];
+		expect(findAttr(attrs, 'callouts')).toBeUndefined();
+	});
+
+	it('ignores an arcs field that is not an object', () => {
+		const node = buildCodeGlossMdxNode(
+			pair({
+				annotationsJson: '{"annotations":[],"arcs":42}',
+			}),
+		);
+		const attrs = node.attributes as MdxJsxAttribute[];
+		expect(findAttr(attrs, 'arcs')).toBeUndefined();
+	});
+
 	it('adds a theme attribute when the pair carries a theme', () => {
 		const node = buildCodeGlossMdxNode(pair({ theme: 'github-dark' }));
 		const attrs = node.attributes as MdxJsxAttribute[];

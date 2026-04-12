@@ -32,6 +32,14 @@ export function buildCodeGlossHtmlNode(pair: DetectedPair): Html {
 			if (parsed.connections && Array.isArray(parsed.connections)) {
 				config.connections = parsed.connections;
 			}
+
+			if (parsed.arcs && typeof parsed.arcs === 'object') {
+				config.arcs = parsed.arcs;
+			}
+
+			if (parsed.callouts && typeof parsed.callouts === 'object') {
+				config.callouts = parsed.callouts;
+			}
 		} catch {
 			console.warn(
 				'[remark-codegloss] Failed to parse annotations JSON, rendering without annotations',

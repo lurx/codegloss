@@ -124,8 +124,8 @@
 
 .runButton {
 	font-size: 12px;
-	color: #333;
-	border: 0.5px solid #ccc;
+	color: var(--cg-text);
+	border: 0.5px solid var(--cg-border);
 	border-radius: 6px;
 	background: transparent;
 	padding: 3px 10px;
@@ -135,7 +135,7 @@
 }
 
 .runButton:hover {
-	background: #f0f0ee;
+	background: var(--cg-badge-bg);
 }
 
 /* Code area */
@@ -149,6 +149,15 @@
 	top: 0;
 	left: 0;
 	width: 44px;
+	pointer-events: none;
+	z-index: 1;
+	overflow: visible;
+}
+
+.rightSvg {
+	position: absolute;
+	top: 0;
+	left: 0;
 	pointer-events: none;
 	z-index: 1;
 	overflow: visible;
@@ -227,6 +236,38 @@
 }
 
 .connectionTooltipBody {
+	font-size: 12px;
+	color: var(--cg-muted);
+	line-height: 1.6;
+}
+
+/* Annotation popover (shares visual language with the connection tooltip
+   but uses the annotation accent for its left border). */
+.annotationPopover {
+	position: fixed;
+	width: 240px;
+	margin: 0;
+	border-radius: 8px;
+	border: 0.5px solid var(--cg-border);
+	border-left: 3px solid var(--cg-ann-border);
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+	padding: 10px 12px 10px 14px;
+	background: var(--cg-bg);
+	font-family:
+		-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	transform: translate(8px, -8px);
+	inset: unset;
+}
+
+.annotationPopoverTitle {
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--cg-text);
+	margin-bottom: 4px;
+	padding-right: 16px;
+}
+
+.annotationPopoverBody {
 	font-size: 12px;
 	color: var(--cg-muted);
 	line-height: 1.6;
@@ -359,15 +400,6 @@
 		--cg-ann-bg: var(--cg-ann-bg-dark);
 		--cg-ann-border: var(--cg-ann-border-dark);
 		--cg-ann-hover: var(--cg-ann-hover-dark);
-	}
-
-	:host(:not([theme])) .runButton {
-		color: #ccc;
-		border-color: #555;
-	}
-
-	:host(:not([theme])) .runButton:hover {
-		background: #333;
 	}
 
 	:host(:not([theme])) .calloutChip {

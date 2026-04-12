@@ -166,6 +166,203 @@ delegate(
 
 ---
 
+## Data Flow — Right-side arrows
+
+Connections can render on the right side of the code block via [`"side": "right"`](/docs/api#connection), anchored at each line's end rather than in the fixed gutter. Combined with [`"arcs": { "arrowhead": true }`](/docs/api#arc-style-options), arcs become explicit flow indicators — the arrow points at the `to` endpoint, the `from` endpoint stays a dot.
+
+`arrowhead` is set **per block**, not per connection — the example below applies arrowheads to all three arcs, the two left-side ones (`q1→q2`, `q4→q2`) as well as the single right-side one (`q3→q5`).
+
+```ts sandbox fetch-queue.ts
+async function processQueue(ids) {
+  const results = new Map();
+
+  for (const id of ids) {
+    if (results.has(id)) continue;
+    const record = await fetchRecord(id);
+    results.set(id, record);
+  }
+
+  return Array.from(results.values());
+}
+```
+
+```json annotations
+{
+  "annotations": [
+    {
+      "id": "q1",
+      "token": "results",
+      "line": 1,
+      "occurrence": 0,
+      "title": "Result map",
+      "text": "Keyed by id so duplicate ids in the input queue collapse into a single fetch."
+    },
+    {
+      "id": "q2",
+      "token": "results.has(id)",
+      "line": 4,
+      "occurrence": 0,
+      "title": "Dedupe guard",
+      "text": "Skip ids we've already resolved during this call."
+    },
+    {
+      "id": "q3",
+      "token": "await fetchRecord(id)",
+      "line": 5,
+      "occurrence": 0,
+      "title": "Network round-trip",
+      "text": "Only reached on a cache miss. The resolved record is then written back into the map."
+    },
+    {
+      "id": "q4",
+      "token": "results.set(id, record)",
+      "line": 6,
+      "occurrence": 0,
+      "title": "Cache write",
+      "text": "Subsequent ids in the queue that match this id will short-circuit at the dedupe guard."
+    },
+    {
+      "id": "q5",
+      "token": "Array.from(results.values())",
+      "line": 9,
+      "occurrence": 0,
+      "title": "Drain",
+      "text": "Return the accumulated records in insertion order."
+    }
+  ],
+  "connections": [
+    { "from": "q1", "to": "q2", "color": "#534AB7" },
+    { "from": "q4", "to": "q2", "color": "#00b894" },
+    {
+      "from": "q3",
+      "to": "q5",
+      "color": "#f5a524",
+      "side": "right",
+      "title": "Flow",
+      "text": "Every fetched record eventually flows into the returned array."
+    }
+  ],
+  "arcs": { "arrowhead": true }
+}
+```
+
+---
+
+## Popover callouts
+
+Annotation callouts normally render inline — clicking a token expands a row of context directly below its line. For denser docs where vertical expansion would shuffle the page, set [`callouts.popover: true`](/docs/api#callout-options) to present the callout as a floating popover anchored to the click position instead.
+
+Annotation and connection popovers are independent surfaces: a reader can have an annotation popover and an arc popover open at the same time. Inline and popover presentations of the *same* annotation are mutually exclusive.
+
+```js sandbox lru.js
+class LruCache {
+  constructor(limit) {
+    this.limit = limit;
+    this.map = new Map();
+  }
+
+  get(key) {
+    if (!this.map.has(key)) return undefined;
+    const value = this.map.get(key);
+    this.map.delete(key);
+    this.map.set(key, value);
+    return value;
+  }
+
+  set(key, value) {
+    if (this.map.has(key)) this.map.delete(key);
+    this.map.set(key, value);
+    if (this.map.size > this.limit) {
+      const oldest = this.map.keys().next().value;
+      this.map.delete(oldest);
+    }
+  }
+}
+```
+
+```json annotations
+{
+  "annotations": [
+    {
+      "id": "lru1",
+      "token": "Map",
+      "line": 3,
+      "occurrence": 0,
+      "title": "Insertion-order store",
+      "text": "ES2015 Map preserves insertion order, which is exactly the eviction order an LRU cache needs."
+    },
+    {
+      "id": "lru2",
+      "token": "this.map.delete(key)",
+      "line": 9,
+      "occurrence": 0,
+      "title": "Touch on read",
+      "text": "Delete + re-insert moves the entry to the end of the iteration order — the LRU \"recently used\" step."
+    },
+    {
+      "id": "lru3",
+      "token": "this.map.keys().next().value",
+      "line": 19,
+      "occurrence": 0,
+      "title": "Oldest key",
+      "text": "The first key yielded by the iterator is the least-recently-used one."
+    }
+  ],
+  "callouts": { "popover": true }
+}
+```
+
+---
+
+## Pre-opened callouts (walkthrough style)
+
+For in-doc walkthroughs you can surface a specific annotation or connection on first render via [`defaultOpen`](/docs/api#pre-opening-callouts). At most **one annotation callout** and **one connection popover** can be pre-opened per block — if multiple are marked, the last one in its array wins (CSS-cascade style).
+
+```ts sandbox debounce.ts
+function debounce(fn, wait) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), wait);
+  };
+}
+```
+
+```json annotations
+{
+  "annotations": [
+    {
+      "id": "d1",
+      "token": "timer",
+      "line": 1,
+      "occurrence": 0,
+      "title": "Shared closure",
+      "text": "The closure captures a single timer reference across every call to the returned function — that's what makes debouncing stateful."
+    },
+    {
+      "id": "d2",
+      "token": "clearTimeout(timer)",
+      "line": 3,
+      "occurrence": 0,
+      "title": "Cancel pending",
+      "text": "Every new call resets the pending timer. No-op on first call since timer is undefined.",
+      "defaultOpen": true
+    }
+  ],
+  "connections": [
+    {
+      "from": "d1",
+      "to": "d2",
+      "color": "#534AB7",
+      "title": "Read → cancel",
+      "text": "The captured timer from line 1 is what every subsequent call cancels on line 3."
+    }
+  ]
+}
+```
+
+---
+
 ## Minimal — No Annotations
 
 A sandbox block without a following annotations block renders as a plain code viewer with line numbers and a toolbar.

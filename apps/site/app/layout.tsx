@@ -51,7 +51,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             </div>
           </div>
         </nav>
-        <div className="nav-offset">{children}</div>
+        {children}
       </body>
     </html>
   );

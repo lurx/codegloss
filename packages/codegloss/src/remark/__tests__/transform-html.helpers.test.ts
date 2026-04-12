@@ -53,6 +53,46 @@ describe('buildCodeGlossHtmlNode', () => {
 		expect(config.connections).toEqual([{ from: 'a', to: 'b', color: '#000' }]);
 	});
 
+	it('forwards an arcs object from the annotations JSON into the config payload', () => {
+		const node = buildCodeGlossHtmlNode(
+			pair({
+				annotationsJson: '{"annotations":[],"arcs":{"arrowhead":true}}',
+			}),
+		);
+
+		expect(extractConfig(node.value).arcs).toEqual({ arrowhead: true });
+	});
+
+	it('forwards a callouts object from the annotations JSON into the config payload', () => {
+		const node = buildCodeGlossHtmlNode(
+			pair({
+				annotationsJson: '{"annotations":[],"callouts":{"popover":true}}',
+			}),
+		);
+
+		expect(extractConfig(node.value).callouts).toEqual({ popover: true });
+	});
+
+	it('ignores a callouts field that is not an object', () => {
+		const node = buildCodeGlossHtmlNode(
+			pair({
+				annotationsJson: '{"annotations":[],"callouts":"nope"}',
+			}),
+		);
+
+		expect(extractConfig(node.value).callouts).toBeUndefined();
+	});
+
+	it('ignores an arcs field that is not an object', () => {
+		const node = buildCodeGlossHtmlNode(
+			pair({
+				annotationsJson: '{"annotations":[],"arcs":"nope"}',
+			}),
+		);
+
+		expect(extractConfig(node.value).arcs).toBeUndefined();
+	});
+
 	it('omits annotation fields when their JSON values are not arrays', () => {
 		const node = buildCodeGlossHtmlNode(
 			pair({ annotationsJson: '{"annotations":"oops","connections":42}' }),

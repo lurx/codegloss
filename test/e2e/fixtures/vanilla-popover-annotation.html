@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>codegloss e2e · popover annotations</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script type="module" src="/codegloss/index.js"></script>
+  </head>
+  <body>
+    <main>
+      <h1>popover annotations</h1>
+      <code-gloss>
+        <script type="application/json">
+{
+  "code": "let total = 0;\nfor (const n of nums) {\n  total += n;\n}",
+  "lang": "js",
+  "filename": "sum.js",
+  "annotations": [
+    { "id": "a1", "token": "total", "line": 0, "occurrence": 0, "title": "Accumulator", "text": "Holds the running sum.", "popover": false },
+    { "id": "a2", "token": "nums", "line": 1, "occurrence": 0, "title": "Input", "text": "The array we're reducing." },
+    { "id": "a3", "token": "total", "line": 2, "occurrence": 0, "title": "Write", "text": "Each iteration updates the accumulator." }
+  ],
+  "callouts": { "popover": true }
+}
+        </script>
+      </code-gloss>
+    </main>
+  </body>
+</html>

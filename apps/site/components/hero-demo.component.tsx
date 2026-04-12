@@ -56,7 +56,17 @@ const ANNOTATIONS = [
 const CONNECTIONS = [
 	{ from: 'a1', to: 'a2', color: '#6c5ce7' },
 	{ from: 'a3', to: 'a2', color: '#00b894' },
+	{
+		from: 'a2',
+		to: 'a4',
+		color: '#f5a524',
+		side: 'right',
+		title: 'Cache miss',
+		text: 'On a miss, the lookup falls through to the recursive descent which actually computes the value.',
+	},
 ] satisfies Connection[];
+
+const ARC_STYLE = { arrowhead: true };
 
 const LIGHT_THEME = String(codeglossConfig.theme ?? '');
 const DARK_THEME = String(
@@ -100,6 +110,7 @@ export function HeroDemo() {
 					theme={siteTheme === 'dark' ? DARK_THEME : LIGHT_THEME}
 					annotations={ANNOTATIONS}
 					connections={CONNECTIONS}
+					arcs={ARC_STYLE}
 					runnable={false}
 				/>
 			</div>

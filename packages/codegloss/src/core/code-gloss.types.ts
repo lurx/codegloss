@@ -11,6 +11,20 @@ export type Annotation = {
 	title: string;
 	/** Tooltip body */
 	text: string;
+	/**
+	 * When `true`, the callout renders as a floating popover anchored to
+	 * the click position instead of the default inline expanding callout.
+	 * Per-annotation value wins over the block-level `callouts.popover`
+	 * default. Default: false.
+	 */
+	popover?: boolean;
+	/**
+	 * When `true`, this annotation's callout opens automatically on first
+	 * render. Only one annotation per block can be pre-opened — if more
+	 * than one sets `defaultOpen: true`, the **last** one in the
+	 * `annotations` array wins (CSS-cascade style). Default: false.
+	 */
+	defaultOpen?: boolean;
 };
 
 export type Connection = {
@@ -24,6 +38,22 @@ export type Connection = {
 	title?: string;
 	/** Tooltip body shown when the arc is clicked. Without it, the arc isn't clickable. */
 	text?: string;
+	/**
+	 * Which side of the code block the arc renders on.
+	 * - `'left'` (default) — fixed-width gutter, mirrored between lines.
+	 * - `'right'` — dynamic-width gutter, arc anchors at each line's end.
+	 */
+	side?: 'left' | 'right';
+	/**
+	 * When `true`, this connection's popover opens automatically on first
+	 * render. Only one connection per block can be pre-opened — if more
+	 * than one sets `defaultOpen: true`, the **last** one in the
+	 * `connections` array wins (CSS-cascade style). Default: false.
+	 *
+	 * Independent of `annotation.defaultOpen`: one of each can be open
+	 * after mount.
+	 */
+	defaultOpen?: boolean;
 };
 
 /**
@@ -63,6 +93,21 @@ export type CodeGlossConfig = {
 		strokeWidth?: number;
 		strokeDasharray?: string;
 		opacity?: number;
+		/**
+		 * Draw an arrowhead at the `to` endpoint. The `from` endpoint always
+		 * renders as a plain dot. Default: false.
+		 */
+		arrowhead?: boolean;
+	};
+	/** Block-level callout behavior for annotations. */
+	callouts?: {
+		/**
+		 * When `true`, every annotation in this block opens as a floating
+		 * popover at the click position instead of the default inline
+		 * expanding callout. Individual annotations can still override via
+		 * `annotation.popover`. Default: false.
+		 */
+		popover?: boolean;
 	};
 };
 

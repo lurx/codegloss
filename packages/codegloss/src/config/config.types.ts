@@ -11,6 +11,20 @@ export type CodeGlossArcStyle = {
 	strokeDasharray?: string;
 	/** Arc opacity (0–1). Default: 0.55 */
 	opacity?: number;
+	/**
+	 * Draw an arrowhead at the `to` endpoint of each connection arc. The
+	 * `from` endpoint always renders as a plain dot. Default: false.
+	 */
+	arrowhead?: boolean;
+};
+
+export type CodeGlossCallouts = {
+	/**
+	 * When `true`, annotations open as a floating popover at the click
+	 * position instead of the default inline expanding callout. Individual
+	 * annotations can still override via `annotation.popover`. Default: false.
+	 */
+	popover?: boolean;
 };
 
 export type CodeGlossUserConfig = {
@@ -20,4 +34,6 @@ export type CodeGlossUserConfig = {
 	darkTheme?: string | CodeGlossTheme;
 	/** Style overrides for connection arcs. */
 	arcs?: CodeGlossArcStyle;
+	/** Block-level callout behavior for annotations. */
+	callouts?: CodeGlossCallouts;
 };

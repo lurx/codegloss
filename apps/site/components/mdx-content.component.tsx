@@ -1,6 +1,12 @@
 'use client';
 
-import { useCallback, useMemo, useState, type MouseEvent } from 'react';
+import {
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  type MouseEvent,
+} from 'react';
 import * as runtime from 'react/jsx-runtime';
 import { CodeGloss } from 'codegloss/react';
 import type { CodeGlossProps } from 'codegloss/react';
@@ -9,7 +15,7 @@ import { MdxTabs } from './mdx-tabs.component';
 import { UsageTabs } from './usage-tabs.component';
 import { CodeBlock } from './code-block.component';
 import { DocLink } from './doc-link.component';
-import { useSiteTheme } from '@/hooks';
+import { useCopyHeadingAnchors, useSiteTheme } from '@/hooks';
 import type {
   CodeGlossTab,
   CompiledMdxFactory,
@@ -91,9 +97,12 @@ function useMDXComponent(code: string) {
 
 export function MdxContent({ code }: MdxContentProps) {
   const Component = useMDXComponent(code);
+  const proseRef = useRef<HTMLDivElement>(null);
+
+  useCopyHeadingAnchors(proseRef);
 
   return (
-    <div className="prose">
+    <div ref={proseRef} className="prose">
       <Component components={MDX_COMPONENTS} />
     </div>
   );

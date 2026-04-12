@@ -70,6 +70,21 @@ export function buildCodeGlossMdxNode(pair: DetectedPair): MdxJsxFlowElement {
 					),
 				);
 			}
+
+			if (parsed.arcs && typeof parsed.arcs === 'object') {
+				attributes.push(
+					jsxExpressionAttribute('arcs', JSON.stringify(parsed.arcs)),
+				);
+			}
+
+			if (parsed.callouts && typeof parsed.callouts === 'object') {
+				attributes.push(
+					jsxExpressionAttribute(
+						'callouts',
+						JSON.stringify(parsed.callouts),
+					),
+				);
+			}
 		} catch {
 			console.warn(
 				'[remark-codegloss] Failed to parse annotations JSON, rendering without annotations',
