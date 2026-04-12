@@ -1,6 +1,6 @@
-import type { EditorConfig } from '../../hooks/use-editor-state';
+import type { EditorConfig } from '../hooks/use-editor-state';
 
-export function serializeConfig(config: EditorConfig): string {
+export function exportJson(config: EditorConfig): string {
 	const payload: Record<string, unknown> = {
 		code: config.code,
 		lang: config.lang,

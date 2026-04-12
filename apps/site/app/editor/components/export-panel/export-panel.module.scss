@@ -11,12 +11,29 @@
 	gap: 8px;
 }
 
-.heading {
-	font-size: 13px;
-	font-weight: 600;
+.tabs {
+	display: flex;
+	gap: 4px;
+}
+
+.tab,
+.tabActive {
+	background: transparent;
+	color: var(--site-muted);
+	border: 1px solid transparent;
+	border-bottom-color: var(--site-border);
+	padding: 4px 10px;
+	font-size: 12px;
+	cursor: pointer;
+	font-family: var(--font-sans);
+	border-radius: 6px 6px 0 0;
+}
+
+.tabActive {
 	color: var(--site-heading);
-	text-transform: uppercase;
-	letter-spacing: 0.02em;
+	background: var(--site-surface);
+	border-color: var(--site-border);
+	border-bottom-color: transparent;
 }
 
 .copyButton {

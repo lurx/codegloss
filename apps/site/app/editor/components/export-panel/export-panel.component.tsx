@@ -1,31 +1,71 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
+import type { MouseEvent } from 'react';
 import type { ExportPanelProps } from './export-panel.types';
-import { serializeConfig } from './export-panel.helpers';
+import type { ExportFormat } from './export-panel.constants';
+import { EXPORT_FORMATS } from './export-panel.constants';
 import styles from './export-panel.module.scss';
 
 const COPIED_RESET_MS = 1200;
+const DATA_FORMAT = 'data-format';
+
+function isExportFormat(value: string | null): value is ExportFormat {
+	return value === 'json' || value === 'mdx' || value === 'jsx';
+}
 
 export function ExportPanel({ config }: Readonly<ExportPanelProps>) {
+	const [active, setActive] = useState<ExportFormat>('json');
 	const [copied, setCopied] = useState(false);
 
-	const json = useMemo(() => serializeConfig(config), [config]);
+	const output = useMemo(() => {
+		const entry = EXPORT_FORMATS.find((f) => f.id === active);
+		return entry ? entry.render(config) : '';
+	}, [active, config]);
 
 	const handleCopy = useCallback(async () => {
 		try {
-			await navigator.clipboard.writeText(json);
+			await navigator.clipboard.writeText(output);
 			setCopied(true);
 			window.setTimeout(() => setCopied(false), COPIED_RESET_MS);
 		} catch {
 			setCopied(false);
 		}
-	}, [json]);
+	}, [output]);
+
+	const handleTabsClick = useCallback((event: MouseEvent<HTMLDivElement>) => {
+		const target = (event.target as HTMLElement).closest(`[${DATA_FORMAT}]`);
+		if (!target) return;
+		const format = target.getAttribute(DATA_FORMAT);
+		if (isExportFormat(format)) {
+			setActive(format);
+			setCopied(false);
+		}
+	}, []);
+
+	const renderTabs = () =>
+		EXPORT_FORMATS.map((format) => {
+			const isActive = format.id === active;
+			const attrs = { [DATA_FORMAT]: format.id };
+			return (
+				<button
+					key={format.id}
+					type="button"
+					className={isActive ? styles.tabActive : styles.tab}
+					aria-pressed={isActive}
+					{...attrs}
+				>
+					{format.label}
+				</button>
+			);
+		});
 
 	return (
 		<div className={styles.root}>
 			<div className={styles.header}>
-				<span className={styles.heading}>Export (JSON)</span>
+				<div className={styles.tabs} onClick={handleTabsClick}>
+					{renderTabs()}
+				</div>
 				<button
 					type="button"
 					className={styles.copyButton}
@@ -34,7 +74,7 @@ export function ExportPanel({ config }: Readonly<ExportPanelProps>) {
 					{copied ? 'Copied' : 'Copy'}
 				</button>
 			</div>
-			<pre className={styles.output}>{json}</pre>
+			<pre className={styles.output}>{output}</pre>
 		</div>
 	);
 }
