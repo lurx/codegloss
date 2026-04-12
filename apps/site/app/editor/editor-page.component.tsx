@@ -11,6 +11,7 @@ import { PreviewPane } from './components/preview-pane';
 import { AnnotationsPanel } from './components/annotations-panel';
 import { ConnectionsPanel } from './components/connections-panel';
 import { ExportPanel } from './components/export-panel';
+import { ImportPanel } from './components/import-panel';
 import { validateConfig } from './helpers/validate-config.helpers';
 import { nextAutoId } from './components/annotations-panel/annotations-panel.helpers';
 import styles from './editor-page.module.scss';
@@ -18,6 +19,7 @@ import styles from './editor-page.module.scss';
 export function EditorPage() {
 	const {
 		config,
+		replaceConfigAction,
 		setCodeAction,
 		setLangAction,
 		setFilenameAction,
@@ -101,6 +103,7 @@ export function EditorPage() {
 
 			<div className={styles.export}>
 				<ExportPanel config={config} />
+				<ImportPanel onImportAction={replaceConfigAction} />
 			</div>
 		</main>
 	);
