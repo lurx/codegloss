@@ -43,6 +43,10 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
+        with:
+          # Auto-create the Pages site on first run so the repo doesn't need
+          # a manual Settings → Pages toggle before this workflow can succeed.
+          enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
