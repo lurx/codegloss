@@ -20,6 +20,7 @@ import {
 } from './code-gloss.strings';
 import { escapeHtml } from './escape-html.util';
 import { injectAnnotationsIntoHtml } from './inject-annotations.helpers';
+import { measureTextRight } from './measure-line-end.helpers';
 import { readConfigFromHost } from './read-config.helpers';
 import { drawArcs } from './render/arcs.helpers';
 import type { AnnotationPosition } from './render/arcs.types';
@@ -507,12 +508,13 @@ export class CodeGlossElement extends SafeHTMLElement {
 
 			const midY = lineElement.offsetTop + lineElement.offsetHeight / 2;
 			const lineContent = lineElement.querySelector<HTMLElement>('.lineContent');
-			// Every rendered line includes a .lineContent child — renderLines
-			// always appends it. The `?? 0` fallback is a defensive guard.
+			// .lineContent is a flex:1 box that stretches to fill the row, so
+			// its own bounding rect doesn't mark where text actually ends.
+			// A Range over its children gives us the true text extent.
 			/* c8 ignore next */
-			const lineEndRight = lineContent?.getBoundingClientRect().right ?? 0;
+			const textRight = lineContent ? measureTextRight(lineContent) : 0;
 			const lineEndX =
-				lineEndRight - codeAreaRect.left + this.codeArea.scrollLeft;
+				textRight - codeAreaRect.left + this.codeArea.scrollLeft;
 
 			annotationPositions.set(ann.id, { y: midY, lineEndX });
 		}

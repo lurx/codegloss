@@ -166,6 +166,86 @@ delegate(
 
 ---
 
+## Data Flow — Right-side arrows
+
+Connections can render on the right side of the code block via `"side": "right"`, anchored at each line's end rather than in the fixed gutter. Combined with `"arcs": { "arrowhead": true }`, right-side arcs become explicit flow indicators — the arrow points at the `to` endpoint.
+
+```ts sandbox fetch-queue.ts
+async function processQueue(ids) {
+  const results = new Map();
+
+  for (const id of ids) {
+    if (results.has(id)) continue;
+    const record = await fetchRecord(id);
+    results.set(id, record);
+  }
+
+  return Array.from(results.values());
+}
+```
+
+```json annotations
+{
+  "annotations": [
+    {
+      "id": "q1",
+      "token": "results",
+      "line": 1,
+      "occurrence": 0,
+      "title": "Result map",
+      "text": "Keyed by id so duplicate ids in the input queue collapse into a single fetch."
+    },
+    {
+      "id": "q2",
+      "token": "results.has(id)",
+      "line": 4,
+      "occurrence": 0,
+      "title": "Dedupe guard",
+      "text": "Skip ids we've already resolved during this call."
+    },
+    {
+      "id": "q3",
+      "token": "await fetchRecord(id)",
+      "line": 5,
+      "occurrence": 0,
+      "title": "Network round-trip",
+      "text": "Only reached on a cache miss. The resolved record is then written back into the map."
+    },
+    {
+      "id": "q4",
+      "token": "results.set(id, record)",
+      "line": 6,
+      "occurrence": 0,
+      "title": "Cache write",
+      "text": "Subsequent ids in the queue that match this id will short-circuit at the dedupe guard."
+    },
+    {
+      "id": "q5",
+      "token": "Array.from(results.values())",
+      "line": 9,
+      "occurrence": 0,
+      "title": "Drain",
+      "text": "Return the accumulated records in insertion order."
+    }
+  ],
+  "connections": [
+    { "from": "q1", "to": "q2", "color": "#534AB7" },
+    { "from": "q4", "to": "q2", "color": "#00b894" },
+    {
+      "from": "q3",
+      "to": "q5",
+      "color": "#f5a524",
+      "side": "right",
+      "title": "Flow",
+      "text": "Every fetched record eventually flows into the returned array."
+    }
+  ],
+  "arcs": { "arrowhead": true }
+}
+```
+
+---
+
 ## Minimal — No Annotations
 
 A sandbox block without a following annotations block renders as a plain code viewer with line numbers and a toolbar.
