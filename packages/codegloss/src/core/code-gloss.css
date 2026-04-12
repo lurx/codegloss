@@ -124,8 +124,8 @@
 
 .runButton {
 	font-size: 12px;
-	color: #333;
-	border: 0.5px solid #ccc;
+	color: var(--cg-text);
+	border: 0.5px solid var(--cg-border);
 	border-radius: 6px;
 	background: transparent;
 	padding: 3px 10px;
@@ -135,7 +135,7 @@
 }
 
 .runButton:hover {
-	background: #f0f0ee;
+	background: var(--cg-badge-bg);
 }
 
 /* Code area */
@@ -400,15 +400,6 @@
 		--cg-ann-bg: var(--cg-ann-bg-dark);
 		--cg-ann-border: var(--cg-ann-border-dark);
 		--cg-ann-hover: var(--cg-ann-hover-dark);
-	}
-
-	:host(:not([theme])) .runButton {
-		color: #ccc;
-		border-color: #555;
-	}
-
-	:host(:not([theme])) .runButton:hover {
-		background: #333;
 	}
 
 	:host(:not([theme])) .calloutChip {
