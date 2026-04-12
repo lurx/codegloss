@@ -15,6 +15,38 @@
 	gap: 4px;
 }
 
+.headerRow {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.historyButtons {
+	display: flex;
+	gap: 6px;
+}
+
+.historyButton {
+	background: var(--site-surface);
+	color: var(--site-fg);
+	border: 1px solid var(--site-border);
+	border-radius: 6px;
+	padding: 4px 12px;
+	font-size: 1rem;
+	font-family: var(--font-sans);
+	cursor: pointer;
+
+	&:hover:not(:disabled) {
+		border-color: var(--accent);
+	}
+
+	&:disabled {
+		opacity: 0.4;
+		cursor: not-allowed;
+	}
+}
+
 .title {
 	font-family: var(--font-display);
 	font-size: 1.75rem;

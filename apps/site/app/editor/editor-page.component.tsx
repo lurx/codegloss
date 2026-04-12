@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import type { Annotation, Connection } from 'codegloss/react';
 import { useEditorState } from './hooks/use-editor-state';
 import { useCodeglossTheme } from './hooks/use-codegloss-theme';
@@ -20,6 +20,10 @@ import styles from './editor-page.module.scss';
 export function EditorPage() {
 	const {
 		config,
+		canUndo,
+		canRedo,
+		undoAction,
+		redoAction,
 		replaceConfigAction,
 		patchConfigAction,
 		setCodeAction,
@@ -37,6 +41,27 @@ export function EditorPage() {
 	const theme = useCodeglossTheme();
 
 	const validation = useMemo(() => validateConfig(config), [config]);
+
+	useEffect(() => {
+		const handler = (event: KeyboardEvent) => {
+			const mod = event.metaKey || event.ctrlKey;
+			if (!mod || event.key.toLowerCase() !== 'z') return;
+			const target = event.target as HTMLElement | null;
+			if (
+				target &&
+				(target.tagName === 'INPUT' ||
+					target.tagName === 'TEXTAREA' ||
+					target.isContentEditable)
+			) {
+				return;
+			}
+			event.preventDefault();
+			if (event.shiftKey) redoAction();
+			else undoAction();
+		};
+		window.addEventListener('keydown', handler);
+		return () => window.removeEventListener('keydown', handler);
+	}, [undoAction, redoAction]);
 
 	const handleConnect = useCallback(
 		(fromId: string, toId: string) => {
@@ -68,7 +93,29 @@ export function EditorPage() {
 	return (
 		<main className={styles.root}>
 			<div className={styles.header}>
-				<h1 className={styles.title}>Editor</h1>
+				<div className={styles.headerRow}>
+					<h1 className={styles.title}>Editor</h1>
+					<div className={styles.historyButtons}>
+						<button
+							type="button"
+							className={styles.historyButton}
+							onClick={undoAction}
+							disabled={!canUndo}
+							title="Undo (Cmd/Ctrl+Z)"
+						>
+							Undo
+						</button>
+						<button
+							type="button"
+							className={styles.historyButton}
+							onClick={redoAction}
+							disabled={!canRedo}
+							title="Redo (Cmd/Ctrl+Shift+Z)"
+						>
+							Redo
+						</button>
+					</div>
+				</div>
 				<p className={styles.subtitle}>
 					Compose a codegloss block — edit the code, click tokens to annotate,
 					then draw connections. Preview updates live on the right.
