@@ -5,7 +5,7 @@ sidebar_position: 3
 
 # Component API
 
-CodeGloss is a Web Component (`<code-gloss>`) with a thin React wrapper at `codegloss/react`. The configuration shape is the same in both — only the way you pass it differs.
+CodeGloss is a Web Component (`<code-gloss>`) with thin framework wrappers at `codegloss/[framework]`. The configuration shape is the same in both — only the way you pass it differs.
 
 ## Web Component
 
@@ -32,9 +32,9 @@ The element reads its config from a `<script type="application/json">` child. JS
 CodeGloss ships thin wrappers for popular frameworks. Each passes props to the same underlying `<code-gloss>` Web Component:
 
 - [React](/docs/setup/react) — `codegloss/react`
+- [Next.js](/docs/setup/nextjs) — React wrapper + remark plugin
 - [Vue / Nuxt](/docs/setup/vue) — `codegloss/vue`
 - [Svelte / SvelteKit](/docs/setup/svelte) — `codegloss/svelte`
-- [Next.js](/docs/setup/nextjs) — React wrapper + remark plugin
 - [Docusaurus](/docs/setup/docusaurus) — React wrapper + MDX components map
 - [Velite](/docs/setup/velite) — React wrapper + Velite content pipeline
 - [Astro / Starlight](/docs/setup/astro) — Web Component via HTML mode
