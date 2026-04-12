@@ -1,22 +1,40 @@
 'use client';
 
-import { useCallback } from 'react';
-import type { ChangeEvent } from 'react';
-import type { SettingsPanelProps } from './settings-panel.types';
-import { AUTO_THEME_VALUE, THEME_OPTIONS } from './settings-panel.constants';
+import { useCallback, useEffect, useRef } from 'react';
+import type { ChangeEvent, SyntheticEvent } from 'react';
+import type { SettingsDialogProps } from './settings-dialog.types';
+import { AUTO_THEME_VALUE, THEME_OPTIONS } from './settings-dialog.constants';
 import {
 	parseOptionalNumber,
 	patchArcs,
 	patchCallouts,
-} from './settings-panel.helpers';
-import styles from './settings-panel.module.scss';
+} from './settings-dialog.helpers';
+import styles from './settings-dialog.module.scss';
 
-export function SettingsPanel({
+export function SettingsDialog({
+	open,
 	config,
+	onCloseAction,
 	onPatchAction,
-}: Readonly<SettingsPanelProps>) {
+}: Readonly<SettingsDialogProps>) {
+	const dialogRef = useRef<HTMLDialogElement | null>(null);
 	const arcs = config.arcs ?? {};
 	const callouts = config.callouts ?? {};
+
+	useEffect(() => {
+		const dialog = dialogRef.current;
+		if (!dialog) return;
+		if (open && !dialog.open) dialog.showModal();
+		else if (!open && dialog.open) dialog.close();
+	}, [open]);
+
+	const handleCancel = useCallback(
+		(event: SyntheticEvent<HTMLDialogElement>) => {
+			event.preventDefault();
+			onCloseAction();
+		},
+		[onCloseAction],
+	);
 
 	const handleTheme = useCallback(
 		(event: ChangeEvent<HTMLSelectElement>) => {
@@ -79,9 +97,14 @@ export function SettingsPanel({
 		));
 
 	return (
-		<div className={styles.root}>
+		<dialog
+			ref={dialogRef}
+			className={styles.dialog}
+			onCancel={handleCancel}
+			onClose={onCloseAction}
+		>
 			<div className={styles.header}>
-				<span className={styles.heading}>Settings</span>
+				<h2 className={styles.heading}>Settings</h2>
 			</div>
 
 			<div className={styles.section}>
@@ -174,6 +197,16 @@ export function SettingsPanel({
 					popover by default
 				</label>
 			</div>
-		</div>
+
+			<div className={styles.footer}>
+				<button
+					type="button"
+					className={styles.doneButton}
+					onClick={onCloseAction}
+				>
+					Done
+				</button>
+			</div>
+		</dialog>
 	);
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Redo2, Undo2, Upload } from 'lucide-react';
+import { Redo2, Settings, Undo2, Upload } from 'lucide-react';
 import type { Annotation, Connection } from 'codegloss/react';
 import { useEditorState } from './hooks/use-editor-state';
 import { useCodeglossTheme } from './hooks/use-codegloss-theme';
@@ -13,7 +13,7 @@ import { AnnotationsPanel } from './components/annotations-panel';
 import { ConnectionsPanel } from './components/connections-panel';
 import { ExportPanel } from './components/export-panel';
 import { ImportDialog } from './components/import-dialog';
-import { SettingsPanel } from './components/settings-panel';
+import { SettingsDialog } from './components/settings-dialog';
 import { validateConfig } from './helpers/validate-config.helpers';
 import { nextAutoId } from './components/annotations-panel/annotations-panel.helpers';
 import styles from './editor-page.module.scss';
@@ -41,11 +41,14 @@ export function EditorPage() {
 
 	const theme = useCodeglossTheme();
 	const [importOpen, setImportOpen] = useState(false);
+	const [settingsOpen, setSettingsOpen] = useState(false);
 
 	const validation = useMemo(() => validateConfig(config), [config]);
 
 	const handleOpenImport = useCallback(() => setImportOpen(true), []);
 	const handleCloseImport = useCallback(() => setImportOpen(false), []);
+	const handleOpenSettings = useCallback(() => setSettingsOpen(true), []);
+	const handleCloseSettings = useCallback(() => setSettingsOpen(false), []);
 
 	useEffect(() => {
 		const handler = (event: KeyboardEvent) => {
@@ -126,6 +129,14 @@ export function EditorPage() {
 						>
 							<Upload size={16} aria-hidden="true" /> Import
 						</button>
+						<button
+							type="button"
+							className={styles.historyButton}
+							onClick={handleOpenSettings}
+							aria-label="Settings"
+						>
+							<Settings size={16} aria-hidden="true" /> Settings
+						</button>
 					</div>
 				</div>
 				<p className={styles.subtitle}>
@@ -173,7 +184,6 @@ export function EditorPage() {
 
 			<div className={styles.right}>
 				<PreviewPane config={config} />
-				<SettingsPanel config={config} onPatchAction={patchConfigAction} />
 			</div>
 
 			<div className={styles.export}>
@@ -184,6 +194,12 @@ export function EditorPage() {
 				open={importOpen}
 				onCloseAction={handleCloseImport}
 				onImportAction={replaceConfigAction}
+			/>
+			<SettingsDialog
+				open={settingsOpen}
+				config={config}
+				onCloseAction={handleCloseSettings}
+				onPatchAction={patchConfigAction}
 			/>
 		</main>
 	);
