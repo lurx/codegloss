@@ -74,15 +74,22 @@
 }
 
 .right {
+	min-width: 0;
+	min-height: 0;
+}
+
+.stickyPreview {
+	position: sticky;
+	top: calc(3.5rem + 16px);
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
-	min-width: 0;
-	min-height: 0;
-	position: sticky;
-	top: calc(3.5rem + 16px);
-	align-self: start;
-	height: calc(100vh - 3.5rem - 32px);
+	height: min(
+		calc(100vh - 3.5rem - 32px),
+		100%
+	);
+	max-height: calc(100vh - 3.5rem - 32px);
+	overflow: hidden;
 }
 
 .panels {
@@ -111,8 +118,10 @@
 		flex-wrap: wrap;
 	}
 
-	.right {
+	.stickyPreview {
 		position: static;
 		height: auto;
+		max-height: none;
+		overflow: visible;
 	}
 }

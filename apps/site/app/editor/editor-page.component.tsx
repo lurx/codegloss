@@ -183,7 +183,9 @@ export function EditorPage() {
 			</div>
 
 			<div className={styles.right}>
-				<PreviewPane config={config} />
+				<div className={styles.stickyPreview}>
+					<PreviewPane config={config} />
+				</div>
 			</div>
 
 			<div className={styles.export}>
