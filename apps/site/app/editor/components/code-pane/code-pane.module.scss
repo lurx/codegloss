@@ -1,0 +1,63 @@
+.root {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	min-height: 0;
+}
+
+.fieldRow {
+	display: grid;
+	grid-template-columns: 1fr 1fr auto;
+	gap: 8px;
+}
+
+.field {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	font-size: 12px;
+	color: var(--site-muted);
+}
+
+.input {
+	background: var(--site-surface);
+	color: var(--site-fg);
+	border: 1px solid var(--site-border);
+	border-radius: 6px;
+	padding: 6px 8px;
+	font-family: var(--font-sans);
+	font-size: 13px;
+
+	&:focus {
+		outline: none;
+		border-color: var(--accent);
+	}
+}
+
+.checkbox {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	align-self: flex-end;
+	color: var(--site-fg);
+	font-size: 13px;
+}
+
+.codeArea {
+	flex: 1;
+	min-height: 240px;
+	background: var(--site-surface);
+	color: var(--site-fg);
+	border: 1px solid var(--site-border);
+	border-radius: 8px;
+	padding: 12px;
+	font-family: var(--font-mono);
+	font-size: 13px;
+	line-height: 1.55;
+	resize: vertical;
+
+	&:focus {
+		outline: none;
+		border-color: var(--accent);
+	}
+}
