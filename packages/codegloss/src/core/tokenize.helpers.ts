@@ -1,5 +1,6 @@
 import { escapeHtml } from './escape-html.util';
 import type { Annotation, AnnotationHit } from './code-gloss.types';
+import type { SyntaxRule } from './tokenize.types';
 
 const SYNTAX_RULES = [
 	{ pattern: /(\/\/.*)/, className: 'comment' },
@@ -12,7 +13,7 @@ const SYNTAX_RULES = [
 	{ pattern: /("(?:[^"\\]|\\.)*")/, className: 'string' },
 	{ pattern: /(`(?:[^`\\]|\\.)*`)/, className: 'string' },
 	{ pattern: /\b(\d+(?:\.\d+)?)\b/, className: 'number' },
-] as const;
+] as const satisfies readonly SyntaxRule[];
 
 export function highlightPlainText(text: string): string {
 	if (text.length === 0) return '';
