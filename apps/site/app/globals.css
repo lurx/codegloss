@@ -98,10 +98,8 @@ a:hover {
 
 /* ─── Nav ─── */
 .nav {
-	position: fixed;
+	position: sticky;
 	top: 0;
-	left: 0;
-	right: 0;
 	z-index: 50;
 	height: 3.5rem;
 	display: flex;
@@ -111,10 +109,6 @@ a:hover {
 	background: var(--site-nav-bg);
 	backdrop-filter: blur(20px) saturate(180%);
 	-webkit-backdrop-filter: blur(20px) saturate(180%);
-}
-
-.nav-offset {
-	padding-top: 3.5rem;
 }
 
 .nav-inner {
@@ -696,6 +690,10 @@ a:hover {
 }
 
 /* ─── Prose ─── */
+.prose :is(h1, h2, h3, h4, h5, h6) {
+	scroll-margin-top: 5rem;
+}
+
 .prose h1 {
 	font-size: 1.875rem;
 	font-weight: 700;
@@ -722,6 +720,47 @@ a:hover {
 	font-weight: 600;
 	color: var(--site-heading);
 	margin: 1.5rem 0 0.5rem;
+}
+
+/* Copy-link pill injected by rehype-autolink-headings. Hidden by
+   default; reveals as a small labelled button when its heading is
+   hovered or the anchor itself is focused. Click copies
+   window.location to the clipboard (see
+   use-copy-heading-anchors.hook.ts); the inner label flips to
+   "Copied!" on success. */
+.prose :is(h1, h2, h3, h4, h5, h6) {
+	position: relative;
+}
+
+.prose .heading-anchor {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	margin-left: 0.5em;
+	border-radius: 5px;
+	border: 1px solid var(--site-border);
+	background: var(--site-surface);
+	color: var(--site-muted);
+	text-decoration: none;
+	vertical-align: middle;
+	opacity: 0;
+	transition: opacity 120ms ease, color 120ms ease;
+}
+
+.prose :is(h1, h2, h3, h4, h5, h6):hover .heading-anchor,
+.prose .heading-anchor:focus-visible {
+	opacity: 1;
+}
+
+.prose .heading-anchor:hover {
+	color: var(--site-heading);
+}
+
+.prose .heading-anchor[data-copied] {
+	color: var(--site-heading);
+	opacity: 1;
 }
 
 .prose p {
