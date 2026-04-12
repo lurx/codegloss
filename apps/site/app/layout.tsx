@@ -1,10 +1,10 @@
-import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import { Logo } from '@/components/logo.component';
 import { ThemeToggle } from '@/components/theme-toggle.component';
 import { Search } from '@/components/search.component';
+import type { RootLayoutProps } from './layout.types';
 
 import './globals.css';
 
@@ -12,10 +12,6 @@ export const metadata: Metadata = {
   title: 'codegloss — annotated code, explained',
   description:
     'Interactive code annotations for MDX. Highlight tokens, add tooltips, draw connection arcs.',
-};
-
-type RootLayoutProps = {
-  children: ReactNode;
 };
 
 export default function RootLayout({ children }: RootLayoutProps) {

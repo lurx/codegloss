@@ -3,10 +3,7 @@ import { docs } from '#velite';
 
 import { MdxContent } from '@/components/mdx-content.component';
 import { DocsLayout } from '@/components/docs-layout.component';
-
-type DocPageProps = {
-  params: Promise<{ slug: string[] }>;
-};
+import type { DocPageProps } from './page.types';
 
 export function generateStaticParams() {
   return docs.map((doc) => ({ slug: doc.slug.split('/') }));
