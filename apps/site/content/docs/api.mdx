@@ -64,13 +64,14 @@ Defines a single highlighted token with an expanding callout.
 
 ````ts
 type Annotation = {
-  id: string;          // Unique ID, e.g. "a1"
-  token: string;       // Exact substring to match, e.g. "memo[k]"
-  line: number;        // 0-indexed line number
-  occurrence: number;  // 0-indexed match on that line
-  title: string;       // Callout heading
-  text: string;        // Callout body
-  popover?: boolean;   // Present the callout as a floating popover. Default: false.
+  id: string;            // Unique ID, e.g. "a1"
+  token: string;         // Exact substring to match, e.g. "memo[k]"
+  line: number;          // 0-indexed line number
+  occurrence: number;    // 0-indexed match on that line
+  title: string;         // Callout heading
+  text: string;          // Callout body
+  popover?: boolean;     // Present the callout as a floating popover. Default: false.
+  defaultOpen?: boolean; // Open this callout automatically on first render. Default: false.
 };
 ````
 
@@ -78,6 +79,7 @@ type Annotation = {
 - **`line`** — 0-indexed. Line 0 is the first line of the code.
 - **`occurrence`** — when a token appears multiple times on one line, this selects which instance (0 = first).
 - **`popover`** — when `true`, clicking the token opens a floating popover at the click position (same surface as the connection-arc popover) instead of the default inline expanding callout. Per-annotation override of the block-level [`callouts.popover`](#callout-options) default.
+- **`defaultOpen`** — when `true`, the callout opens automatically on first render. See [Pre-opening callouts](#pre-opening-callouts).
 
 Clicking an annotated token either expands an inline callout row directly below the line (default), or opens a floating popover if `popover: true`. Click again or press Escape to dismiss.
 
@@ -93,6 +95,7 @@ type Connection = {
   title?: string;            // Popover heading shown on click
   text?: string;             // Popover body. Without it, the arc is not clickable.
   side?: 'left' | 'right';   // Which side to render on. Default: 'left'.
+  defaultOpen?: boolean;     // Open this arc's popover automatically on first render. Default: false.
 };
 ````
 
@@ -239,6 +242,29 @@ Arc popovers and annotation popovers are independent surfaces: a user can have b
     }
   </script>
 </code-gloss>
+````
+
+### Pre-opening callouts
+
+An annotation or connection can open automatically on first render by setting `defaultOpen: true` on it. This is useful for in-doc walkthroughs where you want a specific explanation surfaced without requiring the reader to hunt for it.
+
+**Limits and last-wins.** At most **one annotation** and **one connection** can be pre-opened per block — the two surfaces are independent, so one of each can land open simultaneously after mount. If multiple entries in either array set `defaultOpen: true`, the **last one wins** (CSS-cascade style); earlier flags are ignored.
+
+**Interaction after mount.** A pre-opened callout behaves like any other once rendered — clicking again or pressing Escape dismisses it. Dismissed pre-opens are not re-opened on re-render.
+
+**Positioning without a click.** Pre-opened popovers anchor at a computed position since there's no click event: annotation popovers anchor to the right edge of the annotated token; connection popovers anchor at the midpoint between the two annotation lines, offset to the gutter on their side.
+
+````json
+{
+  "annotations": [
+    { "id": "a1", "token": "cache", "line": 1, "occurrence": 0,
+      "title": "Cache", "text": "...", "defaultOpen": true }
+  ],
+  "connections": [
+    { "from": "a1", "to": "a1", "color": "#534AB7", "text": "Write then read",
+      "side": "right", "defaultOpen": true }
+  ]
+}
 ````
 
 ### Loading the config programmatically

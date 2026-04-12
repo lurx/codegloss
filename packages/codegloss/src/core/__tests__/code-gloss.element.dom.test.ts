@@ -749,6 +749,270 @@ describe('CodeGlossElement', () => {
 		});
 	});
 
+	describe('defaultOpen pre-opens', () => {
+		beforeEach(() => {
+			(HTMLElement.prototype.showPopover as ReturnType<typeof vi.fn>).mockClear();
+		});
+
+		it('pre-opens the inline callout for an annotation with defaultOpen: true', () => {
+			const element = mount({
+				lang: 'js',
+				code: 'foo bar',
+				annotations: [
+					ann({ id: 'a1', token: 'foo', line: 0, defaultOpen: true }),
+				],
+			});
+
+			expect(shadow(element).querySelector('.callout')).not.toBeNull();
+		});
+
+		it('pre-opens the popover callout when the winning annotation is in popover mode', async () => {
+			mount({
+				lang: 'js',
+				code: 'foo bar',
+				annotations: [
+					ann({
+						id: 'a1',
+						token: 'foo',
+						line: 0,
+						popover: true,
+						defaultOpen: true,
+					}),
+				],
+			});
+
+			await nextFrame();
+			expect(HTMLElement.prototype.showPopover).toHaveBeenCalledTimes(1);
+		});
+
+		it('last annotation with defaultOpen wins when multiple are flagged', () => {
+			const element = mount({
+				lang: 'js',
+				code: 'foo bar baz',
+				annotations: [
+					ann({
+						id: 'a1',
+						token: 'foo',
+						line: 0,
+						title: 'Foo',
+						text: 'About foo',
+						defaultOpen: true,
+					}),
+					ann({
+						id: 'a2',
+						token: 'baz',
+						line: 0,
+						title: 'Baz',
+						text: 'About baz',
+						defaultOpen: true,
+					}),
+				],
+			});
+
+			const callout = shadow(element).querySelector('.calloutTitle');
+			expect(callout?.textContent).toBe('Baz');
+		});
+
+		it('pre-opens the winning connection popover', async () => {
+			const element = mount({
+				lang: 'js',
+				code: 'a\nb',
+				annotations: [
+					ann({ id: 'a1', token: 'a', line: 0 }),
+					ann({ id: 'a2', token: 'b', line: 1 }),
+				],
+				connections: [
+					{
+						from: 'a1',
+						to: 'a2',
+						color: '#0af',
+						title: 'Conn title',
+						text: 'Conn body',
+						defaultOpen: true,
+					},
+				],
+			});
+			await nextFrame();
+
+			const popover = shadow(element).querySelector('.connectionTooltip')!;
+			expect(popover.innerHTML).toContain('Conn title');
+			expect(HTMLElement.prototype.showPopover).toHaveBeenCalledTimes(1);
+		});
+
+		it('last connection with defaultOpen wins when multiple are flagged', async () => {
+			const element = mount({
+				lang: 'js',
+				code: 'a\nb',
+				annotations: [
+					ann({ id: 'a1', token: 'a', line: 0 }),
+					ann({ id: 'a2', token: 'b', line: 1 }),
+				],
+				connections: [
+					{
+						from: 'a1',
+						to: 'a2',
+						color: '#0af',
+						title: 'First',
+						text: 'First body',
+						defaultOpen: true,
+					},
+					{
+						from: 'a2',
+						to: 'a1',
+						color: '#f00',
+						title: 'Second',
+						text: 'Second body',
+						defaultOpen: true,
+					},
+				],
+			});
+			await nextFrame();
+
+			const popover = shadow(element).querySelector('.connectionTooltip')!;
+			expect(popover.innerHTML).toContain('Second');
+			expect(popover.innerHTML).not.toContain('First body');
+		});
+
+		it('opens one annotation and one connection together (independent surfaces)', async () => {
+			const element = mount({
+				lang: 'js',
+				code: 'a\nb',
+				annotations: [
+					ann({
+						id: 'a1',
+						token: 'a',
+						line: 0,
+						title: 'A',
+						text: 'About a',
+						defaultOpen: true,
+					}),
+					ann({ id: 'a2', token: 'b', line: 1 }),
+				],
+				connections: [
+					{
+						from: 'a1',
+						to: 'a2',
+						color: '#0af',
+						title: 'Conn',
+						text: 'Conn body',
+						defaultOpen: true,
+					},
+				],
+			});
+			await nextFrame();
+
+			expect(shadow(element).querySelector('.callout')).not.toBeNull();
+			expect(HTMLElement.prototype.showPopover).toHaveBeenCalledTimes(1);
+		});
+
+		it('skips connection pre-open when the connection has no text (non-interactive)', async () => {
+			mount({
+				lang: 'js',
+				code: 'a\nb',
+				annotations: [
+					ann({ id: 'a1', token: 'a', line: 0 }),
+					ann({ id: 'a2', token: 'b', line: 1 }),
+				],
+				connections: [
+					{
+						from: 'a1',
+						to: 'a2',
+						color: '#0af',
+						title: 'No body',
+						defaultOpen: true,
+					},
+				],
+			});
+			await nextFrame();
+
+			expect(HTMLElement.prototype.showPopover).not.toHaveBeenCalled();
+		});
+
+		it('anchors a right-side pre-opened connection differently from a left-side one', async () => {
+			const element = mount({
+				lang: 'js',
+				code: 'a\nb',
+				annotations: [
+					ann({ id: 'a1', token: 'a', line: 0 }),
+					ann({ id: 'a2', token: 'b', line: 1 }),
+				],
+				connections: [
+					{
+						from: 'a1',
+						to: 'a2',
+						color: '#0af',
+						title: 'Right',
+						text: 'On the right',
+						side: 'right',
+						defaultOpen: true,
+					},
+				],
+			});
+			await nextFrame();
+
+			const popover = shadow(element).querySelector<HTMLElement>(
+				'.connectionTooltip',
+			)!;
+			expect(popover.style.left).toBeTruthy();
+		});
+
+		it('falls back to the codeArea center when a connection references an unknown annotation', async () => {
+			const element = mount({
+				lang: 'js',
+				code: 'a\nb',
+				annotations: [ann({ id: 'a1', token: 'a', line: 0 })],
+				connections: [
+					{
+						from: 'ghost',
+						to: 'other-ghost',
+						color: '#0af',
+						title: 'Orphan',
+						text: 'Both partners missing',
+						defaultOpen: true,
+					},
+				],
+			});
+			await nextFrame();
+
+			const popover = shadow(element).querySelector<HTMLElement>(
+				'.connectionTooltip',
+			)!;
+			expect(popover.innerHTML).toContain('Orphan');
+			expect(popover.style.top).toBeTruthy();
+		});
+
+		it('does nothing when no annotation or connection is marked defaultOpen', async () => {
+			const element = mount({
+				lang: 'js',
+				code: 'foo',
+				annotations: [ann({ id: 'a1', token: 'foo', line: 0 })],
+			});
+			await nextFrame();
+
+			expect(shadow(element).querySelector('.callout')).toBeNull();
+			expect(HTMLElement.prototype.showPopover).not.toHaveBeenCalled();
+		});
+
+		it('ignores defaultOpen pointing at a popover annotation whose token was not rendered', async () => {
+			mount({
+				lang: 'js',
+				code: 'foo',
+				annotations: [
+					ann({
+						id: 'ghost',
+						token: 'not-there',
+						line: 0,
+						popover: true,
+						defaultOpen: true,
+					}),
+				],
+			});
+			await nextFrame();
+
+			expect(HTMLElement.prototype.showPopover).not.toHaveBeenCalled();
+		});
+	});
+
 	describe('theme handling', () => {
 		it('applies a theme from the JSON config on connect and sets the host attribute', () => {
 			const element = mount({

@@ -121,8 +121,39 @@ export class CodeGlossElement extends SafeHTMLElement {
 
 		this.highlightedLines =
 			this.highlight?.(this.config.code, this.config.lang) ?? undefined;
+		this.primeInlineDefaultOpen();
 		this.buildDom();
 		this.attachListeners();
+		this.applyFloatingDefaultOpens();
+	}
+
+	/**
+	 * If an annotation is marked `defaultOpen: true` and is in the inline
+	 * callout mode, set it as active *before* the initial renderLines so
+	 * the callout is included in the first paint. Runs pre-DOM-build so
+	 * we don't do a wasted second render.
+	 *
+	 * Last-wins: if multiple annotations are marked, the last one in the
+	 * array takes effect (CSS-cascade style).
+	 */
+	private primeInlineDefaultOpen(): void {
+		const ann = this.findLastDefaultOpenAnnotation();
+		if (!ann) return;
+		if (this.shouldUsePopoverFor(ann)) return;
+		this.activeAnnotationId = ann.id;
+	}
+
+	/**
+	 * Opens the winning popover annotation and winning connection
+	 * pre-open after the DOM is laid out and arcs are drawn. Annotation
+	 * and connection popovers are independent surfaces, so one of each
+	 * can land open.
+	 */
+	private applyFloatingDefaultOpens(): void {
+		requestAnimationFrame(() => {
+			this.openDefaultAnnotationPopoverIfAny();
+			this.openDefaultConnectionIfAny();
+		});
 	}
 
 	attributeChangedCallback(
@@ -496,6 +527,88 @@ export class CodeGlossElement extends SafeHTMLElement {
 		if (!this.annotationPopoverState) return;
 		this.annotationPopoverEl.hidePopover();
 		this.annotationPopoverState = undefined;
+	}
+
+	private findLastDefaultOpenAnnotation(): Annotation | undefined {
+		const anns = this.config?.annotations;
+		if (!anns) return undefined;
+		for (let i = anns.length - 1; i >= 0; i--) {
+			if (anns[i].defaultOpen) return anns[i];
+		}
+		return undefined;
+	}
+
+	private findLastDefaultOpenConnection(): Connection | undefined {
+		const conns = this.config?.connections;
+		if (!conns) return undefined;
+		for (let i = conns.length - 1; i >= 0; i--) {
+			if (conns[i].defaultOpen) return conns[i];
+		}
+		return undefined;
+	}
+
+	private openDefaultAnnotationPopoverIfAny(): void {
+		const ann = this.findLastDefaultOpenAnnotation();
+		if (!ann || !this.shouldUsePopoverFor(ann)) return;
+
+		const mark = this.preEl.querySelector<HTMLElement>(
+			`mark[data-ann-id="${ann.id}"]`,
+		);
+		if (!mark) return;
+
+		const rect = mark.getBoundingClientRect();
+		this.annotationPopoverState = {
+			annId: ann.id,
+			top: rect.top + rect.height / 2,
+			left: rect.right,
+		};
+		this.renderAnnotationPopover();
+		this.annotationPopoverEl.showPopover();
+	}
+
+	private openDefaultConnectionIfAny(): void {
+		const conn = this.findLastDefaultOpenConnection();
+		if (!conn?.text) return;
+
+		const { top, left } = this.computeConnectionAnchor(conn);
+		this.connectionTooltip = { connection: conn, top, left };
+		this.renderConnectionPopover();
+		this.popoverEl.showPopover();
+	}
+
+	/**
+	 * Picks a reasonable viewport anchor for a pre-opened arc popover:
+	 * the midpoint between the two annotation lines, offset into the
+	 * gutter so it doesn't overlap the code.
+	 */
+	private computeConnectionAnchor(conn: Connection): {
+		top: number;
+		left: number;
+	} {
+		// This only runs from openDefaultConnectionIfAny, which already
+		// proved the config + connection exist. A block with connections
+		// but no annotations is nonsensical but guarded against anyway.
+		/* c8 ignore next */
+		const annotations = this.config?.annotations ?? [];
+		const fromLine = this.lineRefs.get(
+			annotations.find(a => a.id === conn.from)?.line ?? -1,
+		);
+		const toLine = this.lineRefs.get(
+			annotations.find(a => a.id === conn.to)?.line ?? -1,
+		);
+		const fromRect = fromLine?.getBoundingClientRect();
+		const toRect = toLine?.getBoundingClientRect();
+		const codeAreaRect = this.codeArea.getBoundingClientRect();
+
+		const midY =
+			fromRect && toRect
+				? (fromRect.top + fromRect.height / 2 + toRect.top + toRect.height / 2) / 2
+				: codeAreaRect.top + codeAreaRect.height / 2;
+
+		const left =
+			conn.side === 'right' ? codeAreaRect.right : codeAreaRect.left;
+
+		return { top: midY, left };
 	}
 
 	private dismissCallout(): void {

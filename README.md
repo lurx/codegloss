@@ -11,6 +11,7 @@ Interactive annotated code blocks for the web. Drop a `<code-gloss>` element on 
 
 - **Annotations** — click any highlighted token for context. Render inline by default or as a floating popover via `annotation.popover: true` / `callouts.popover: true` on the block.
 - **Connection arcs** — visual arcs between related annotations. Render in the fixed left gutter (default) or on the right with `connection.side: 'right'`, anchored at each line's text end. Turn on marker-end arrowheads with `arcs.arrowhead: true`.
+- **Pre-opened callouts** — set `defaultOpen: true` on an annotation or connection to surface it on first render (walkthrough style). At most one of each per block; last-wins cascade if multiple are marked.
 - **Framework-agnostic** — one Web Component, thin wrappers for React, Vue, and Svelte, and a remark plugin that covers MDX and plain markdown pipelines.
 - **Themeable** — 9 bundled light/dark themes plus full CSS variable overrides; auto-swaps via `prefers-color-scheme`.
 

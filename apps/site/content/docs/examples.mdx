@@ -314,6 +314,55 @@ class LruCache {
 
 ---
 
+## Pre-opened callouts (walkthrough style)
+
+For in-doc walkthroughs you can surface a specific annotation or connection on first render via [`defaultOpen`](/docs/api#pre-opening-callouts). At most **one annotation callout** and **one connection popover** can be pre-opened per block — if multiple are marked, the last one in its array wins (CSS-cascade style).
+
+```ts sandbox debounce.ts
+function debounce(fn, wait) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), wait);
+  };
+}
+```
+
+```json annotations
+{
+  "annotations": [
+    {
+      "id": "d1",
+      "token": "timer",
+      "line": 1,
+      "occurrence": 0,
+      "title": "Shared closure",
+      "text": "The closure captures a single timer reference across every call to the returned function — that's what makes debouncing stateful."
+    },
+    {
+      "id": "d2",
+      "token": "clearTimeout(timer)",
+      "line": 3,
+      "occurrence": 0,
+      "title": "Cancel pending",
+      "text": "Every new call resets the pending timer. No-op on first call since timer is undefined.",
+      "defaultOpen": true
+    }
+  ],
+  "connections": [
+    {
+      "from": "d1",
+      "to": "d2",
+      "color": "#534AB7",
+      "title": "Read → cancel",
+      "text": "The captured timer from line 1 is what every subsequent call cancels on line 3."
+    }
+  ]
+}
+```
+
+---
+
 ## Minimal — No Annotations
 
 A sandbox block without a following annotations block renders as a plain code viewer with line numbers and a toolbar.

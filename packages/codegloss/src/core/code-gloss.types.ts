@@ -18,6 +18,13 @@ export type Annotation = {
 	 * default. Default: false.
 	 */
 	popover?: boolean;
+	/**
+	 * When `true`, this annotation's callout opens automatically on first
+	 * render. Only one annotation per block can be pre-opened — if more
+	 * than one sets `defaultOpen: true`, the **last** one in the
+	 * `annotations` array wins (CSS-cascade style). Default: false.
+	 */
+	defaultOpen?: boolean;
 };
 
 export type Connection = {
@@ -37,6 +44,16 @@ export type Connection = {
 	 * - `'right'` — dynamic-width gutter, arc anchors at each line's end.
 	 */
 	side?: 'left' | 'right';
+	/**
+	 * When `true`, this connection's popover opens automatically on first
+	 * render. Only one connection per block can be pre-opened — if more
+	 * than one sets `defaultOpen: true`, the **last** one in the
+	 * `connections` array wins (CSS-cascade style). Default: false.
+	 *
+	 * Independent of `annotation.defaultOpen`: one of each can be open
+	 * after mount.
+	 */
+	defaultOpen?: boolean;
 };
 
 /**
