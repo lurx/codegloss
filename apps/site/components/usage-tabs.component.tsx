@@ -1,71 +1,35 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useCallback, useRef, useState, type MouseEvent } from 'react';
 import { useSiteTheme } from '@/hooks';
 import { CopyCodeButton } from './copy-code-button.component';
 import highlightedHtml from './usage-tabs-html.generated.json';
-import type { CopyableBlockProps, Tab } from './usage-tabs.types';
+import type {
+	CopyableBlockProps,
+	HighlightedHtmlMap,
+} from './usage-tabs.types';
+import { TABS } from './usage-tabs.data';
+import {
+	BLOCK_LABEL_STYLE,
+	BLOCK_WRAPPER_STYLE,
+	TAB_CONTENT_STYLE,
+} from './usage-tabs.constants';
 
-const TABS: Tab[] = [
-	{
-		label: 'MDX / Remark',
-		content:
-			'Use fenced code blocks with a sandbox tag. The remark plugin detects them and emits CodeGloss components at build time.',
-		blocks: [
-			{ htmlKey: 'MDX / Remark — Setup', label: 'Setup' },
-			{ htmlKey: 'MDX / Remark — Markdown', label: 'Markdown' },
-		],
-	},
-	{
-		label: 'React',
-		content:
-			'Import the wrapper and pass props. Works with React 16.14+. The React wrapper is a thin JSX adapter — zero React APIs beyond JSX itself.',
-		blocks: [{ htmlKey: 'React' }],
-	},
-	{
-		label: 'Vue',
-		content: 'Import the Vue 3 wrapper component.',
-		blocks: [{ htmlKey: 'Vue' }],
-	},
-	{
-		label: 'Svelte',
-		content: 'Import the Svelte wrapper component.',
-		blocks: [{ htmlKey: 'Svelte' }],
-	},
-	{
-		label: 'Vanilla HTML',
-		content:
-			'Drop a <script> tag and a <code-gloss> custom element with a JSON config child. Works in plain HTML pages, Hugo, Eleventy, Jekyll — anywhere you can drop a <script> tag.',
-		blocks: [{ htmlKey: 'Vanilla HTML' }],
-	},
-];
-
-const htmlData = highlightedHtml as Record<
-	string,
-	Record<string, string>
->;
+const htmlData = highlightedHtml as HighlightedHtmlMap;
 
 function CopyableBlock({ html, label }: CopyableBlockProps) {
 	const codeRef = useRef<HTMLDivElement>(null);
 
 	const getText = useCallback(() => codeRef.current?.textContent ?? '', []);
 
+	const renderLabel = () => {
+		if (!label) return null;
+		return <div style={BLOCK_LABEL_STYLE}>{label}</div>;
+	};
+
 	return (
-		<div style={{ marginBottom: '0.75rem' }}>
-			{label && (
-				<div
-					style={{
-						fontSize: '0.6875rem',
-						fontWeight: 600,
-						textTransform: 'uppercase',
-						letterSpacing: '0.06em',
-						color: 'var(--site-muted)',
-						marginBottom: '0.375rem',
-					}}
-				>
-					{label}
-				</div>
-			)}
+		<div style={BLOCK_WRAPPER_STYLE}>
+			{renderLabel()}
 			<div className="code-block-wrapper">
 				<div
 					ref={codeRef}
@@ -81,8 +45,13 @@ function CopyableBlock({ html, label }: CopyableBlockProps) {
 export function UsageTabs() {
 	const [active, setActive] = useState(0);
 	const siteTheme = useSiteTheme();
+
+	const handleSelect = useCallback((event: MouseEvent<HTMLButtonElement>) => {
+		const index = Number(event.currentTarget.dataset.index);
+		setActive(index);
+	}, []);
+
 	const tab = TABS[active];
-	const variant = siteTheme === 'dark' ? 'dark' : 'light';
 
 	return (
 		<div className="mdx-tabs">
@@ -91,28 +60,20 @@ export function UsageTabs() {
 					<button
 						key={t.label}
 						type="button"
+						data-index={i}
 						className={`mdx-tabs-trigger${i === active ? ' mdx-tabs-trigger-active' : ''}`}
-						onClick={() => setActive(i)}
+						onClick={handleSelect}
 					>
 						{t.label}
 					</button>
 				))}
 			</div>
 			<div className="mdx-tabs-panel">
-				<p
-					style={{
-						color: 'var(--site-fg)',
-						lineHeight: 1.72,
-						fontSize: '0.9375rem',
-						marginBottom: '1rem',
-					}}
-				>
-					{tab.content}
-				</p>
+				<p style={TAB_CONTENT_STYLE}>{tab.content}</p>
 				{tab.blocks.map(block => (
 					<CopyableBlock
 						key={block.htmlKey}
-						html={htmlData[block.htmlKey]?.[variant] ?? ''}
+						html={htmlData[block.htmlKey]?.[siteTheme] ?? ''}
 						label={tab.blocks.length > 1 ? block.label : undefined}
 					/>
 				))}
