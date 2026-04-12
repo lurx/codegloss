@@ -39,12 +39,11 @@ export function applyGlobalTheme(name: string): void {
 }
 
 export { default as githubLight } from './github-light.theme';
-export { default as oneLight } from './one-light.theme';
 export { default as githubDark } from './github-dark.theme';
-
+export { default as oneLight } from './one-light.theme';
 export { default as oneDark } from './one-dark.theme';
-export { default as nordLight } from './nord-light.theme';
 export { default as dracula } from './dracula.theme';
-export { default as vitesseLight } from './vitesse-light.theme';
+export { default as nordLight } from './nord-light.theme';
 export { default as nordDark } from './nord-dark.theme';
+export { default as vitesseLight } from './vitesse-light.theme';
 export { default as vitesseDark } from './vitesse-dark.theme';
