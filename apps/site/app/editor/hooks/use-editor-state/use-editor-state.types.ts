@@ -14,6 +14,7 @@ export type EditorState = {
 };
 
 export type EditorAction =
+	| { kind: 'replaceConfig'; value: EditorConfig }
 	| { kind: 'setCode'; value: string }
 	| { kind: 'setLang'; value: string }
 	| { kind: 'setFilename'; value: string }
@@ -27,6 +28,7 @@ export type EditorAction =
 
 export type UseEditorStateResult = {
 	config: EditorConfig;
+	replaceConfigAction: (value: EditorConfig) => void;
 	setCodeAction: (value: string) => void;
 	setLangAction: (value: string) => void;
 	setFilenameAction: (value: string) => void;

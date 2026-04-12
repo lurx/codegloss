@@ -25,6 +25,8 @@ const INITIAL_STATE = {
 function reducer(state: EditorState, action: EditorAction): EditorState {
 	const { config } = state;
 	switch (action.kind) {
+		case 'replaceConfig':
+			return { config: action.value };
 		case 'setCode':
 			return { config: { ...config, code: action.value } };
 		case 'setLang':
@@ -82,6 +84,9 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
 export function useEditorState(): UseEditorStateResult {
 	const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
+	const replaceConfigAction = useCallback<
+		UseEditorStateResult['replaceConfigAction']
+	>((value) => dispatch({ kind: 'replaceConfig', value }), []);
 	const setCodeAction = useCallback(
 		(value: string) => dispatch({ kind: 'setCode', value }),
 		[],
@@ -121,6 +126,7 @@ export function useEditorState(): UseEditorStateResult {
 
 	return {
 		config: state.config,
+		replaceConfigAction,
 		setCodeAction,
 		setLangAction,
 		setFilenameAction,
