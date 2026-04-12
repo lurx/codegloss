@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..500&family=JetBrains+Mono:wght@400;500&display=swap');
 
 /* ─── Tokens ─── */
 :root,
@@ -25,7 +25,7 @@
 	--site-selection: rgba(108, 92, 231, 0.35);
 	--site-glow: rgba(108, 92, 231, 0.08);
 	--font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
-	--font-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+	--font-display: 'Newsreader', Georgia, 'Times New Roman', serif;
 	--font-mono: 'JetBrains Mono', 'SFMono-Regular', Menlo, monospace;
 	color-scheme: dark;
 }
