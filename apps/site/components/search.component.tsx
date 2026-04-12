@@ -2,10 +2,8 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { Search as SearchIcon } from 'lucide-react';
 import type { SearchEntry, SearchResult } from './search.types';
-
-const SEARCH_ICON =
-	'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
 
 function searchDocs(query: string, index: SearchEntry[]): SearchResult[] {
 	const lower = query.toLowerCase();
@@ -105,9 +103,7 @@ export function Search() {
 				onClick={() => setOpen(true)}
 				aria-label="Search documentation"
 			>
-				<span
-					dangerouslySetInnerHTML={{ __html: SEARCH_ICON }}
-				/>
+				<SearchIcon size={14} />
 				<span className="search-trigger-text">Search</span>
 				<kbd className="search-trigger-kbd">
 					<span className="search-trigger-kbd-mod">⌘</span>K

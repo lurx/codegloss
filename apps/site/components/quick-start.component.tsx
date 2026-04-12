@@ -1,8 +1,8 @@
 'use client';
 
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 import { useSiteTheme } from '@/hooks/use-site-theme.hook';
-import { COPY_ICON, CHECK_ICON } from './code-block.component';
+import { CopyCodeButton } from './copy-code-button.component';
 import highlightedHtml from './homepage-snippets-html.generated.json';
 
 const htmlData = highlightedHtml as Record<
@@ -18,14 +18,8 @@ const STEPS = [
 
 function HighlightedBlock({ html }: { html: string }) {
 	const codeRef = useRef<HTMLDivElement>(null);
-	const [copied, setCopied] = useState(false);
 
-	const handleCopy = useCallback(() => {
-		const text = codeRef.current?.textContent ?? '';
-		void navigator.clipboard.writeText(text);
-		setCopied(true);
-		setTimeout(() => setCopied(false), 2000);
-	}, []);
+	const getText = useCallback(() => codeRef.current?.textContent ?? '', []);
 
 	return (
 		<div className="code-block-wrapper">
@@ -34,16 +28,7 @@ function HighlightedBlock({ html }: { html: string }) {
 				className="usage-code-block"
 				dangerouslySetInnerHTML={{ __html: html }}
 			/>
-			<button
-				type="button"
-				className="code-block-copy"
-				onClick={handleCopy}
-				aria-label={copied ? 'Copied' : 'Copy code'}
-				title={copied ? 'Copied!' : 'Copy code'}
-				dangerouslySetInnerHTML={{
-					__html: copied ? CHECK_ICON : COPY_ICON,
-				}}
-			/>
+			<CopyCodeButton getTextAction={getText} />
 		</div>
 	);
 }
