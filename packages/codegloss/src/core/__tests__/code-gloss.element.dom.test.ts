@@ -16,7 +16,7 @@ import type {
 } from '../code-gloss.types';
 
 // Mock the arc renderer so we can (a) assert call counts deterministically and
-// (b) capture the onConnectionClick callback the element passes in. The real
+// (b) capture the onConnectionClickAction callback the element passes in. The real
 // drawArcs is exercised in arcs.helpers.dom.test.ts.
 vi.mock('../render/arcs.helpers', () => ({
 	drawArcs: vi.fn(),
@@ -322,7 +322,7 @@ describe('CodeGlossElement', () => {
 			await nextFrame();
 
 			const event = new MouseEvent('click', { clientX: 120, clientY: 240 });
-			lastDrawArgs().onConnectionClick(connection, event);
+			lastDrawArgs().onConnectionClickAction(connection, event);
 
 			const popover = shadow(element).querySelector('.connectionTooltip')!;
 			expect(popover.style.top).toBe('240px');
@@ -342,7 +342,7 @@ describe('CodeGlossElement', () => {
 			const element = mount({ ...config, connections: [titleOnly] });
 			await nextFrame();
 
-			lastDrawArgs().onConnectionClick(titleOnly, new MouseEvent('click'));
+			lastDrawArgs().onConnectionClickAction(titleOnly, new MouseEvent('click'));
 			const popover = shadow(element).querySelector('.connectionTooltip')!;
 			expect(popover.innerHTML).toContain('Just a title');
 			expect(popover.querySelector('.connectionTooltipBody')).toBeNull();
@@ -358,7 +358,7 @@ describe('CodeGlossElement', () => {
 			const element = mount({ ...config, connections: [bodyOnly] });
 			await nextFrame();
 
-			lastDrawArgs().onConnectionClick(bodyOnly, new MouseEvent('click'));
+			lastDrawArgs().onConnectionClickAction(bodyOnly, new MouseEvent('click'));
 			const popover = shadow(element).querySelector('.connectionTooltip')!;
 			expect(popover.innerHTML).toContain('Just a body');
 			expect(popover.querySelector('.connectionTooltipTitle')).toBeNull();
@@ -368,7 +368,7 @@ describe('CodeGlossElement', () => {
 			const element = mount(config);
 			await nextFrame();
 
-			lastDrawArgs().onConnectionClick(connection, new MouseEvent('click'));
+			lastDrawArgs().onConnectionClickAction(connection, new MouseEvent('click'));
 			const popover = shadow(element).querySelector('.connectionTooltip')!;
 
 			const toggle = new Event('toggle');
@@ -376,14 +376,14 @@ describe('CodeGlossElement', () => {
 			popover.dispatchEvent(toggle);
 
 			// Re-trigger render to make sure no stale state crashes the path
-			lastDrawArgs().onConnectionClick(connection, new MouseEvent('click'));
+			lastDrawArgs().onConnectionClickAction(connection, new MouseEvent('click'));
 			expect(HTMLElement.prototype.showPopover).toHaveBeenCalledTimes(2);
 		});
 
 		it('ignores popover toggle events whose newState is not "closed"', async () => {
 			const element = mount(config);
 			await nextFrame();
-			lastDrawArgs().onConnectionClick(connection, new MouseEvent('click'));
+			lastDrawArgs().onConnectionClickAction(connection, new MouseEvent('click'));
 
 			const popover = shadow(element).querySelector('.connectionTooltip')!;
 			const toggle = new Event('toggle');

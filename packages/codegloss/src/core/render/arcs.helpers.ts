@@ -13,7 +13,7 @@ export function drawArcs({
 	height,
 	connections,
 	annotationYMap,
-	onConnectionClick,
+	onConnectionClickAction,
 	arcStyle,
 }: DrawArcsParameters): void {
 	const dotR = arcStyle?.dotRadius ?? 2.5;
@@ -37,7 +37,7 @@ export function drawArcs({
 		const xPos = ARC_BASE_X - idx * ARC_X_STEP;
 		const interactive = Boolean(conn.text);
 		const onClick = interactive
-			? (event: MouseEvent) => onConnectionClick(conn, event)
+			? (event: MouseEvent) => onConnectionClickAction(conn, event)
 			: null;
 
 		const dot1 = createDot(xPos, fromY, conn.color, dotR, dotOp);

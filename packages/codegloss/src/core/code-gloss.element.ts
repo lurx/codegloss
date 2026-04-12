@@ -501,7 +501,7 @@ export class CodeGlossElement extends SafeHTMLElement {
 			annotations,
 			connections: this.config.connections,
 			annotationYMap,
-			onConnectionClick: this.handleConnectionClick,
+			onConnectionClickAction: this.handleConnectionClick,
 			arcStyle: this.config.arcs,
 		});
 	}

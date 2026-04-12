@@ -16,7 +16,7 @@ export type DrawArcsParameters = {
 	/** Map from annotation id → vertical position (px) within the code area */
 	annotationYMap: Map<string, number>;
 	/** Click handler invoked when an interactive arc/dot is clicked */
-	onConnectionClick: (conn: Connection, event: MouseEvent) => void;
+	onConnectionClickAction: (conn: Connection, event: MouseEvent) => void;
 	/** Optional style overrides for arcs */
 	arcStyle?: ArcStyleOverrides;
 };

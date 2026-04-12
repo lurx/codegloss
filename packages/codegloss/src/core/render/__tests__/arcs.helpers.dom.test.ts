@@ -40,7 +40,7 @@ describe('drawArcs', () => {
 			annotations: [],
 			connections: [],
 			annotationYMap: new Map(),
-			onConnectionClick() {
+			onConnectionClickAction() {
 				// Noop
 			},
 		});
@@ -60,7 +60,7 @@ describe('drawArcs', () => {
 			annotations: [],
 			connections: [],
 			annotationYMap: new Map(),
-			onConnectionClick() {
+			onConnectionClickAction() {
 				// Noop
 			},
 		});
@@ -75,7 +75,7 @@ describe('drawArcs', () => {
 			annotations: [ann('a'), ann('b')],
 			connections: [conn({ from: 'a', to: 'missing' })],
 			annotationYMap: new Map([['a', 10]]),
-			onConnectionClick() {
+			onConnectionClickAction() {
 				// Noop
 			},
 		});
@@ -93,7 +93,7 @@ describe('drawArcs', () => {
 				['a', 10],
 				['b', 50],
 			]),
-			onConnectionClick() {
+			onConnectionClickAction() {
 				// Noop
 			},
 		});
@@ -130,7 +130,7 @@ describe('drawArcs', () => {
 				['a', 10],
 				['b', 50],
 			]),
-			onConnectionClick: onClick,
+			onConnectionClickAction: onClick,
 		});
 
 		// 2 dots + decorative path + hit target
@@ -170,7 +170,7 @@ describe('drawArcs', () => {
 				['c', 30],
 				['d', 40],
 			]),
-			onConnectionClick() {
+			onConnectionClickAction() {
 				// Noop
 			},
 		});
