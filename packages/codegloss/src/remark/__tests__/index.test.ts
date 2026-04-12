@@ -192,6 +192,25 @@ describe('remarkCodegloss (full pipeline)', () => {
 		});
 	});
 
+	describe('options.theme', () => {
+		it('forwards the theme into the emitted html node', () => {
+			const tree = run(SANDBOX_MD, { output: 'html', theme: 'github-dark' });
+			const html = tree.children.find(n => n.type === 'html') as
+				| { value: string }
+				| undefined;
+			expect(html?.value).toContain('theme="github-dark"');
+		});
+
+		it('forwards the theme into the emitted mdxJsxFlowElement', () => {
+			const tree = run(SANDBOX_MD, { theme: 'one-dark' });
+			const jsx = tree.children.find(
+				n => (n as { type: string }).type === 'mdxJsxFlowElement',
+			) as { attributes: Array<{ name: string; value: unknown }> };
+			const themeAttr = jsx.attributes.find(a => a.name === 'theme');
+			expect(themeAttr?.value).toBe('one-dark');
+		});
+	});
+
 	describe('default export', () => {
 		it('matches the named export', async () => {
 			const { default: defaultExport } = await import('../index');

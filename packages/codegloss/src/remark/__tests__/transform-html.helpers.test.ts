@@ -35,6 +35,11 @@ describe('buildCodeGlossHtmlNode', () => {
 		expect(extractConfig(node.value).filename).toBe('fib.js');
 	});
 
+	it('emits a theme attribute when a theme is set on the pair', () => {
+		const node = buildCodeGlossHtmlNode(pair({ theme: 'github-dark' }));
+		expect(node.value.startsWith('<code-gloss theme="github-dark">')).toBe(true);
+	});
+
 	it('includes annotations and connections from the JSON blob', () => {
 		const node = buildCodeGlossHtmlNode(
 			pair({

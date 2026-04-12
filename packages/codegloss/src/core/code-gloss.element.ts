@@ -125,6 +125,8 @@ export class CodeGlossElement extends SafeHTMLElement {
 		_oldValue: string | undefined,
 		newValue: string | undefined,
 	): void {
+		// Guard only matters if observedAttributes grows beyond ['theme'].
+		/* c8 ignore next */
 		if (name === 'theme') {
 			this.applyTheme(newValue);
 		}
@@ -148,12 +150,12 @@ export class CodeGlossElement extends SafeHTMLElement {
 			this.themeStylesheet = undefined;
 		}
 
-		// Ensure the theme attribute is on the host element so the CSS
-		// selector :host(:not([theme])) correctly disables base dark-mode.
+		// Mirror the theme attribute onto the host so the CSS selector
+		// `:host(:not([theme]))` correctly disables base dark-mode. The
+		// no-theme case is already handled by the removal that triggered
+		// this callback — attributeChangedCallback fires after the mutation.
 		if (themeName && this.getAttribute('theme') !== themeName) {
 			this.setAttribute('theme', themeName);
-		} else if (!themeName && this.hasAttribute('theme')) {
-			this.removeAttribute('theme');
 		}
 
 		if (!themeName) return;
@@ -162,6 +164,10 @@ export class CodeGlossElement extends SafeHTMLElement {
 		if (!theme) return;
 
 		const css = buildThemeCss(theme.light, theme.dark);
+		// Every bundled theme has at least one variant; the empty case is
+		// unreachable via resolveTheme but kept as a guard against future
+		// registries that could return sparse themes.
+		/* c8 ignore next */
 		if (!css) return;
 
 		this.themeStylesheet = new CSSStyleSheet();

@@ -158,6 +158,26 @@ describe('drawArcs', () => {
 		expect(circles[0].style.pointerEvents).toBe('auto');
 	});
 
+	it('omits the stroke-dasharray attribute when arcStyle.strokeDasharray is "none"', () => {
+		drawArcs({
+			svg,
+			height: 100,
+			annotations: [ann('a'), ann('b')],
+			connections: [conn({ from: 'a', to: 'b' })],
+			annotationYMap: new Map([
+				['a', 10],
+				['b', 20],
+			]),
+			onConnectionClickAction() {
+				// Noop
+			},
+			arcStyle: { strokeDasharray: 'none' },
+		});
+
+		const path = svg.querySelector('path');
+		expect(path?.hasAttribute('stroke-dasharray')).toBe(false);
+	});
+
 	it('offsets each subsequent arc horizontally by ARC_X_STEP', () => {
 		drawArcs({
 			svg,

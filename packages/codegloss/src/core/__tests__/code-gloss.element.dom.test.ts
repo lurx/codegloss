@@ -495,6 +495,67 @@ describe('CodeGlossElement', () => {
 		});
 	});
 
+	describe('theme handling', () => {
+		it('applies a theme from the JSON config on connect and sets the host attribute', () => {
+			const element = mount({
+				lang: 'js',
+				code: 'x',
+				theme: 'github-dark',
+			});
+			expect(element.getAttribute('theme')).toBe('github-dark');
+			expect(shadow(element).adoptedStyleSheets.length).toBeGreaterThan(1);
+		});
+
+		it('reacts to theme attribute changes via attributeChangedCallback', () => {
+			const element = mount({ lang: 'js', code: 'x' });
+			const before = shadow(element).adoptedStyleSheets.length;
+
+			element.setAttribute('theme', 'github-dark');
+
+			expect(shadow(element).adoptedStyleSheets.length).toBeGreaterThan(before);
+		});
+
+		it('swaps an existing theme stylesheet when the theme attribute changes', () => {
+			const element = mount({ lang: 'js', code: 'x', theme: 'github-dark' });
+			const sheetAfterFirst = shadow(element).adoptedStyleSheets.at(-1);
+
+			element.setAttribute('theme', 'dracula');
+
+			const sheetAfterSwap = shadow(element).adoptedStyleSheets.at(-1);
+			expect(sheetAfterSwap).not.toBe(sheetAfterFirst);
+		});
+
+		it('ignores attribute changes for unrelated attributes', () => {
+			const element = mount({ lang: 'js', code: 'x', theme: 'github-dark' });
+			const before = shadow(element).adoptedStyleSheets.length;
+
+			element.setAttribute('class', 'decorative');
+
+			expect(shadow(element).adoptedStyleSheets.length).toBe(before);
+		});
+
+		it('removes the theme attribute and detaches the theme stylesheet when the theme is cleared', () => {
+			const element = mount({ lang: 'js', code: 'x', theme: 'github-dark' });
+			const sheetsBefore = shadow(element).adoptedStyleSheets.length;
+
+			element.removeAttribute('theme');
+
+			expect(element.hasAttribute('theme')).toBe(false);
+			expect(shadow(element).adoptedStyleSheets.length).toBe(sheetsBefore - 1);
+		});
+
+		it('is a no-op when an unknown theme name is applied', () => {
+			const element = mount({ lang: 'js', code: 'x' });
+			const before = shadow(element).adoptedStyleSheets.length;
+
+			element.setAttribute('theme', 'does-not-exist');
+
+			// Attribute is mirrored even for unknown themes, but no stylesheet is added.
+			expect(element.getAttribute('theme')).toBe('does-not-exist');
+			expect(shadow(element).adoptedStyleSheets.length).toBe(before);
+		});
+	});
+
 	describe('disconnectedCallback', () => {
 		it('cleans up listeners and pending timers without throwing', async () => {
 			const element = mount({

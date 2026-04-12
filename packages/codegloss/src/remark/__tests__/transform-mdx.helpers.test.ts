@@ -53,6 +53,12 @@ describe('buildCodeGlossMdxNode', () => {
 		expect(findAttr(attrs, 'filename')?.value).toBe('fib.js');
 	});
 
+	it('adds a theme attribute when the pair carries a theme', () => {
+		const node = buildCodeGlossMdxNode(pair({ theme: 'github-dark' }));
+		const attrs = node.attributes as MdxJsxAttribute[];
+		expect(findAttr(attrs, 'theme')?.value).toBe('github-dark');
+	});
+
 	it('serializes annotations into a JSON expression attribute', () => {
 		const node = buildCodeGlossMdxNode(
 			pair({

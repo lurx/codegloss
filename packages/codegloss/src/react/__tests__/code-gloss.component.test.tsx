@@ -60,6 +60,16 @@ describe('CodeGloss (React wrapper)', () => {
 		expect(extractConfig(html)).toEqual(props);
 	});
 
+	it('renders the theme attribute on the custom element when provided', () => {
+		const html = renderToStaticMarkup(
+			<CodeGloss code="let x = 1" lang="js" theme="github-dark" />,
+		);
+		expect(html).toContain('<code-gloss theme="github-dark">');
+		// And it should not end up in the JSON config child:
+		const payload = /<script[^>]*>(.*?)<\/script>/s.exec(html)?.[1] ?? '';
+		expect(JSON.parse(payload)).not.toHaveProperty('theme');
+	});
+
 	it('emits the JSON payload raw (not HTML-entity-escaped)', () => {
 		// DangerouslySetInnerHTML means JSON characters like " and { stay as-is
 		// and aren't replaced with &quot; / &#123; — that's the whole point.
