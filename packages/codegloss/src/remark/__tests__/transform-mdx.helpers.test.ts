@@ -65,6 +65,28 @@ describe('buildCodeGlossMdxNode', () => {
 		);
 	});
 
+	it('forwards a callouts object as a JSX expression attribute', () => {
+		const node = buildCodeGlossMdxNode(
+			pair({
+				annotationsJson: '{"annotations":[],"callouts":{"popover":true}}',
+			}),
+		);
+		const attrs = node.attributes as MdxJsxAttribute[];
+		expect(expressionValue(findAttr(attrs, 'callouts'))).toBe(
+			'{"popover":true}',
+		);
+	});
+
+	it('ignores a callouts field that is not an object', () => {
+		const node = buildCodeGlossMdxNode(
+			pair({
+				annotationsJson: '{"annotations":[],"callouts":42}',
+			}),
+		);
+		const attrs = node.attributes as MdxJsxAttribute[];
+		expect(findAttr(attrs, 'callouts')).toBeUndefined();
+	});
+
 	it('ignores an arcs field that is not an object', () => {
 		const node = buildCodeGlossMdxNode(
 			pair({

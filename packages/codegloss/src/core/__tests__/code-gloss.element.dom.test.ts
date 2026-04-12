@@ -69,6 +69,7 @@ const nextFrame = async () =>
 beforeAll(() => {
 	// Stub APIs that happy-dom doesn't ship.
 	(HTMLElement.prototype as { showPopover?: () => void }).showPopover = vi.fn();
+	(HTMLElement.prototype as { hidePopover?: () => void }).hidePopover = vi.fn();
 
 	Object.defineProperty(navigator, 'clipboard', {
 		configurable: true,
@@ -281,6 +282,259 @@ describe('CodeGlossElement', () => {
 			const element = mount(annotated);
 			shadow(element).querySelector<HTMLElement>('.lineNumber')!.click();
 			expect(shadow(element).querySelector('.callout')).toBeNull();
+		});
+	});
+
+	describe('annotation popover', () => {
+		const fooAnn = ann({
+			id: 'a1',
+			token: 'foo',
+			line: 0,
+			title: 'Foo',
+			text: 'About foo',
+			popover: true,
+		});
+		const barAnn = ann({
+			id: 'a2',
+			token: 'bar',
+			line: 0,
+			title: 'Bar',
+			text: 'About bar',
+			popover: true,
+		});
+
+		const clickMark = (element: CodeGlossElement, annId: string) => {
+			const mark = shadow(element).querySelector<HTMLElement>(
+				`mark[data-ann-id="${annId}"]`,
+			)!;
+			mark.dispatchEvent(
+				new MouseEvent('click', {
+					bubbles: true,
+					clientX: 120,
+					clientY: 240,
+				}),
+			);
+		};
+
+		beforeEach(() => {
+			(HTMLElement.prototype.showPopover as ReturnType<typeof vi.fn>).mockClear();
+			(HTMLElement.prototype.hidePopover as ReturnType<typeof vi.fn>).mockClear();
+		});
+
+		it('opens the floating popover with title + body when popover: true', () => {
+			const element = mount({
+				lang: 'js',
+				code: 'foo bar',
+				annotations: [fooAnn],
+			});
+			clickMark(element, 'a1');
+
+			const popover = shadow(element).querySelector<HTMLElement>(
+				'.annotationPopover',
+			)!;
+			expect(popover.style.top).toBe('240px');
+			expect(popover.style.left).toBe('120px');
+			expect(popover.innerHTML).toContain('Foo');
+			expect(popover.innerHTML).toContain('About foo');
+			expect(HTMLElement.prototype.showPopover).toHaveBeenCalledTimes(1);
+		});
+
+		it('closes the popover when the same annotation is clicked again', () => {
+			const element = mount({
+				lang: 'js',
+				code: 'foo bar',
+				annotations: [fooAnn],
+			});
+			clickMark(element, 'a1');
+			clickMark(element, 'a1');
+
+			expect(HTMLElement.prototype.hidePopover).toHaveBeenCalledTimes(1);
+		});
+
+		it('switches content when a different popover annotation is clicked', () => {
+			const element = mount({
+				lang: 'js',
+				code: 'foo bar',
+				annotations: [fooAnn, barAnn],
+			});
+			clickMark(element, 'a1');
+			clickMark(element, 'a2');
+
+			const popover = shadow(element).querySelector<HTMLElement>(
+				'.annotationPopover',
+			)!;
+			expect(popover.innerHTML).toContain('Bar');
+			expect(popover.innerHTML).not.toContain('Foo');
+			// Never hides — just re-renders and re-shows
+			expect(HTMLElement.prototype.hidePopover).not.toHaveBeenCalled();
+		});
+
+		it('renders only the title when the annotation has no body text', () => {
+			const titleOnly = ann({
+				id: 'a1',
+				token: 'foo',
+				line: 0,
+				title: 'Just a title',
+				text: '',
+				popover: true,
+			});
+			const element = mount({
+				lang: 'js',
+				code: 'foo',
+				annotations: [titleOnly],
+			});
+			clickMark(element, 'a1');
+
+			const popover = shadow(element).querySelector('.annotationPopover')!;
+			expect(popover.innerHTML).toContain('Just a title');
+			expect(popover.querySelector('.annotationPopoverBody')).toBeNull();
+		});
+
+		it('respects the block-level callouts.popover default', () => {
+			const element = mount({
+				lang: 'js',
+				code: 'foo',
+				annotations: [ann({ id: 'a1', token: 'foo', line: 0 })],
+				callouts: { popover: true },
+			});
+			clickMark(element, 'a1');
+
+			expect(shadow(element).querySelector('.annotationPopover')?.innerHTML).toContain(
+				'Foo',
+			);
+		});
+
+		it('lets an individual annotation override the block-level default', () => {
+			const inlineOverride = ann({
+				id: 'a1',
+				token: 'foo',
+				line: 0,
+				title: 'Foo',
+				text: 'About foo',
+				popover: false,
+			});
+			const element = mount({
+				lang: 'js',
+				code: 'foo',
+				annotations: [inlineOverride],
+				callouts: { popover: true },
+			});
+			clickMark(element, 'a1');
+
+			expect(shadow(element).querySelector('.callout')).not.toBeNull();
+			expect(HTMLElement.prototype.showPopover).not.toHaveBeenCalled();
+		});
+
+		it('closes any open inline callout before opening a popover annotation', () => {
+			const inline = ann({
+				id: 'a1',
+				token: 'foo',
+				line: 0,
+				title: 'Foo',
+				text: 'About foo',
+			});
+			const popoverAnn = ann({
+				id: 'a2',
+				token: 'bar',
+				line: 0,
+				title: 'Bar',
+				text: 'About bar',
+				popover: true,
+			});
+			const element = mount({
+				lang: 'js',
+				code: 'foo bar',
+				annotations: [inline, popoverAnn],
+			});
+
+			clickMark(element, 'a1');
+			expect(shadow(element).querySelector('.callout')).not.toBeNull();
+
+			clickMark(element, 'a2');
+			expect(shadow(element).querySelector('.callout')).toBeNull();
+			expect(HTMLElement.prototype.showPopover).toHaveBeenCalledTimes(1);
+		});
+
+		it('closes an open popover when switching to an inline annotation', () => {
+			const popoverAnn = ann({
+				id: 'a1',
+				token: 'foo',
+				line: 0,
+				title: 'Foo',
+				text: 'About foo',
+				popover: true,
+			});
+			const inline = ann({
+				id: 'a2',
+				token: 'bar',
+				line: 0,
+				title: 'Bar',
+				text: 'About bar',
+			});
+			const element = mount({
+				lang: 'js',
+				code: 'foo bar',
+				annotations: [popoverAnn, inline],
+			});
+
+			clickMark(element, 'a1');
+			clickMark(element, 'a2');
+			expect(shadow(element).querySelector('.callout')).not.toBeNull();
+		});
+
+		it('ignores toggle events whose newState is not "closed"', () => {
+			const element = mount({
+				lang: 'js',
+				code: 'foo',
+				annotations: [fooAnn],
+			});
+			clickMark(element, 'a1');
+
+			const popover = shadow(element).querySelector<HTMLElement>(
+				'.annotationPopover',
+			)!;
+			const toggle = new Event('toggle');
+			Object.assign(toggle, { newState: 'open' });
+			popover.dispatchEvent(toggle);
+
+			// State should remain — re-clicking the same ann toggles-closes.
+			clickMark(element, 'a1');
+			expect(HTMLElement.prototype.hidePopover).toHaveBeenCalledTimes(1);
+		});
+
+		it('clears popover state when the toggle event reports closed', () => {
+			const element = mount({
+				lang: 'js',
+				code: 'foo',
+				annotations: [fooAnn],
+			});
+			clickMark(element, 'a1');
+
+			const popover = shadow(element).querySelector<HTMLElement>(
+				'.annotationPopover',
+			)!;
+			const toggle = new Event('toggle');
+			Object.assign(toggle, { newState: 'closed' });
+			popover.dispatchEvent(toggle);
+
+			// Next click on the same ann should open (not toggle-close) since
+			// state is cleared.
+			clickMark(element, 'a1');
+			expect(HTMLElement.prototype.showPopover).toHaveBeenCalledTimes(2);
+		});
+
+		it('does nothing when the clicked annotation id is missing from config', () => {
+			const element = mount({
+				lang: 'js',
+				code: 'foo',
+				annotations: [fooAnn],
+			});
+			const fake = document.createElement('mark');
+			fake.dataset.annId = 'ghost';
+			shadow(element).querySelector('.lineContent')!.append(fake);
+			fake.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+			expect(HTMLElement.prototype.showPopover).not.toHaveBeenCalled();
 		});
 	});
 

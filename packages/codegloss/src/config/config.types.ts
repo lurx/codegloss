@@ -18,6 +18,15 @@ export type CodeGlossArcStyle = {
 	arrowhead?: boolean;
 };
 
+export type CodeGlossCallouts = {
+	/**
+	 * When `true`, annotations open as a floating popover at the click
+	 * position instead of the default inline expanding callout. Individual
+	 * annotations can still override via `annotation.popover`. Default: false.
+	 */
+	popover?: boolean;
+};
+
 export type CodeGlossUserConfig = {
 	/** Named bundled theme, or an inline theme object. */
 	theme?: string | CodeGlossTheme;
@@ -25,4 +34,6 @@ export type CodeGlossUserConfig = {
 	darkTheme?: string | CodeGlossTheme;
 	/** Style overrides for connection arcs. */
 	arcs?: CodeGlossArcStyle;
+	/** Block-level callout behavior for annotations. */
+	callouts?: CodeGlossCallouts;
 };

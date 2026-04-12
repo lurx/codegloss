@@ -63,6 +63,26 @@ describe('buildCodeGlossHtmlNode', () => {
 		expect(extractConfig(node.value).arcs).toEqual({ arrowhead: true });
 	});
 
+	it('forwards a callouts object from the annotations JSON into the config payload', () => {
+		const node = buildCodeGlossHtmlNode(
+			pair({
+				annotationsJson: '{"annotations":[],"callouts":{"popover":true}}',
+			}),
+		);
+
+		expect(extractConfig(node.value).callouts).toEqual({ popover: true });
+	});
+
+	it('ignores a callouts field that is not an object', () => {
+		const node = buildCodeGlossHtmlNode(
+			pair({
+				annotationsJson: '{"annotations":[],"callouts":"nope"}',
+			}),
+		);
+
+		expect(extractConfig(node.value).callouts).toBeUndefined();
+	});
+
 	it('ignores an arcs field that is not an object', () => {
 		const node = buildCodeGlossHtmlNode(
 			pair({

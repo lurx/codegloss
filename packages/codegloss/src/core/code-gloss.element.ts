@@ -81,6 +81,8 @@ export class CodeGlossElement extends SafeHTMLElement {
 	private outputEl!: HTMLDivElement;
 	private copyBtn!: HTMLButtonElement;
 	private popoverEl!: HTMLDivElement;
+	private annotationPopoverEl!: HTMLDivElement;
+	private annotationPopoverState: { annId: string; top: number; left: number } | undefined;
 	private readonly lineRefs = new Map<number, HTMLDivElement>();
 
 	private resizeTimer: ReturnType<typeof setTimeout> | undefined;
@@ -225,6 +227,11 @@ export class CodeGlossElement extends SafeHTMLElement {
 		this.popoverEl.className = 'connectionTooltip';
 		this.popoverEl.setAttribute('popover', 'auto');
 		this.root.append(this.popoverEl);
+
+		this.annotationPopoverEl = document.createElement('div');
+		this.annotationPopoverEl.className = 'annotationPopover';
+		this.annotationPopoverEl.setAttribute('popover', 'auto');
+		this.root.append(this.annotationPopoverEl);
 
 		this.shadow.append(this.root);
 
@@ -393,7 +400,7 @@ export class CodeGlossElement extends SafeHTMLElement {
 
 			const { annId } = mark.dataset;
 
-			if (annId) this.handleAnnotationClick(annId);
+			if (annId) this.handleAnnotationClick(annId, event);
 		});
 
 		this.copyBtn.addEventListener('click', () => this.handleCopy());
@@ -404,15 +411,91 @@ export class CodeGlossElement extends SafeHTMLElement {
 			}
 		});
 
+		this.annotationPopoverEl.addEventListener('toggle', event => {
+			if (event.newState === 'closed') {
+				this.annotationPopoverState = undefined;
+			}
+		});
+
 		window.addEventListener('resize', this.resizeHandler);
 		document.addEventListener('keydown', this.keyHandler);
 	}
 
-	private handleAnnotationClick(annId: string): void {
+	private handleAnnotationClick(annId: string, event: MouseEvent): void {
+		const annotation = this.config?.annotations?.find(a => a.id === annId);
+		if (!annotation) return;
+
+		if (this.shouldUsePopoverFor(annotation)) {
+			this.toggleAnnotationPopover(annotation, event);
+			return;
+		}
+
+		// Inline callout mode — inline and annotation-popover are mutually
+		// exclusive for the same session, so close any open popover first.
+		this.closeAnnotationPopover();
 		this.activeAnnotationId =
 			this.activeAnnotationId === annId ? undefined : annId;
 		this.renderLines();
 		this.animateArcsThroughTransition();
+	}
+
+	private shouldUsePopoverFor(annotation: Annotation): boolean {
+		return annotation.popover ?? this.config?.callouts?.popover ?? false;
+	}
+
+	private toggleAnnotationPopover(
+		annotation: Annotation,
+		event: MouseEvent,
+	): void {
+		// Close the inline callout if one is showing — inline + popover are
+		// mutually exclusive for annotations.
+		if (this.activeAnnotationId !== undefined) {
+			this.activeAnnotationId = undefined;
+			this.renderLines();
+		}
+
+		if (this.annotationPopoverState?.annId === annotation.id) {
+			this.closeAnnotationPopover();
+			return;
+		}
+
+		this.annotationPopoverState = {
+			annId: annotation.id,
+			top: event.clientY,
+			left: event.clientX,
+		};
+		this.renderAnnotationPopover();
+		this.annotationPopoverEl.showPopover();
+	}
+
+	private renderAnnotationPopover(): void {
+		// Defensive: callers (toggleAnnotationPopover) already verified both;
+		// kept as a guard in case a future caller forgets.
+		/* c8 ignore next */
+		if (!this.annotationPopoverState || !this.config?.annotations) return;
+
+		const annotation = this.config.annotations.find(
+			a => a.id === this.annotationPopoverState!.annId,
+		);
+		/* c8 ignore next */
+		if (!annotation) return;
+
+		const { top, left } = this.annotationPopoverState;
+		this.annotationPopoverEl.style.top = `${top}px`;
+		this.annotationPopoverEl.style.left = `${left}px`;
+
+		let inner = `<div class="annotationPopoverTitle">${escapeHtml(annotation.title)}</div>`;
+		if (annotation.text) {
+			inner += `<div class="annotationPopoverBody">${escapeHtml(annotation.text)}</div>`;
+		}
+
+		this.annotationPopoverEl.innerHTML = inner;
+	}
+
+	private closeAnnotationPopover(): void {
+		if (!this.annotationPopoverState) return;
+		this.annotationPopoverEl.hidePopover();
+		this.annotationPopoverState = undefined;
 	}
 
 	private dismissCallout(): void {

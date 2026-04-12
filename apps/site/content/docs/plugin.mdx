@@ -22,7 +22,7 @@ The plugin walks the markdown AST looking for a specific pattern:
 When it finds a match, it:
 
 - Replaces both blocks with a single CodeGloss node (JSX or HTML, depending on `output` mode)
-- Parses the annotations JSON and forwards its top-level keys (`annotations`, `connections`, `arcs`) as individual props — each key becomes its own prop on the emitted node, not merged
+- Parses the annotations JSON and forwards its top-level keys (`annotations`, `connections`, `arcs`, `callouts`) as individual props — each key becomes its own prop on the emitted node, not merged
 - In `mdx` mode, auto-injects `import { CodeGloss } from 'codegloss/react'` (skippable via `skipImport`)
 
 ## Detection pattern
@@ -46,16 +46,18 @@ The annotations block must immediately follow the sandbox block:
 {
   "annotations": [...],
   "connections": [...],
-  "arcs": { "arrowhead": true }
+  "arcs": { "arrowhead": true },
+  "callouts": { "popover": true }
 }
 ```
 ````
 
-Three top-level keys are recognized:
+Four top-level keys are recognized:
 
-- **`annotations`** — array of [`Annotation`](/docs/api#annotation) objects.
+- **`annotations`** — array of [`Annotation`](/docs/api#annotation) objects. Each annotation can set `"popover": true` to switch its callout from inline-expanding to floating-popover presentation.
 - **`connections`** — array of [`Connection`](/docs/api#connection) objects. Each connection can set `"side": "right"` to render on the right side of the block instead of in the left gutter.
 - **`arcs`** — arc-style overrides forwarded verbatim as a prop. Most commonly used for `"arrowhead": true` to turn on arrowheads at the `to` endpoint. See [Arc style options](/docs/api#arc-style-options) for the full field list.
+- **`callouts`** — block-level callout behavior overrides. Set `"popover": true` to make every annotation in the block open as a floating popover. See [Callout options](/docs/api#callout-options).
 
 If no annotations block follows, the component renders the code without annotations.
 

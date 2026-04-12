@@ -241,6 +241,38 @@
 	line-height: 1.6;
 }
 
+/* Annotation popover (shares visual language with the connection tooltip
+   but uses the annotation accent for its left border). */
+.annotationPopover {
+	position: fixed;
+	width: 240px;
+	margin: 0;
+	border-radius: 8px;
+	border: 0.5px solid var(--cg-border);
+	border-left: 3px solid var(--cg-ann-border);
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+	padding: 10px 12px 10px 14px;
+	background: var(--cg-bg);
+	font-family:
+		-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	transform: translate(8px, -8px);
+	inset: unset;
+}
+
+.annotationPopoverTitle {
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--cg-text);
+	margin-bottom: 4px;
+	padding-right: 16px;
+}
+
+.annotationPopoverBody {
+	font-size: 12px;
+	color: var(--cg-muted);
+	line-height: 1.6;
+}
+
 /* Inline callout */
 .calloutWrapper {
 	display: grid;

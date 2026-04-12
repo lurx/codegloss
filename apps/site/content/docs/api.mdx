@@ -54,6 +54,7 @@ The same `CodeGlossConfig` shape powers both usage modes:
 | `runnable` | `boolean?` | `lang === 'js'` | Whether to show the Run button. |
 | `theme` | `string?` | — | Named theme (`github-dark`, `dracula`, etc.). |
 | `arcs` | `object?` | — | Arc style overrides (see [Arc style options](#arc-style-options)). |
+| `callouts` | `object?` | — | Annotation callout behavior (see [Callout options](#callout-options)). |
 
 ## Types
 
@@ -69,14 +70,16 @@ type Annotation = {
   occurrence: number;  // 0-indexed match on that line
   title: string;       // Callout heading
   text: string;        // Callout body
+  popover?: boolean;   // Present the callout as a floating popover. Default: false.
 };
 ````
 
 - **`token`** — the exact substring to search for on the given line. Must match character-for-character.
 - **`line`** — 0-indexed. Line 0 is the first line of the code.
 - **`occurrence`** — when a token appears multiple times on one line, this selects which instance (0 = first).
+- **`popover`** — when `true`, clicking the token opens a floating popover at the click position (same surface as the connection-arc popover) instead of the default inline expanding callout. Per-annotation override of the block-level [`callouts.popover`](#callout-options) default.
 
-Clicking an annotated token expands an inline callout row directly below the line, with smooth animation. Click again or press Escape to dismiss.
+Clicking an annotated token either expands an inline callout row directly below the line (default), or opens a floating popover if `popover: true`. Click again or press Escape to dismiss.
 
 ### Connection
 
@@ -166,6 +169,8 @@ type CodeGlossUserConfig = {
   darkTheme?: string | CodeGlossTheme;
   /** Style overrides for connection arcs. */
   arcs?: CodeGlossArcStyle;
+  /** Block-level callout behavior for annotations. */
+  callouts?: CodeGlossCallouts;
 };
 ````
 
@@ -206,6 +211,31 @@ Arc styles can also be set per-block via the JSON config:
         { "from": "a", "to": "b", "color": "#534AB7" },
         { "from": "a", "to": "c", "color": "#00b894", "side": "right" }
       ]
+    }
+  </script>
+</code-gloss>
+````
+
+### Callout options
+
+Callouts are the title + text surfaces that appear when an annotation token is clicked. They have two presentations:
+
+| Field | Type | Default | Description |
+| --- | --- | --- | --- |
+| `popover` | `boolean` | `false` | When `true`, every annotation in the block opens as a floating popover anchored at the click position instead of the default inline expanding callout. |
+
+`popover` is per-block — setting it on the config file, `CodeGlossConfig.callouts`, or the JSON annotations block flips the default for every annotation in that block. Individual annotations can still override via [`annotation.popover`](#annotation).
+
+Arc popovers and annotation popovers are independent surfaces: a user can have both open at once. Inline and popover presentations of an annotation are mutually exclusive — opening one dismisses the other.
+
+````html
+<code-gloss>
+  <script type="application/json">
+    {
+      "code": "...",
+      "lang": "js",
+      "callouts": { "popover": true },
+      "annotations": [...]
     }
   </script>
 </code-gloss>

@@ -248,6 +248,72 @@ async function processQueue(ids) {
 
 ---
 
+## Popover callouts
+
+Annotation callouts normally render inline — clicking a token expands a row of context directly below its line. For denser docs where vertical expansion would shuffle the page, set [`callouts.popover: true`](/docs/api#callout-options) to present the callout as a floating popover anchored to the click position instead.
+
+Annotation and connection popovers are independent surfaces: a reader can have an annotation popover and an arc popover open at the same time. Inline and popover presentations of the *same* annotation are mutually exclusive.
+
+```js sandbox lru.js
+class LruCache {
+  constructor(limit) {
+    this.limit = limit;
+    this.map = new Map();
+  }
+
+  get(key) {
+    if (!this.map.has(key)) return undefined;
+    const value = this.map.get(key);
+    this.map.delete(key);
+    this.map.set(key, value);
+    return value;
+  }
+
+  set(key, value) {
+    if (this.map.has(key)) this.map.delete(key);
+    this.map.set(key, value);
+    if (this.map.size > this.limit) {
+      const oldest = this.map.keys().next().value;
+      this.map.delete(oldest);
+    }
+  }
+}
+```
+
+```json annotations
+{
+  "annotations": [
+    {
+      "id": "lru1",
+      "token": "Map",
+      "line": 3,
+      "occurrence": 0,
+      "title": "Insertion-order store",
+      "text": "ES2015 Map preserves insertion order, which is exactly the eviction order an LRU cache needs."
+    },
+    {
+      "id": "lru2",
+      "token": "this.map.delete(key)",
+      "line": 9,
+      "occurrence": 0,
+      "title": "Touch on read",
+      "text": "Delete + re-insert moves the entry to the end of the iteration order — the LRU \"recently used\" step."
+    },
+    {
+      "id": "lru3",
+      "token": "this.map.keys().next().value",
+      "line": 19,
+      "occurrence": 0,
+      "title": "Oldest key",
+      "text": "The first key yielded by the iterator is the least-recently-used one."
+    }
+  ],
+  "callouts": { "popover": true }
+}
+```
+
+---
+
 ## Minimal — No Annotations
 
 A sandbox block without a following annotations block renders as a plain code viewer with line numbers and a toolbar.

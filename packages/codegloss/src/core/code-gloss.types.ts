@@ -11,6 +11,13 @@ export type Annotation = {
 	title: string;
 	/** Tooltip body */
 	text: string;
+	/**
+	 * When `true`, the callout renders as a floating popover anchored to
+	 * the click position instead of the default inline expanding callout.
+	 * Per-annotation value wins over the block-level `callouts.popover`
+	 * default. Default: false.
+	 */
+	popover?: boolean;
 };
 
 export type Connection = {
@@ -74,6 +81,16 @@ export type CodeGlossConfig = {
 		 * renders as a plain dot. Default: false.
 		 */
 		arrowhead?: boolean;
+	};
+	/** Block-level callout behavior for annotations. */
+	callouts?: {
+		/**
+		 * When `true`, every annotation in this block opens as a floating
+		 * popover at the click position instead of the default inline
+		 * expanding callout. Individual annotations can still override via
+		 * `annotation.popover`. Default: false.
+		 */
+		popover?: boolean;
 	};
 };
 
