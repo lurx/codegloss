@@ -1,28 +1,8 @@
 import Link from 'next/link';
-import { MousePointerClick, Spline, FileCode2 } from 'lucide-react';
 import { HeroDemo } from '@/components/hero-demo.component';
 import { CopyButton } from '@/components/copy-button.component';
 import { QuickStart } from '@/components/quick-start.component';
-
-const INSTALL_CMD = 'npm install codegloss';
-
-const FEATURES = [
-  { icon: <MousePointerClick size={16} />, title: 'Interactive Annotations', description: 'Click any highlighted token to reveal an explanation. Annotations are defined in JSON alongside your code — no custom syntax to learn.' },
-  { icon: <Spline size={16} />, title: 'Connection Arcs', description: 'Draw visual arcs between related annotations. Gutter lines connect concepts with click-to-explain popovers.' },
-  { icon: <FileCode2 size={16} />, title: 'MDX Native', description: 'Write fenced code blocks with a sandbox tag. The remark plugin detects them and emits CodeGloss components at build time.' },
-];
-
-const FRAMEWORKS = [
-  { label: 'Markdown', href: '/docs/usage/markdown' },
-  { label: 'React', href: '/docs/setup/react' },
-  { label: 'Vue', href: '/docs/setup/vue' },
-  { label: 'Svelte', href: '/docs/setup/svelte' },
-  { label: 'Next.js', href: '/docs/setup/nextjs' },
-  { label: 'Astro', href: '/docs/setup/astro' },
-  { label: 'VitePress', href: '/docs/setup/vitepress' },
-  { label: 'Docusaurus', href: '/docs/setup/docusaurus' },
-  { label: 'Vanilla HTML', href: '/docs/api' },
-];
+import { FEATURES, FRAMEWORKS, INSTALL_CMD } from './page.data';
 
 export default function HomePage() {
   return (
