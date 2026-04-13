@@ -1,4 +1,4 @@
-import type { CodeGlossProps } from 'codegloss/react';
+import type { CodeGlossProps } from '@codegloss/react';
 import type { SiteTheme } from '@/hooks';
 import codeglossConfig from '@/codegloss.config';
 

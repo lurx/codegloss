@@ -37,7 +37,7 @@ function greet(name) {
 	{
 		label: 'React',
 		lang: 'tsx',
-		code: `import { CodeGloss } from 'codegloss/react';
+		code: `import { CodeGloss } from '@codegloss/react';
 
 <CodeGloss
   code="function greet(name) { return 'Hello, ' + name; }"
@@ -53,7 +53,7 @@ function greet(name) {
 		label: 'Vue',
 		lang: 'vue',
 		code: `<script setup lang="ts">
-import { CodeGloss } from 'codegloss/vue';
+import { CodeGloss } from '@codegloss/vue';
 </script>
 
 <template>
@@ -68,7 +68,7 @@ import { CodeGloss } from 'codegloss/vue';
 		label: 'Svelte',
 		lang: 'svelte',
 		code: `<script>
-  import CodeGloss from 'codegloss/svelte';
+  import CodeGloss from '@codegloss/svelte';
 </script>
 
 <CodeGloss

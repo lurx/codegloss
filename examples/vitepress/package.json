@@ -9,6 +9,7 @@
     "test": "vitepress build docs && node ./test.mjs"
   },
   "dependencies": {
+    "@codegloss/vue": "workspace:*",
     "codegloss": "workspace:*",
     "vue": "^3.5.13"
   },

@@ -1,4 +1,4 @@
-import type { Annotation, CodeGlossConfig, Connection } from 'codegloss/react';
+import type { Annotation, CodeGlossConfig, Connection } from '@codegloss/react';
 
 export type ArcsStyle = NonNullable<CodeGlossConfig['arcs']>;
 export type CalloutsStyle = NonNullable<CodeGlossConfig['callouts']>;

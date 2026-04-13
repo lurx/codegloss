@@ -41,7 +41,7 @@ Swizzle MDX components to make CodeGloss available everywhere:
 ````js
 // src/theme/MDXComponents.js
 import MDXComponents from '@theme-original/MDXComponents';
-import { CodeGloss } from 'codegloss/react';
+import { CodeGloss } from '@codegloss/react';
 
 export default {
   ...MDXComponents,
@@ -79,4 +79,4 @@ These variables propagate into the Shadow DOM through `:host` inheritance.
 
 ## Why use the React subpath?
 
-The `codegloss/react` subpath is a thin JSX wrapper around the underlying Web Component. Docusaurus runs on React, so importing the React wrapper is the most natural fit. Under the hood, both the React wrapper and the vanilla Web Component render the same `<code-gloss>` element with a Shadow DOM tree.
+The `@codegloss/react` subpath is a thin JSX wrapper around the underlying Web Component. Docusaurus runs on React, so importing the React wrapper is the most natural fit. Under the hood, both the React wrapper and the vanilla Web Component render the same `<code-gloss>` element with a Shadow DOM tree.

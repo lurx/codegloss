@@ -50,7 +50,7 @@ Velite compiles MDX content into a JS function body string. Pass `CodeGloss` via
 
 import { useMemo } from 'react';
 import * as runtime from 'react/jsx-runtime';
-import { CodeGloss } from 'codegloss/react';
+import { CodeGloss } from '@codegloss/react';
 
 const components = { CodeGloss };
 
@@ -69,7 +69,7 @@ export function PostContent({ code }: { code: string }) {
 
 ## No CSS import needed
 
-CodeGloss bundles its styles inside Shadow DOM. There's nothing for you to import in your global stylesheet — the element registers itself when `codegloss/react` is loaded.
+CodeGloss bundles its styles inside Shadow DOM. There's nothing for you to import in your global stylesheet — the element registers itself when `@codegloss/react` is loaded.
 
 ## With Next.js
 

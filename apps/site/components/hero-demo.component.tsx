@@ -2,8 +2,8 @@
 
 import codeglossConfig from '@/codegloss.config';
 import { useSiteTheme } from '@/hooks';
-import type { Annotation, Connection } from 'codegloss/react';
-import { CodeGloss } from 'codegloss/react';
+import type { Annotation, Connection } from '@codegloss/react';
+import { CodeGloss } from '@codegloss/react';
 
 const CODE = `function fibonacci(n) {
   const memo = {};

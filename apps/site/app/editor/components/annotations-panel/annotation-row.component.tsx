@@ -3,7 +3,7 @@
 import { useCallback } from 'react';
 import type { ChangeEvent, PointerEvent as ReactPointerEvent } from 'react';
 import { ArrowLeft, Target, Trash2 } from 'lucide-react';
-import type { Annotation } from 'codegloss/react';
+import type { Annotation } from '@codegloss/react';
 import type { AnnotationRowProps } from './annotations-panel.types';
 import { IssueList } from '../issue-list';
 import styles from './annotations-panel.module.scss';

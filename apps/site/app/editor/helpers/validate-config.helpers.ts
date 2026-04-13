@@ -1,4 +1,4 @@
-import type { Annotation, Connection } from 'codegloss/react';
+import type { Annotation, Connection } from '@codegloss/react';
 import type { EditorConfig } from '../hooks/use-editor-state';
 
 export type AnnotationIssue =

@@ -1,4 +1,4 @@
-import type { Annotation, Connection } from 'codegloss/react';
+import type { Annotation, Connection } from '@codegloss/react';
 
 export const THEME_NAMES = [
   'github-light',

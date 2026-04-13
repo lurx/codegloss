@@ -3,7 +3,7 @@
 // the JSX names emitted by remark-codegloss resolve at render time.
 import MDXComponents from '@theme-original/MDXComponents';
 
-import { CodeGloss } from 'codegloss/react';
+import { CodeGloss } from '@codegloss/react';
 
 export default {
   ...MDXComponents,

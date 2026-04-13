@@ -1,6 +1,6 @@
 'use client';
 
-import { CodeGloss } from 'codegloss/react';
+import { CodeGloss } from '@codegloss/react';
 import { useMemo } from 'react';
 import { useCodeglossTheme } from '../../hooks/use-codegloss-theme';
 import styles from './preview-pane.module.scss';

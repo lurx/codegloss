@@ -9,6 +9,7 @@
     "test": "vite build && node ./test.mjs"
   },
   "dependencies": {
+    "@codegloss/react": "workspace:*",
     "codegloss": "workspace:*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"

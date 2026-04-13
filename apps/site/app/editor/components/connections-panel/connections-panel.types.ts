@@ -1,4 +1,4 @@
-import type { Annotation, Connection } from 'codegloss/react';
+import type { Annotation, Connection } from '@codegloss/react';
 import type { ConnectionIssue } from '../../helpers/validate-config.helpers';
 
 export type ConnectionsPanelProps = {

@@ -7,7 +7,7 @@ sidebar_position: 1
 
 CodeGloss works with Next.js in two ways:
 
-1. **Direct React usage** — import `CodeGloss` from `codegloss/react` and use it as a regular component
+1. **Direct React usage** — import `CodeGloss` from `@codegloss/react` and use it as a regular component
 2. **Authoring in MDX** — install `remark-codegloss` and use the fenced code block syntax
 
 ## Install
@@ -33,7 +33,7 @@ Just import and use it. The `'use client'` directive is needed because the compo
 ````tsx
 'use client';
 
-import { CodeGloss } from 'codegloss/react';
+import { CodeGloss } from '@codegloss/react';
 
 export function Example() {
   return (
@@ -101,7 +101,7 @@ console.log(x);
 ```
 `````
 
-The plugin auto-injects `import { CodeGloss } from 'codegloss/react'` into the MDX file at build time. You don't need to import anything yourself.
+The plugin auto-injects `import { CodeGloss } from '@codegloss/react'` into the MDX file at build time. You don't need to import anything yourself.
 
 ## With next-mdx-remote
 
@@ -124,7 +124,7 @@ In your render component, pass `CodeGloss` via the components map:
 'use client';
 
 import { MDXRemote } from 'next-mdx-remote';
-import { CodeGloss } from 'codegloss/react';
+import { CodeGloss } from '@codegloss/react';
 
 export function Post({ source }) {
   return <MDXRemote {...source} components={{ CodeGloss }} />;

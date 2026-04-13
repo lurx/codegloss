@@ -1,5 +1,5 @@
 <script>
-  import CodeGloss from 'codegloss/svelte';
+  import CodeGloss from '@codegloss/svelte';
 
   const fibAnnotations = [
     {
@@ -20,7 +20,7 @@ markdown page.
 
 ## 1 — Manual `<CodeGloss />` invocation (via the typed Svelte wrapper)
 
-This path imports the wrapper from `codegloss/svelte` and invokes it directly.
+This path imports the wrapper from `@codegloss/svelte` and invokes it directly.
 It gives you full prop typing in `svelte-check`.
 
 <CodeGloss

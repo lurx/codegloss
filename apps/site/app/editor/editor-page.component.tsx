@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { HelpCircle, Redo2, Settings, Undo2, Upload } from 'lucide-react';
-import type { Annotation, Connection } from 'codegloss/react';
+import type { Annotation, Connection } from '@codegloss/react';
 import { useEditorState } from './hooks/use-editor-state';
 import { useCodeglossTheme } from './hooks/use-codegloss-theme';
 import { useEditorTour } from './hooks/use-editor-tour';

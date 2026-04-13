@@ -23,7 +23,7 @@ When it finds a match, it:
 
 - Replaces both blocks with a single CodeGloss node (JSX or HTML, depending on `output` mode)
 - Parses the annotations JSON and forwards its top-level keys (`annotations`, `connections`, `arcs`, `callouts`) as individual props — each key becomes its own prop on the emitted node, not merged
-- In `mdx` mode, auto-injects `import { CodeGloss } from 'codegloss/react'` (skippable via `skipImport`)
+- In `mdx` mode, auto-injects `import { CodeGloss } from '@codegloss/react'` (skippable via `skipImport`)
 
 ## Detection pattern
 
@@ -74,7 +74,7 @@ type RemarkCodeglossOptions = {
    */
   output?: 'mdx' | 'html';
   /**
-   * (mdx mode only) Skip injecting `import { CodeGloss } from 'codegloss/react'`.
+   * (mdx mode only) Skip injecting `import { CodeGloss } from '@codegloss/react'`.
    * Set true when CodeGloss is provided via a custom MDX components map.
    */
   skipImport?: boolean;

@@ -1,4 +1,4 @@
-import type { Annotation, Connection } from 'codegloss/react';
+import type { Annotation, Connection } from '@codegloss/react';
 
 const DEFAULT_COLOR = '#6c5ce7';
 
