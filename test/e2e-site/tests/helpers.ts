@@ -2,16 +2,21 @@ import { test as base, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
 export const STORAGE_KEY = 'codegloss:editor:draft';
+export const TOUR_STORAGE_KEY = 'codegloss:editor:tour-seen';
 
 export const test = base.extend({
 	page: async ({ page }, use) => {
-		await page.addInitScript((key) => {
-			try {
-				window.localStorage.removeItem(key);
-			} catch {
-				/* ignore */
-			}
-		}, STORAGE_KEY);
+		await page.addInitScript(
+			({ draftKey, tourKey }) => {
+				try {
+					window.localStorage.removeItem(draftKey);
+					window.localStorage.setItem(tourKey, '1');
+				} catch {
+					/* ignore */
+				}
+			},
+			{ draftKey: STORAGE_KEY, tourKey: TOUR_STORAGE_KEY },
+		);
 		await use(page);
 	},
 });
