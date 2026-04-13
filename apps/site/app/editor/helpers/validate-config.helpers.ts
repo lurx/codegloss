@@ -43,6 +43,7 @@ function validateAnnotations(
 	annotations.forEach((a, i) => {
 		const issues: AnnotationIssue[] = [];
 		if (a.id.trim() === '') issues.push('empty-id');
+		/* v8 ignore next -- idCounts always contains a.id */
 		if ((idCounts.get(a.id) ?? 0) > 1) issues.push('duplicate-id');
 
 		const lineText = codeLines[a.line];

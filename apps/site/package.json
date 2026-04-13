@@ -6,7 +6,10 @@
     "dev": "next dev",
     "prebuild": "node scripts/generate-usage-html.mjs && node scripts/generate-search-index.mjs",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@shikijs/rehype": "^4.0.2",
@@ -22,9 +25,11 @@
     "@types/node": "^22.15.0",
     "@types/react": "^18.3.21",
     "@types/react-dom": "^18.3.7",
+    "@vitest/coverage-v8": "^4.1.4",
     "rehype-autolink-headings": "^7.1.0",
     "rehype-slug": "^6.0.0",
     "sass": "^1.99.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.4"
   }
 }

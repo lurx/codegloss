@@ -204,6 +204,7 @@ export function importConfig(input: string): ImportResult {
 	try {
 		return { ok: true, format, config: parseFor(format, trimmed) };
 	} catch (err) {
+		/* v8 ignore next -- parsers only throw Error instances */
 		const message = err instanceof Error ? err.message : String(err);
 		return { ok: false, error: `${format.toUpperCase()}: ${message}` };
 	}
