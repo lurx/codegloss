@@ -16,8 +16,13 @@ test.describe('code pane', () => {
 		// wait for the initial preview render before replacing the code
 		await expect(preview).toContainText('greet', { timeout: 15_000 });
 
-		const newCode = 'const answer = 42;';
-		await codeTextarea(page).fill(newCode);
+		// webkit + React controlled <textarea> occasionally drops the input
+		// event from locator.fill(); real keystrokes are reliable.
+		const textarea = codeTextarea(page);
+		await textarea.focus();
+		await textarea.selectText();
+		await page.keyboard.press('Backspace');
+		await textarea.pressSequentially('const answer = 42;');
 
 		await expect(preview).toContainText('answer', { timeout: 15_000 });
 	});
