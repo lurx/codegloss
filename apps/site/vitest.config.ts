@@ -2,8 +2,26 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
 	test: {
-		environment: 'node',
-		include: ['app/**/__tests__/**/*.test.ts', 'app/**/__tests__/**/*.test.tsx'],
+		projects: [
+			{
+				test: {
+					name: 'node',
+					environment: 'node',
+					include: ['app/**/__tests__/**/*.test.ts'],
+					exclude: ['app/**/__tests__/**/*.dom.test.ts'],
+				},
+			},
+			{
+				test: {
+					name: 'dom',
+					environment: 'happy-dom',
+					include: [
+						'app/**/__tests__/**/*.dom.test.ts',
+						'app/**/__tests__/**/*.dom.test.tsx',
+					],
+				},
+			},
+		],
 		coverage: {
 			provider: 'v8',
 			reporter: ['text', 'html', 'lcov'],
@@ -20,6 +38,7 @@ export default defineConfig({
 				'app/editor/components/connections-panel/connections-panel.helpers.ts',
 				'app/editor/components/code-picker/code-picker.helpers.ts',
 				'app/editor/components/settings-dialog/settings-dialog.helpers.ts',
+				'app/editor/hooks/use-editor-state/use-editor-state.hook.ts',
 			],
 			thresholds: {
 				lines: 100,
