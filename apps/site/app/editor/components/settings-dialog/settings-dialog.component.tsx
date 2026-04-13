@@ -221,7 +221,6 @@ export function SettingsDialog({
 			</div>
 
 			<div className={styles.section}>
-				<span className={styles.sectionTitle}>Preview</span>
 				<div className={styles.preview}>
 					<PreviewPane config={config} />
 				</div>

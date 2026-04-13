@@ -1,10 +1,10 @@
 'use client';
 
-import { useMemo } from 'react';
 import { CodeGloss } from 'codegloss/react';
-import type { PreviewPaneProps } from './preview-pane.types';
+import { useMemo } from 'react';
 import { useCodeglossTheme } from '../../hooks/use-codegloss-theme';
 import styles from './preview-pane.module.scss';
+import type { PreviewPaneProps } from './preview-pane.types';
 
 export function PreviewPane({ config }: Readonly<PreviewPaneProps>) {
 	const siteTheme = useCodeglossTheme();
@@ -17,6 +17,7 @@ export function PreviewPane({ config }: Readonly<PreviewPaneProps>) {
 
 	return (
 		<div className={styles.root}>
+			<h2 className={styles.heading}>Preview</h2>
 			<CodeGloss
 				key={remountKey}
 				code={config.code}
