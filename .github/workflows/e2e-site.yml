@@ -43,6 +43,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v${{ needs.playwright-version.outputs.version }}-noble
+    env:
+      HOME: /root
     strategy:
       fail-fast: false
       matrix:
