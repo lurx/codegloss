@@ -1,6 +1,6 @@
 // Asserts the built static page actually contains a <code-gloss> element AND
 // that the codegloss runtime that lives next to it registers the custom element.
-import { readFile } from 'node:fs/promises';
+import { readdir, readFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -8,7 +8,16 @@ const here = dirname(fileURLToPath(import.meta.url));
 const dist = resolve(here, 'dist');
 
 const html = await readFile(resolve(dist, 'index.html'), 'utf8');
-const runtime = await readFile(resolve(dist, 'codegloss.js'), 'utf8');
+// Read the entry plus any shared chunks it imports — the runtime splits
+// its element registration into a sibling chunk.
+const runtimeFiles = (await readdir(dist)).filter(
+  (entry) => entry === 'codegloss.js' || (entry.startsWith('chunk-') && entry.endsWith('.js')),
+);
+let runtime = '';
+for (const file of runtimeFiles) {
+  runtime += await readFile(resolve(dist, file), 'utf8');
+  runtime += '\n';
+}
 
 const checks = [
   {
