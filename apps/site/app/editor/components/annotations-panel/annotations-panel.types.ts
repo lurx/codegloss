@@ -15,6 +15,7 @@ export type AnnotationRowProps = {
 	value: Annotation;
 	issues: AnnotationIssue[];
 	dragFromId: string | null;
+	canConnect: boolean;
 	onUpdateAction: (index: number, value: Annotation) => void;
 	onRemoveAction: (index: number) => void;
 	onDragStartAction: (id: string) => void;

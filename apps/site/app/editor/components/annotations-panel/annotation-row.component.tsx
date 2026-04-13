@@ -2,7 +2,7 @@
 
 import { useCallback } from 'react';
 import type { ChangeEvent, PointerEvent as ReactPointerEvent } from 'react';
-import { Trash2 } from 'lucide-react';
+import { ArrowLeft, Target, Trash2 } from 'lucide-react';
 import type { Annotation } from 'codegloss/react';
 import type { AnnotationRowProps } from './annotations-panel.types';
 import { IssueList } from '../issue-list';
@@ -20,6 +20,7 @@ export function AnnotationRow({
 	value,
 	issues,
 	dragFromId,
+	canConnect,
 	onUpdateAction,
 	onRemoveAction,
 	onDragStartAction,
@@ -73,18 +74,27 @@ export function AnnotationRow({
 	);
 	const handleDragStart = useCallback(
 		(event: ReactPointerEvent<HTMLSpanElement>) => {
+			if (!canConnect) return;
 			event.preventDefault();
 			onDragStartAction(value.id);
 		},
-		[onDragStartAction, value.id],
+		[canConnect, onDragStartAction, value.id],
 	);
 
 	const dragging = dragFromId !== null;
 	const isSource = dragFromId === value.id;
+	const disabled = !canConnect;
 	let handleClass = styles.dragHandle;
-	if (isSource) handleClass = styles.dragHandleActive;
+	if (disabled) handleClass = styles.dragHandleDisabled;
+	else if (isSource) handleClass = styles.dragHandleActive;
 	else if (dragging) handleClass = styles.dragHandleTarget;
 	const handleAttrs = { [DATA_CONNECT_ID]: value.id };
+	const showAsTarget = !disabled && dragging && !isSource;
+	const HandleIcon = showAsTarget ? Target : ArrowLeft;
+
+	let handleLabel = 'Drag to another annotation to connect';
+	if (disabled) handleLabel = 'Add a second annotation to enable connecting';
+	else if (showAsTarget) handleLabel = 'Drop here to connect';
 
 	return (
 		<div className={styles.row}>
@@ -92,10 +102,12 @@ export function AnnotationRow({
 				<span
 					className={handleClass}
 					onPointerDown={handleDragStart}
-					title="Drag to another annotation to create a connection"
-					aria-label="Drag to connect"
+					title={handleLabel}
+					aria-label={handleLabel}
 					{...handleAttrs}
-				/>
+				>
+					<HandleIcon size={14} aria-hidden="true" />
+				</span>
 				<input
 					className={`${styles.input} ${styles.idInput}`}
 					value={value.id}
