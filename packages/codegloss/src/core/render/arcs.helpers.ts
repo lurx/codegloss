@@ -14,6 +14,10 @@ import type {
 } from './arcs.types';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
+const ARROWHEAD_MARKER_WIDTH = 7;
+/** Factor applied to ARC_BEND when arrowhead is on — pulls the control point
+ *  further out so the shaft has a visible sweep before meeting the arrow. */
+const ARROWHEAD_BEND_FACTOR = 0.4;
 
 type ResolvedStyle = {
 	dotRadius: number;
@@ -121,14 +125,22 @@ function drawLeftArc({
 	if (!from || !to) return;
 
 	const xPos = ARC_BASE_X - idx * ARC_X_STEP;
-	const path = buildCubicPath(xPos, from.y, ARC_BEND, xPos, to.y);
+	// When an arrowhead is attached, pull the path end back along the tangent
+	// by the marker's length and widen the bend so the shaft sweeps into the
+	// arrow base instead of terminating under its body.
+	const arrowLength = style.arrowhead
+		? ARROWHEAD_MARKER_WIDTH * style.strokeWidth
+		: 0;
+	const bendX = style.arrowhead ? ARC_BEND * ARROWHEAD_BEND_FACTOR : ARC_BEND;
+	const endX = xPos - arrowLength;
+	const path = buildCubicPath(xPos, from.y, bendX, endX, to.y);
 
 	drawConnection({
 		svg,
 		conn,
 		style,
 		fromPoint: { x: xPos, y: from.y },
-		toPoint: { x: xPos, y: to.y },
+		toPoint: { x: endX, y: to.y },
 		path,
 		onConnectionClickAction,
 	});
@@ -149,16 +161,23 @@ function drawRightArc({
 
 	const fromX = from.lineEndX + RIGHT_DOT_OFFSET;
 	const toX = to.lineEndX + RIGHT_DOT_OFFSET;
-	const bendX = Math.max(fromX, toX) + RIGHT_ARC_BEND + idx * ARC_X_STEP;
+	const arrowLength = style.arrowhead
+		? ARROWHEAD_MARKER_WIDTH * style.strokeWidth
+		: 0;
+	const rightBend = style.arrowhead
+		? RIGHT_ARC_BEND / ARROWHEAD_BEND_FACTOR
+		: RIGHT_ARC_BEND;
+	const bendX = Math.max(fromX, toX) + rightBend + idx * ARC_X_STEP;
+	const endX = toX + arrowLength;
 
-	const path = buildCubicPath(fromX, from.y, bendX, toX, to.y);
+	const path = buildCubicPath(fromX, from.y, bendX, endX, to.y);
 
 	drawConnection({
 		svg,
 		conn,
 		style,
 		fromPoint: { x: fromX, y: from.y },
-		toPoint: { x: toX, y: to.y },
+		toPoint: { x: endX, y: to.y },
 		path,
 		onConnectionClickAction,
 	});
@@ -312,10 +331,14 @@ function attachArrowheadMarker(
 	const marker = document.createElementNS(SVG_NS, 'marker');
 	marker.setAttribute('id', markerId);
 	marker.setAttribute('viewBox', '0 0 8 8');
-	marker.setAttribute('refX', '7');
+	// refX=0 registers the marker's base at the path end so the shaft
+	// visually terminates at the arrow base; the tip then extends forward
+	// along the tangent to land at the original anchor (see the arrowLength
+	// compensation in drawLeftArc / drawRightArc).
+	marker.setAttribute('refX', '0');
 	marker.setAttribute('refY', '4');
-	marker.setAttribute('markerWidth', '7');
-	marker.setAttribute('markerHeight', '7');
+	marker.setAttribute('markerWidth', String(ARROWHEAD_MARKER_WIDTH));
+	marker.setAttribute('markerHeight', String(ARROWHEAD_MARKER_WIDTH));
 	marker.setAttribute('orient', 'auto-start-reverse');
 
 	const tip = document.createElementNS(SVG_NS, 'path');
