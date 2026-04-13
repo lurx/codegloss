@@ -1,7 +1,7 @@
 import type { Root, RootContent } from 'mdast';
 import type { MdxjsEsm } from './remark.types';
 
-const CODEGLOSS_IMPORT = "import { CodeGloss } from 'codegloss/react'";
+const CODEGLOSS_IMPORT = "import { CodeGloss } from '@codegloss/react'";
 
 export function injectImportIfNeeded(tree: Root): void {
 	const hasImport = tree.children.some((node: RootContent | MdxjsEsm) => {
@@ -32,8 +32,8 @@ export function injectImportIfNeeded(tree: Root): void {
 						],
 						source: {
 							type: 'Literal',
-							value: 'codegloss/react',
-							raw: "'codegloss/react'",
+							value: '@codegloss/react',
+							raw: "'@codegloss/react'",
 						},
 					},
 				],

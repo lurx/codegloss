@@ -38,8 +38,6 @@ export default defineConfig({
 				'src/core/render/arcs.helpers.ts',
 				'src/core/measure-line-end.helpers.ts',
 				'src/core/code-gloss.element.ts',
-				'src/react/code-gloss.component.tsx',
-				'src/vue/code-gloss.component.ts',
 				'src/themes/theme-css.helpers.ts',
 				'src/themes/index.ts',
 				'src/remark/index.ts',

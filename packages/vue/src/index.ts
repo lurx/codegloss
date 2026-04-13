@@ -1,5 +1,6 @@
-// Side effect: ensure the custom element is registered.
-import '../index';
+// Side effect: register the <code-gloss> custom element on import.
+import { defineCodeGloss } from 'codegloss';
+defineCodeGloss();
 
 export { CodeGloss } from './code-gloss.component';
 export type { CodeGlossProps } from './code-gloss.types';
@@ -10,4 +11,4 @@ export type {
 	CodeGlossConfig,
 	Highlighter,
 	RunResult,
-} from '../core/code-gloss.types';
+} from 'codegloss';

@@ -8,8 +8,6 @@ export default defineConfig([
 	{
 		entry: {
 			index: 'src/index.ts',
-			'react/index': 'src/react/index.ts',
-			'vue/index': 'src/vue/index.ts',
 			'themes/index': 'src/themes/index.ts',
 			'config/index': 'src/config/index.ts',
 			'config/node': 'src/config/load-config.ts',
@@ -18,13 +16,13 @@ export default defineConfig([
 		format: ['esm'],
 		dts: true,
 		clean: true,
-		external: ['react', 'react/jsx-runtime', 'vue', 'unified'],
+		external: ['unified'],
 	},
 	{
 		entry: { 'remark/index': 'src/remark/index.ts' },
 		format: ['cjs'],
 		dts: false,
 		clean: false,
-		external: ['react', 'react/jsx-runtime', 'vue', 'unified'],
+		external: ['unified'],
 	},
 ]);

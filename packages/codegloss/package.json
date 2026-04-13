@@ -5,8 +5,6 @@
   "type": "module",
   "sideEffects": [
     "./dist/index.js",
-    "./dist/react/index.js",
-    "./dist/vue/index.js",
     "./dist/chunk-*.js"
   ],
   "module": "./dist/index.js",
@@ -15,25 +13,12 @@
     "node": ">=18"
   },
   "files": [
-    "dist",
-    "src/svelte/code-gloss.component.svelte"
+    "dist"
   ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
-    },
-    "./react": {
-      "types": "./dist/react/index.d.ts",
-      "import": "./dist/react/index.js"
-    },
-    "./vue": {
-      "types": "./dist/vue/index.d.ts",
-      "import": "./dist/vue/index.js"
-    },
-    "./svelte": {
-      "svelte": "./src/svelte/code-gloss.component.svelte",
-      "default": "./src/svelte/code-gloss.component.svelte"
     },
     "./themes": {
       "types": "./dist/themes/index.d.ts",
@@ -57,41 +42,24 @@
     "unist-util-visit": "^5"
   },
   "peerDependencies": {
-    "react": ">=16.14.0",
-    "svelte": ">=4.0.0",
-    "unified": ">=11",
-    "vue": ">=3.0.0"
+    "unified": ">=11"
   },
   "peerDependenciesMeta": {
-    "react": {
-      "optional": true
-    },
-    "svelte": {
-      "optional": true
-    },
     "unified": {
-      "optional": true
-    },
-    "vue": {
       "optional": true
     }
   },
   "devDependencies": {
     "@types/mdast": "^4",
     "@types/node": "^22.19.17",
-    "@types/react": "^18",
-    "@types/react-dom": "^18.3.7",
     "@vitest/coverage-v8": "^4.1.4",
     "happy-dom": "^20.8.9",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
     "tsup": "^8",
     "typescript": "^5.9.3",
     "vitest": "^4.1.4",
     "mdast-util-mdx-jsx": "^3",
     "remark-parse": "^11.0.0",
-    "unified": "^11.0.5",
-    "vue": "^3.5.13"
+    "unified": "^11.0.5"
   },
   "scripts": {
     "generate:styles": "node scripts/inline-css.mjs",

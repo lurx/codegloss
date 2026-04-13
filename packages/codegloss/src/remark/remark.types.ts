@@ -50,7 +50,7 @@ export type RemarkCodeglossOptions = {
 	 */
 	output?: 'mdx' | 'html';
 	/**
-	 * (mdx only) Skip injecting `import { CodeGloss } from 'codegloss/react'`.
+	 * (mdx only) Skip injecting `import { CodeGloss } from '@codegloss/react'`.
 	 * Set to true when providing CodeGloss via MDX component mapping
 	 * (e.g. Docusaurus MDXComponents swizzle).
 	 */

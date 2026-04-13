@@ -1,10 +1,6 @@
 import { defineComponent, h, type PropType } from 'vue';
-import type {
-	Annotation,
-	CodeGlossConfig,
-	Connection,
-} from '../core/code-gloss.types';
-import { stripUndefined } from '../core/strip-undefined.util';
+import type { Annotation, CodeGlossConfig, Connection } from 'codegloss';
+import { stripUndefined } from './strip-undefined.util';
 
 /**
  * Stateless Vue 3 wrapper around the `<code-gloss>` custom element. Renders

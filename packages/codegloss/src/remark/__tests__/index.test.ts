@@ -57,7 +57,7 @@ describe('remarkCodegloss (full pipeline)', () => {
 			const first = tree.children[0] as { type: string; value?: string };
 			expect(first.type).toBe('mdxjsEsm');
 			expect(first.value).toContain('CodeGloss');
-			expect(first.value).toContain("from 'codegloss/react'");
+			expect(first.value).toContain("from '@codegloss/react'");
 		});
 
 		it('does not inject the import when skipImport is true', () => {

@@ -1,0 +1,21 @@
+{
+  "name": "@codegloss/svelte",
+  "version": "0.1.0",
+  "description": "Svelte wrapper for the codegloss <code-gloss> web component",
+  "type": "module",
+  "types": "./src/code-gloss.component.svelte",
+  "engines": {
+    "node": ">=18"
+  },
+  "files": ["src"],
+  "exports": {
+    ".": {
+      "svelte": "./src/code-gloss.component.svelte",
+      "default": "./src/code-gloss.component.svelte"
+    }
+  },
+  "peerDependencies": {
+    "codegloss": "workspace:*",
+    "svelte": ">=4.0.0"
+  }
+}
