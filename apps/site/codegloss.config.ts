@@ -4,8 +4,7 @@ export default defineConfig({
 	theme: 'github-light',
 	darkTheme: 'github-dark',
 	arcs: {
-		strokeDasharray: '0',
-		strokeWidth: 2,
+		strokeDasharray: 'none',
 		opacity: 0.65,
 	},
 });
