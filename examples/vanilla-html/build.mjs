@@ -2,13 +2,11 @@
 // runtime so the static page can load it via a relative `<script type="module">`.
 // Real consumers would use a CDN URL or their own bundler.
 import { copyFile, mkdir, rm, writeFile } from 'node:fs/promises';
-import { createRequire } from 'node:module';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const dist = resolve(here, 'dist');
-const require = createRequire(import.meta.url);
 
 await rm(dist, { recursive: true, force: true });
 await mkdir(dist, { recursive: true });
@@ -17,7 +15,7 @@ await mkdir(dist, { recursive: true });
 await copyFile(resolve(here, 'index.html'), resolve(dist, 'index.html'));
 
 // 2. Copy the codegloss ESM bundle so the relative import resolves.
-const codeglossEntry = require.resolve('codegloss');
+const codeglossEntry = fileURLToPath(import.meta.resolve('codegloss'));
 await copyFile(codeglossEntry, resolve(dist, 'codegloss.js'));
 
 // 3. Copy the chunked sibling files (codegloss splits its CSS chunk).
