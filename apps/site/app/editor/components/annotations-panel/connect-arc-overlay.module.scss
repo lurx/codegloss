@@ -1,0 +1,32 @@
+.overlay {
+	position: fixed;
+	inset: 0;
+	width: 100vw;
+	height: 100vh;
+	pointer-events: none;
+	z-index: 9999;
+	overflow: visible;
+}
+
+.path,
+.pathSnapped {
+	fill: none;
+	stroke: var(--accent);
+	stroke-width: 2;
+	stroke-linecap: round;
+	opacity: 0.9;
+}
+
+.path {
+	stroke-dasharray: 6 4;
+}
+
+.pathSnapped {
+	stroke-width: 2.5;
+	filter: drop-shadow(0 0 4px var(--accent-subtle));
+}
+
+.endDot {
+	fill: var(--accent);
+	opacity: 0.9;
+}
