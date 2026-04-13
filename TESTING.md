@@ -2,16 +2,16 @@
 
 codegloss uses three layers of tests that run independently in CI. Each layer has a narrow job — combined they keep the runtime, the framework wrappers, the remark plugin, and every example integration honest.
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
-│  Unit (Vitest)                                                   │
-│    pure helpers, web-component DOM behavior, wrappers, remark    │
+│  Unit (Vitest)                                                  │
+│    pure helpers, web-component DOM behavior, wrappers, remark   │
 ├─────────────────────────────────────────────────────────────────┤
-│  Build integration (per-example scripts)                         │
-│    every example app builds + asserts on its output              │
+│  Build integration (per-example scripts)                        │
+│    every example app builds + asserts on its output             │
 ├─────────────────────────────────────────────────────────────────┤
-│  E2E (Playwright)                                                │
-│    real browsers driving the built `<code-gloss>` runtime        │
+│  E2E (Playwright)                                               │
+│    real browsers driving the built `<code-gloss>` runtime       │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -21,8 +21,8 @@ codegloss uses three layers of tests that run independently in CI. Each layer ha
 
 | Project | Environment | Include pattern | Purpose |
 | --- | --- | --- | --- |
-| `node`  | `node`       | `**/__tests__/**/*.test.ts(x)` (excluding `.dom.test.*`) | Pure helpers, SSR wrappers, remark pipeline |
-| `dom`   | `happy-dom`  | `**/__tests__/**/*.dom.test.ts(x)`                       | Custom-element lifecycle, arcs rendering, themes applied to a host |
+| `node` | `node` | `**/__tests__/**/*.test.ts(x)` (excluding `.dom.test.*`) | Pure helpers, SSR wrappers, remark pipeline |
+| `dom` | `happy-dom` | `**/__tests__/**/*.dom.test.ts(x)` | Custom-element lifecycle, arcs rendering, themes applied to a host |
 
 The `.dom.test.ts` suffix is load-bearing — it routes tests into the `happy-dom` project. Don't rename files without updating `vitest.config.ts`.
 
