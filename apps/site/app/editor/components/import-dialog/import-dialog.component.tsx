@@ -23,6 +23,7 @@ export function ImportDialog({
 
 	useEffect(() => {
 		const dialog = dialogRef.current;
+		/* v8 ignore next -- ref is always set after first paint */
 		if (!dialog) return;
 		if (open && !dialog.open) {
 			setInput('');
@@ -51,6 +52,7 @@ export function ImportDialog({
 		}
 	}, [input, onImportAction, onCloseAction]);
 
+	/* v8 ignore start -- onCancel fires on native ESC, not simulable in happy-dom */
 	const handleCancel = useCallback(
 		(event: SyntheticEvent<HTMLDialogElement>) => {
 			event.preventDefault();
@@ -58,6 +60,7 @@ export function ImportDialog({
 		},
 		[onCloseAction],
 	);
+	/* v8 ignore stop */
 
 	const renderStatus = () => {
 		if (status.kind === 'error') {

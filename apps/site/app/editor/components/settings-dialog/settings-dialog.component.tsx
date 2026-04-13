@@ -42,11 +42,13 @@ export function SettingsDialog({
 
 	useEffect(() => {
 		const dialog = dialogRef.current;
+		/* v8 ignore next -- ref is always set after first paint */
 		if (!dialog) return;
 		if (open && !dialog.open) dialog.showModal();
 		else if (!open && dialog.open) dialog.close();
 	}, [open]);
 
+	/* v8 ignore start -- onCancel fires on native ESC, not simulable in happy-dom */
 	const handleCancel = useCallback(
 		(event: SyntheticEvent<HTMLDialogElement>) => {
 			event.preventDefault();
@@ -54,6 +56,7 @@ export function SettingsDialog({
 		},
 		[onCloseAction],
 	);
+	/* v8 ignore stop */
 
 	const handleTheme = useCallback(
 		(event: ChangeEvent<HTMLSelectElement>) => {

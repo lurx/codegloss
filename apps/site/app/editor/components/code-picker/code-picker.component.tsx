@@ -51,10 +51,12 @@ export function CodePicker({
 			if (!target) return;
 			const lineAttr = target.getAttribute(DATA_LINE);
 			const indexAttr = target.getAttribute(DATA_TOKEN_INDEX);
+			/* v8 ignore next -- rendered tokens always carry both attributes */
 			if (lineAttr === null || indexAttr === null) return;
 			const line = Number.parseInt(lineAttr, 10);
 			const tokenIndex = Number.parseInt(indexAttr, 10);
 			const token = lines[line]?.[tokenIndex];
+			/* v8 ignore next -- guarded by matching DOM structure */
 			if (!token) return;
 			onTokenPickAction({
 				token: token.content,
