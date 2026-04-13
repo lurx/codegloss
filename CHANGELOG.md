@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## Unreleased
+
+### Changed
+
+- **Breaking:** package ships as ESM only. The `./remark` subpath keeps a CJS twin for older remark/content pipelines (Docusaurus with jiti-loaded `.ts` configs, etc.); every other entry is ESM-only. Consumers on bundlers (Vite, Next, webpack 5, Rollup, esbuild) are unaffected. Minimum Node for tooling bumped to 18.
+- Unpacked package size roughly halved (179 KB → 93 KB).
+
 ## [0.1.0] — 2026-04-12
 
 ### Added

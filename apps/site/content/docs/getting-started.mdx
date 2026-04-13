@@ -17,6 +17,11 @@ npm install codegloss
 
 That's it. One package — the web component, framework wrappers, remark plugin, themes, and config are all included. Framework-specific peer dependencies (`react`, `vue`, `unified`) are optional.
 
+### Requirements
+
+- **Node 18+** for build tooling.
+- **ESM consumers.** The package ships as ES modules only; use a bundler (Vite, Next, webpack 5, Rollup, esbuild) or import from an ESM Node config. The `codegloss/remark` subpath keeps a CJS build for older remark config pipelines (Docusaurus with `.ts` configs, etc.).
+
 ## Pick your usage
 
 <UsageTabs />
