@@ -1,6 +1,28 @@
 import type { Html } from 'mdast';
 import type { AnnotationsData, DetectedPair } from './remark.types';
 
+function parseAnnotationsData(json: string | undefined): AnnotationsData {
+	if (!json) return {};
+	try {
+		return JSON.parse(json) as AnnotationsData;
+	} catch {
+		console.warn(
+			'[remark-codegloss] Failed to parse annotations JSON, rendering without annotations',
+		);
+		return {};
+	}
+}
+
+function mergeObject(
+	base: Record<string, unknown> | undefined,
+	override: unknown,
+): Record<string, unknown> | undefined {
+	if (override && typeof override === 'object') {
+		return { ...base, ...(override as Record<string, unknown>) };
+	}
+	return base;
+}
+
 /**
  * Builds a raw HTML mdast node containing a `<code-gloss>` custom element
  * with its config in a `<script type="application/json">` child.
@@ -21,30 +43,19 @@ export function buildCodeGlossHtmlNode(pair: DetectedPair): Html {
 
 	const themeAttr = pair.theme ? ` theme="${pair.theme}"` : '';
 
-	if (pair.annotationsJson) {
-		try {
-			const parsed = JSON.parse(pair.annotationsJson) as AnnotationsData;
+	const parsed = parseAnnotationsData(pair.annotationsJson);
 
-			if (parsed.annotations && Array.isArray(parsed.annotations)) {
-				config.annotations = parsed.annotations;
-			}
+	if (Array.isArray(parsed.annotations)) config.annotations = parsed.annotations;
+	if (Array.isArray(parsed.connections)) config.connections = parsed.connections;
 
-			if (parsed.connections && Array.isArray(parsed.connections)) {
-				config.connections = parsed.connections;
-			}
+	const mergedArcs = mergeObject(pair.arcs, parsed.arcs);
+	if (mergedArcs && Object.keys(mergedArcs).length > 0) {
+		config.arcs = mergedArcs;
+	}
 
-			if (parsed.arcs && typeof parsed.arcs === 'object') {
-				config.arcs = parsed.arcs;
-			}
-
-			if (parsed.callouts && typeof parsed.callouts === 'object') {
-				config.callouts = parsed.callouts;
-			}
-		} catch {
-			console.warn(
-				'[remark-codegloss] Failed to parse annotations JSON, rendering without annotations',
-			);
-		}
+	const mergedCallouts = mergeObject(pair.callouts, parsed.callouts);
+	if (mergedCallouts && Object.keys(mergedCallouts).length > 0) {
+		config.callouts = mergedCallouts;
 	}
 
 	// Escape `</script` so the JSON payload can't break out of the script tag.

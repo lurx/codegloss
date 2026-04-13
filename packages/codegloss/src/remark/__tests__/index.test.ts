@@ -211,6 +211,53 @@ describe('remarkCodegloss (full pipeline)', () => {
 		});
 	});
 
+	describe('options.arcs and options.callouts', () => {
+		it('forwards arcs/callouts defaults into the emitted mdx node', () => {
+			const tree = run(SANDBOX_MD, {
+				arcs: { opacity: 0.65, arrowhead: true },
+				callouts: { popover: true },
+			});
+			const jsx = tree.children.find(
+				n => (n as { type: string }).type === 'mdxJsxFlowElement',
+			) as {
+				attributes: Array<{
+					name: string;
+					value: string | { value?: string } | null;
+				}>;
+			};
+			const arcs = jsx.attributes.find(a => a.name === 'arcs');
+			const callouts = jsx.attributes.find(a => a.name === 'callouts');
+			expect(
+				JSON.parse((arcs!.value as { value: string }).value),
+			).toEqual({ opacity: 0.65, arrowhead: true });
+			expect(
+				JSON.parse((callouts!.value as { value: string }).value),
+			).toEqual({ popover: true });
+		});
+
+		it('forwards arcs/callouts defaults into the emitted html node', () => {
+			const tree = run(SANDBOX_MD, {
+				output: 'html',
+				arcs: { opacity: 0.5 },
+				callouts: { popover: true },
+			});
+			const html = tree.children.find(n => n.type === 'html') as {
+				value: string;
+			};
+			expect(html.value).toContain('"arcs":{"opacity":0.5}');
+			expect(html.value).toContain('"callouts":{"popover":true}');
+		});
+
+		it('ignores empty arcs/callouts objects', () => {
+			const tree = run(SANDBOX_MD, { arcs: {}, callouts: {} });
+			const jsx = tree.children.find(
+				n => (n as { type: string }).type === 'mdxJsxFlowElement',
+			) as { attributes: Array<{ name: string }> };
+			expect(jsx.attributes.find(a => a.name === 'arcs')).toBeUndefined();
+			expect(jsx.attributes.find(a => a.name === 'callouts')).toBeUndefined();
+		});
+	});
+
 	describe('default export', () => {
 		it('matches the named export', async () => {
 			const { default: defaultExport } = await import('../index');

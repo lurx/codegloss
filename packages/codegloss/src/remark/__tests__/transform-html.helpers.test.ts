@@ -117,6 +117,51 @@ describe('buildCodeGlossHtmlNode', () => {
 		expect(config.code).toBe('</script><script>alert(1)</script>');
 	});
 
+	describe('defaults injected from the plugin', () => {
+		it('forwards pair-level arcs defaults when no per-block arcs exist', () => {
+			const node = buildCodeGlossHtmlNode(
+				pair({ arcs: { opacity: 0.65, arrowhead: true } }),
+			);
+			expect(extractConfig(node.value).arcs).toEqual({
+				opacity: 0.65,
+				arrowhead: true,
+			});
+		});
+
+		it('shallow-merges defaults with per-block arcs — per-block wins', () => {
+			const node = buildCodeGlossHtmlNode(
+				pair({
+					arcs: { opacity: 0.65, arrowhead: true, strokeDasharray: '1 1' },
+					annotationsJson:
+						'{"arcs":{"opacity":0.3,"strokeWidth":2}}',
+				}),
+			);
+			expect(extractConfig(node.value).arcs).toEqual({
+				opacity: 0.3,
+				arrowhead: true,
+				strokeDasharray: '1 1',
+				strokeWidth: 2,
+			});
+		});
+
+		it('drops a non-object per-block arcs override but keeps defaults', () => {
+			const node = buildCodeGlossHtmlNode(
+				pair({
+					arcs: { opacity: 0.4 },
+					annotationsJson: '{"arcs":42}',
+				}),
+			);
+			expect(extractConfig(node.value).arcs).toEqual({ opacity: 0.4 });
+		});
+
+		it('forwards pair-level callouts defaults when no per-block callouts exist', () => {
+			const node = buildCodeGlossHtmlNode(
+				pair({ callouts: { popover: true } }),
+			);
+			expect(extractConfig(node.value).callouts).toEqual({ popover: true });
+		});
+	});
+
 	describe('invalid JSON', () => {
 		let warnSpy: ReturnType<typeof vi.spyOn>;
 

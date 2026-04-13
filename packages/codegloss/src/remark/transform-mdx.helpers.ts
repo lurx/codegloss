@@ -35,69 +35,67 @@ function jsxExpressionAttribute(
 	};
 }
 
+function parseAnnotationsData(json: string | undefined): AnnotationsData {
+	if (!json) return {};
+	try {
+		return JSON.parse(json) as AnnotationsData;
+	} catch {
+		console.warn(
+			'[remark-codegloss] Failed to parse annotations JSON, rendering without annotations',
+		);
+		return {};
+	}
+}
+
+function mergeObject(
+	base: Record<string, unknown> | undefined,
+	override: unknown,
+): Record<string, unknown> | undefined {
+	if (override && typeof override === 'object') {
+		return { ...base, ...(override as Record<string, unknown>) };
+	}
+	return base;
+}
+
 export function buildCodeGlossMdxNode(pair: DetectedPair): MdxJsxFlowElement {
 	const attributes: MdxJsxAttribute[] = [
 		jsxExpressionAttribute('code', JSON.stringify(pair.code)),
 		jsxAttribute('lang', pair.lang),
 	];
 
-	if (pair.filename) {
-		attributes.push(jsxAttribute('filename', pair.filename));
+	if (pair.filename) attributes.push(jsxAttribute('filename', pair.filename));
+	if (pair.theme) attributes.push(jsxAttribute('theme', pair.theme));
+
+	const parsed = parseAnnotationsData(pair.annotationsJson);
+
+	if (Array.isArray(parsed.annotations)) {
+		attributes.push(
+			jsxExpressionAttribute('annotations', JSON.stringify(parsed.annotations)),
+		);
 	}
 
-	if (pair.theme) {
-		attributes.push(jsxAttribute('theme', pair.theme));
+	if (Array.isArray(parsed.connections)) {
+		attributes.push(
+			jsxExpressionAttribute('connections', JSON.stringify(parsed.connections)),
+		);
 	}
 
-	if (pair.annotationsJson) {
-		try {
-			const parsed = JSON.parse(pair.annotationsJson) as AnnotationsData;
-
-			if (parsed.annotations && Array.isArray(parsed.annotations)) {
-				attributes.push(
-					jsxExpressionAttribute(
-						'annotations',
-						JSON.stringify(parsed.annotations),
-					),
-				);
-			}
-
-			if (parsed.connections && Array.isArray(parsed.connections)) {
-				attributes.push(
-					jsxExpressionAttribute(
-						'connections',
-						JSON.stringify(parsed.connections),
-					),
-				);
-			}
-
-			if (parsed.arcs && typeof parsed.arcs === 'object') {
-				attributes.push(
-					jsxExpressionAttribute('arcs', JSON.stringify(parsed.arcs)),
-				);
-			}
-
-			if (parsed.callouts && typeof parsed.callouts === 'object') {
-				attributes.push(
-					jsxExpressionAttribute(
-						'callouts',
-						JSON.stringify(parsed.callouts),
-					),
-				);
-			}
-		} catch {
-			console.warn(
-				'[remark-codegloss] Failed to parse annotations JSON, rendering without annotations',
-			);
-		}
+	const mergedArcs = mergeObject(pair.arcs, parsed.arcs);
+	if (mergedArcs && Object.keys(mergedArcs).length > 0) {
+		attributes.push(jsxExpressionAttribute('arcs', JSON.stringify(mergedArcs)));
 	}
 
-	const node: MdxJsxFlowElement = {
+	const mergedCallouts = mergeObject(pair.callouts, parsed.callouts);
+	if (mergedCallouts && Object.keys(mergedCallouts).length > 0) {
+		attributes.push(
+			jsxExpressionAttribute('callouts', JSON.stringify(mergedCallouts)),
+		);
+	}
+
+	return {
 		type: 'mdxJsxFlowElement',
 		name: 'CodeGloss',
 		attributes,
 		children: [],
 	};
-
-	return node;
 }
