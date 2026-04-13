@@ -6,10 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## Unreleased
 
+### Added
+
+- New wrapper packages — `@codegloss/react`, `@codegloss/vue`, `@codegloss/svelte`. Each installs independently and declares `codegloss` as a peer dependency, so users only pay for the wrapper they actually use.
+
 ### Changed
 
-- **Breaking:** package ships as ESM only. The `./remark` subpath keeps a CJS twin for older remark/content pipelines (Docusaurus with jiti-loaded `.ts` configs, etc.); every other entry is ESM-only. Consumers on bundlers (Vite, Next, webpack 5, Rollup, esbuild) are unaffected. Minimum Node for tooling bumped to 18.
-- Unpacked package size roughly halved (179 KB → 93 KB).
+- Framework wrappers moved out of the main package. Imports are now `@codegloss/react`, `@codegloss/vue`, `@codegloss/svelte` (previously `codegloss/react`, etc.). The remark plugin now injects the `@codegloss/react` import.
+- Main package ships as ESM only. The `./remark` subpath keeps a CJS twin for older remark/content pipelines (Docusaurus with jiti-loaded `.ts` configs, etc.); every other entry is ESM-only. Minimum Node for tooling is 18.
+- Core `codegloss` package footprint dropped further (179 KB → 85 KB unpacked) now that wrappers ship separately.
 
 ## [0.1.0] — 2026-04-12
 

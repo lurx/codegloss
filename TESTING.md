@@ -45,7 +45,7 @@ Each example is a **real consumer** of the published `codegloss` workspace packa
 1. Builds the app (Vite, webpack, rollup, astro, whatever the framework uses).
 2. Runs a small `test.mjs` or similar that asserts the built output contains what it should (a `<code-gloss>` tag, the JSON config script, the runtime bundle, etc.).
 
-**Why this layer exists:** TypeScript compilation doesn't catch all module-resolution problems. An example that imports from `codegloss/react` will surface broken `exports` maps, wrong `types` entries, or a missing subpath the moment its bundler runs.
+**Why this layer exists:** TypeScript compilation doesn't catch all module-resolution problems. An example that imports from `@codegloss/react` will surface broken `exports` maps, wrong `types` entries, or a missing subpath the moment its bundler runs.
 
 **Run locally:**
 

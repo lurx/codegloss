@@ -21,9 +21,9 @@ Interactive annotated code blocks for the web. Drop a `<code-gloss>` element on 
 | Import | What it is |
 |---|---|
 | `codegloss` | The `<code-gloss>` Web Component (auto-registers on import). |
-| `codegloss/react` | Thin React wrapper. |
-| `codegloss/vue` | Thin Vue 3 wrapper. |
-| `codegloss/svelte` | Thin Svelte wrapper. |
+| `@codegloss/react` | Thin React wrapper. |
+| `@codegloss/vue` | Thin Vue 3 wrapper. |
+| `@codegloss/svelte` | Thin Svelte wrapper. |
 | `codegloss/remark` | Remark plugin — turns annotated fenced code blocks into `<code-gloss>` elements. Supports MDX and plain-HTML output. |
 | `codegloss/themes` | Bundled themes (tree-shakeable). |
 | `codegloss/config` | `defineConfig` helper for `codegloss.config.ts`. |
@@ -53,7 +53,7 @@ Interactive annotated code blocks for the web. Drop a `<code-gloss>` element on 
 ### React
 
 ```tsx
-import { CodeGloss } from 'codegloss/react';
+import { CodeGloss } from '@codegloss/react';
 
 export function Example() {
   return (
@@ -74,7 +74,7 @@ export function Example() {
 
 ```vue
 <script setup lang="ts">
-import { CodeGloss } from 'codegloss/vue';
+import { CodeGloss } from '@codegloss/vue';
 </script>
 
 <template>
@@ -90,7 +90,7 @@ import { CodeGloss } from 'codegloss/vue';
 
 ```svelte
 <script>
-  import CodeGloss from 'codegloss/svelte';
+  import CodeGloss from '@codegloss/svelte';
 </script>
 
 <CodeGloss
