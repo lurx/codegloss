@@ -3,7 +3,21 @@ name: E2E tests
 on:
   push:
     branches: [main]
+    paths:
+      - 'packages/codegloss/**'
+      - 'test/e2e/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+      - '.github/workflows/e2e.yml'
   pull_request:
+    paths:
+      - 'packages/codegloss/**'
+      - 'test/e2e/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+      - '.github/workflows/e2e.yml'
 
 permissions:
   contents: read

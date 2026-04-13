@@ -3,7 +3,23 @@ name: Sonar
 on:
   push:
     branches: [main]
+    paths:
+      - 'packages/codegloss/**'
+      - 'apps/site/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+      - 'sonar-project.properties'
+      - '.github/workflows/sonar.yml'
   pull_request:
+    paths:
+      - 'packages/codegloss/**'
+      - 'apps/site/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+      - 'sonar-project.properties'
+      - '.github/workflows/sonar.yml'
 
 permissions:
   contents: read

@@ -3,7 +3,21 @@ name: Unit tests
 on:
   push:
     branches: [main]
+    paths:
+      - 'packages/codegloss/**'
+      - 'apps/site/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+      - '.github/workflows/unit.yml'
   pull_request:
+    paths:
+      - 'packages/codegloss/**'
+      - 'apps/site/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+      - '.github/workflows/unit.yml'
 
 permissions:
   contents: read
