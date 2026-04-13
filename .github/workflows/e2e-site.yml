@@ -25,9 +25,24 @@ permissions:
   contents: read
 
 jobs:
+  playwright-version:
+    name: Resolve Playwright version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.read.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: read
+        run: |
+          v=$(node -p "require('./test/e2e-site/package.json').devDependencies['@playwright/test']")
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+
   e2e-site:
     name: e2e-site / ${{ matrix.browser }}
+    needs: playwright-version
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v${{ needs.playwright-version.outputs.version }}-noble
     strategy:
       fail-fast: false
       matrix:
@@ -50,9 +65,6 @@ jobs:
 
       - name: Build local packages
         run: pnpm -w run build:packages
-
-      - name: Install Playwright browser
-        run: pnpm --filter @codegloss/e2e-site exec playwright install --with-deps ${{ matrix.browser }}
 
       - name: Run E2E site tests
         run: pnpm --filter @codegloss/e2e-site test --project=${{ matrix.browser }}
