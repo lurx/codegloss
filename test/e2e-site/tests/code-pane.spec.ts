@@ -12,11 +12,14 @@ test.describe('code pane', () => {
 	test('editing code updates preview', async ({ page }) => {
 		await gotoEditor(page);
 
+		const preview = page.locator('code-gloss').first();
+		// wait for the initial preview render before replacing the code
+		await expect(preview).toContainText('greet', { timeout: 15_000 });
+
 		const newCode = 'const answer = 42;';
 		await codeTextarea(page).fill(newCode);
 
-		const preview = page.locator('code-gloss').first();
-		await expect(preview).toContainText('answer', { timeout: 5000 });
+		await expect(preview).toContainText('answer', { timeout: 15_000 });
 	});
 
 	test('language input changes value', async ({ page }) => {

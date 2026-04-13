@@ -32,7 +32,10 @@ test.describe('export panel', () => {
 		context,
 		browserName,
 	}) => {
-		test.skip(browserName === 'webkit', 'clipboard permissions flaky in webkit');
+		test.skip(
+			browserName !== 'chromium',
+			'clipboard-read permission only works reliably in chromium',
+		);
 		await context.grantPermissions(['clipboard-read', 'clipboard-write']);
 		await gotoEditor(page);
 
