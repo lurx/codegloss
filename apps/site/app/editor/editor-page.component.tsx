@@ -1,10 +1,11 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Redo2, Settings, Undo2, Upload } from 'lucide-react';
+import { HelpCircle, Redo2, Settings, Undo2, Upload } from 'lucide-react';
 import type { Annotation, Connection } from 'codegloss/react';
 import { useEditorState } from './hooks/use-editor-state';
 import { useCodeglossTheme } from './hooks/use-codegloss-theme';
+import { useEditorTour } from './hooks/use-editor-tour';
 import { CodePane } from './components/code-pane';
 import { CodePicker } from './components/code-picker';
 import type { TokenPick } from './components/code-picker';
@@ -42,6 +43,7 @@ export function EditorPage() {
 	const theme = useCodeglossTheme();
 	const [importOpen, setImportOpen] = useState(false);
 	const [settingsOpen, setSettingsOpen] = useState(false);
+	const { startTour } = useEditorTour();
 
 	const validation = useMemo(() => validateConfig(config), [config]);
 
@@ -134,8 +136,19 @@ export function EditorPage() {
 							className={styles.historyButton}
 							onClick={handleOpenSettings}
 							aria-label="Settings"
+							data-tour="settings"
 						>
 							<Settings size={16} aria-hidden="true" /> Settings
+						</button>
+						<button
+							type="button"
+							className={styles.historyButton}
+							onClick={startTour}
+							aria-label="Show editor tour"
+							title="Show editor tour"
+							data-tour="help"
+						>
+							<HelpCircle size={16} aria-hidden="true" />
 						</button>
 					</div>
 				</div>
@@ -146,49 +159,57 @@ export function EditorPage() {
 			</div>
 
 			<div className={styles.left}>
-				<CodePane
-					code={config.code}
-					lang={config.lang}
-					filename={config.filename ?? ''}
-					runnable={config.runnable ?? false}
-					onCodeChangeAction={setCodeAction}
-					onLangChangeAction={setLangAction}
-					onFilenameChangeAction={setFilenameAction}
-					onRunnableChangeAction={setRunnableAction}
-				/>
-				<CodePicker
-					code={config.code}
-					lang={config.lang}
-					theme={theme}
-					onTokenPickAction={handleTokenPick}
-				/>
+				<div data-tour="code-pane">
+					<CodePane
+						code={config.code}
+						lang={config.lang}
+						filename={config.filename ?? ''}
+						runnable={config.runnable ?? false}
+						onCodeChangeAction={setCodeAction}
+						onLangChangeAction={setLangAction}
+						onFilenameChangeAction={setFilenameAction}
+						onRunnableChangeAction={setRunnableAction}
+					/>
+				</div>
+				<div data-tour="code-picker">
+					<CodePicker
+						code={config.code}
+						lang={config.lang}
+						theme={theme}
+						onTokenPickAction={handleTokenPick}
+					/>
+				</div>
 				<div className={styles.panels}>
-					<AnnotationsPanel
-						annotations={config.annotations}
-						issues={validation.annotationIssues}
-						onAddAction={addAnnotationAction}
-						onUpdateAction={updateAnnotationAction}
-						onRemoveAction={removeAnnotationAction}
-						onConnectAction={handleConnect}
-					/>
-					<ConnectionsPanel
-						connections={config.connections}
-						annotations={config.annotations}
-						issues={validation.connectionIssues}
-						onAddAction={addConnectionAction}
-						onUpdateAction={updateConnectionAction}
-						onRemoveAction={removeConnectionAction}
-					/>
+					<div data-tour="annotations">
+						<AnnotationsPanel
+							annotations={config.annotations}
+							issues={validation.annotationIssues}
+							onAddAction={addAnnotationAction}
+							onUpdateAction={updateAnnotationAction}
+							onRemoveAction={removeAnnotationAction}
+							onConnectAction={handleConnect}
+						/>
+					</div>
+					<div data-tour="connections">
+						<ConnectionsPanel
+							connections={config.connections}
+							annotations={config.annotations}
+							issues={validation.connectionIssues}
+							onAddAction={addConnectionAction}
+							onUpdateAction={updateConnectionAction}
+							onRemoveAction={removeConnectionAction}
+						/>
+					</div>
 				</div>
 			</div>
 
 			<div className={styles.right}>
-				<div className={styles.stickyPreview}>
+				<div className={styles.stickyPreview} data-tour="preview">
 					<PreviewPane config={config} />
 				</div>
 			</div>
 
-			<div className={styles.export}>
+			<div className={styles.export} data-tour="export">
 				<ExportPanel config={config} />
 			</div>
 
