@@ -1,0 +1,69 @@
+.root {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	min-height: 0;
+}
+
+.fieldRow {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+	gap: 8px;
+
+	@media (max-width: 560px) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+.field {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	font-size: 1rem;
+	color: var(--site-muted);
+}
+
+.input {
+	background: var(--site-surface);
+	color: var(--site-fg);
+	border: 1px solid var(--site-border);
+	border-radius: 6px;
+	padding: 6px 8px;
+	font-family: var(--font-sans);
+	font-size: 1.0625rem;
+
+	&:focus {
+		outline: none;
+		border-color: var(--accent);
+	}
+}
+
+.checkbox {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	align-self: flex-end;
+	color: var(--site-fg);
+	font-size: 1.0625rem;
+}
+
+.codeArea {
+	flex: 1;
+	min-height: 240px;
+	width: 100%;
+	box-sizing: border-box;
+	background: var(--site-surface);
+	color: var(--site-fg);
+	border: 1px solid var(--site-border);
+	border-radius: 8px;
+	padding: 12px;
+	font-family: var(--font-mono);
+	font-size: 13px;
+	line-height: 1.55;
+	resize: vertical;
+
+	&:focus {
+		outline: none;
+		border-color: var(--accent);
+	}
+}

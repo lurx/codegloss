@@ -423,6 +423,43 @@ describe('drawArcs', () => {
 			expect(onClick).toHaveBeenCalledTimes(2);
 		});
 
+		it('registers the arrowhead marker at its base so the tip overshoots the path end', () => {
+			drawArcs(
+				defaultParams({
+					annotations: [ann('a'), ann('b')],
+					connections: [conn({ from: 'a', to: 'b' })],
+					annotationPositions: new Map([
+						['a', pos(10)],
+						['b', pos(50)],
+					]),
+					arcStyle: { arrowhead: true },
+				}),
+			);
+
+			const marker = leftSvg.querySelector('marker');
+			expect(marker?.getAttribute('refX')).toBe('0');
+		});
+
+		it('shortens the path end by the arrow length so the shaft meets the base', () => {
+			drawArcs(
+				defaultParams({
+					annotations: [ann('a'), ann('b')],
+					connections: [conn({ from: 'a', to: 'b' })],
+					annotationPositions: new Map([
+						['a', pos(10)],
+						['b', pos(50)],
+					]),
+					arcStyle: { arrowhead: true, strokeWidth: 2 },
+				}),
+			);
+
+			const arcPath = leftSvg.querySelector<SVGPathElement>(':scope > path');
+			const d = arcPath?.getAttribute('d') ?? '';
+			// Path ends at xPos - 7*strokeWidth = 34 - 14 = 20. The trailing
+			// coordinate pair in the cubic is the endpoint.
+			expect(d.endsWith(' 20 50')).toBe(true);
+		});
+
 		it('applies the arrowhead to right-side arcs as well', () => {
 			drawArcs(
 				defaultParams({

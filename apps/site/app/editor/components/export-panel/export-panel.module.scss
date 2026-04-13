@@ -1,0 +1,69 @@
+.root {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.tabs {
+	display: flex;
+	gap: 4px;
+}
+
+.tab,
+.tabActive {
+	background: transparent;
+	color: var(--site-muted);
+	border: 1px solid transparent;
+	border-bottom-color: var(--site-border);
+	padding: 4px 10px;
+	font-size: 1rem;
+	cursor: pointer;
+	font-family: var(--font-sans);
+	border-radius: 6px 6px 0 0;
+}
+
+.tabActive {
+	color: var(--site-heading);
+	background: var(--site-surface);
+	border-color: var(--site-border);
+	border-bottom-color: transparent;
+}
+
+.copyButton {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	background: var(--site-surface);
+	color: var(--site-fg);
+	border: 1px solid var(--site-border);
+	border-radius: 6px;
+	padding: 4px 10px;
+	font-size: 1rem;
+	cursor: pointer;
+
+	&:hover {
+		border-color: var(--accent);
+	}
+}
+
+.output {
+	background: var(--site-pre-bg);
+	color: var(--site-pre-fg);
+	border: 1px solid var(--site-border);
+	border-radius: 8px;
+	padding: 10px;
+	font-family: var(--font-mono);
+	font-size: 1rem;
+	line-height: 1.5;
+	max-height: 280px;
+	overflow: auto;
+	margin: 0;
+	white-space: pre;
+}

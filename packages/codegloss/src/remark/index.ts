@@ -24,13 +24,20 @@ export function remarkCodegloss(options: RemarkCodeglossOptions = {}) {
 				const pair = detectSandboxPair(parent.children, index);
 
 				if (pair) {
-					const pairWithTheme = options.theme
-						? { ...pair, theme: options.theme }
-						: pair;
+					const pairWithDefaults = {
+						...pair,
+						...(options.theme ? { theme: options.theme } : {}),
+						...(options.arcs && Object.keys(options.arcs).length > 0
+							? { arcs: options.arcs }
+							: {}),
+						...(options.callouts && Object.keys(options.callouts).length > 0
+							? { callouts: options.callouts }
+							: {}),
+					};
 					const node =
 						output === 'html'
-							? buildCodeGlossHtmlNode(pairWithTheme)
-							: buildCodeGlossMdxNode(pairWithTheme);
+							? buildCodeGlossHtmlNode(pairWithDefaults)
+							: buildCodeGlossMdxNode(pairWithDefaults);
 
 					parent.children.splice(
 						pair.codeIndex,

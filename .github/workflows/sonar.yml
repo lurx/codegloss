@@ -3,7 +3,23 @@ name: Sonar
 on:
   push:
     branches: [main]
+    paths:
+      - 'packages/codegloss/**'
+      - 'apps/site/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+      - 'sonar-project.properties'
+      - '.github/workflows/sonar.yml'
   pull_request:
+    paths:
+      - 'packages/codegloss/**'
+      - 'apps/site/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+      - 'sonar-project.properties'
+      - '.github/workflows/sonar.yml'
 
 permissions:
   contents: read
@@ -30,6 +46,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Build local packages
+        run: pnpm -w run build:packages
 
       - name: Run unit tests with coverage
         run: pnpm -w run test:coverage

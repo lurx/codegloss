@@ -3,7 +3,21 @@ name: Unit tests
 on:
   push:
     branches: [main]
+    paths:
+      - 'packages/codegloss/**'
+      - 'apps/site/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+      - '.github/workflows/unit.yml'
   pull_request:
+    paths:
+      - 'packages/codegloss/**'
+      - 'apps/site/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+      - '.github/workflows/unit.yml'
 
 permissions:
   contents: read
@@ -27,6 +41,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build local packages
+        run: pnpm -w run build:packages
+
       - name: Run unit tests with coverage
         run: pnpm -w run test:coverage
 
@@ -34,5 +51,5 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: packages/codegloss/coverage/lcov.info
+          files: packages/codegloss/coverage/lcov.info,apps/site/coverage/lcov.info
           fail_ci_if_error: false

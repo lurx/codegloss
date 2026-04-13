@@ -1,0 +1,80 @@
+name: E2E site tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/codegloss/**'
+      - 'apps/site/**'
+      - 'test/e2e-site/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+      - '.github/workflows/e2e-site.yml'
+  pull_request:
+    paths:
+      - 'packages/codegloss/**'
+      - 'apps/site/**'
+      - 'test/e2e-site/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+      - '.github/workflows/e2e-site.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  playwright-version:
+    name: Resolve Playwright version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.read.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: read
+        run: |
+          v=$(node -p "require('./test/e2e-site/package.json').devDependencies['@playwright/test']")
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+
+  e2e-site:
+    name: e2e-site / ${{ matrix.browser }}
+    needs: playwright-version
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v${{ needs.playwright-version.outputs.version }}-noble
+    env:
+      HOME: /root
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build local packages
+        run: pnpm -w run build:packages
+
+      - name: Run E2E site tests
+        run: pnpm --filter @codegloss/e2e-site test --project=${{ matrix.browser }}
+
+      - name: Upload traces on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-site-traces-${{ matrix.browser }}
+          path: test/e2e-site/test-results/
+          retention-days: 7

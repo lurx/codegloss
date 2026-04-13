@@ -88,6 +88,7 @@ export class CodeGlossElement extends SafeHTMLElement {
 	private resizeTimer: ReturnType<typeof setTimeout> | undefined;
 	private copyTimer: ReturnType<typeof setTimeout> | undefined;
 	private animationFrameId: number | undefined;
+	private resizeObserver: ResizeObserver | undefined;
 	private readonly resizeHandler = () => {
 		if (this.resizeTimer) clearTimeout(this.resizeTimer);
 		this.resizeTimer = setTimeout(() => this.redrawArcs(), RESIZE_DEBOUNCE_MS);
@@ -171,6 +172,8 @@ export class CodeGlossElement extends SafeHTMLElement {
 	disconnectedCallback(): void {
 		window.removeEventListener('resize', this.resizeHandler);
 		document.removeEventListener('keydown', this.keyHandler);
+		this.resizeObserver?.disconnect();
+		this.resizeObserver = undefined;
 		if (this.resizeTimer) clearTimeout(this.resizeTimer);
 		if (this.copyTimer) clearTimeout(this.copyTimer);
 		if (this.animationFrameId) cancelAnimationFrame(this.animationFrameId);
@@ -450,6 +453,12 @@ export class CodeGlossElement extends SafeHTMLElement {
 
 		window.addEventListener('resize', this.resizeHandler);
 		document.addEventListener('keydown', this.keyHandler);
+
+		// Also redraw when the host's own size changes — e.g. when the component
+		// mounts inside a hidden <dialog> and only gains layout once the dialog
+		// is opened. Window resize alone never fires for that transition.
+		this.resizeObserver = new ResizeObserver(this.resizeHandler);
+		this.resizeObserver.observe(this);
 	}
 
 	private handleAnnotationClick(annId: string, event: MouseEvent): void {

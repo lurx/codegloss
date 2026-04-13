@@ -3,7 +3,21 @@ name: Integration tests
 on:
   push:
     branches: [main]
+    paths:
+      - 'packages/codegloss/**'
+      - 'examples/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+      - '.github/workflows/integration.yml'
   pull_request:
+    paths:
+      - 'packages/codegloss/**'
+      - 'examples/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+      - '.github/workflows/integration.yml'
 
 permissions:
   contents: read

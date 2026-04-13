@@ -9,6 +9,10 @@ export type DetectedPair = {
 	nodeCount: number;
 	/** Theme name injected by the remark plugin from config */
 	theme?: string;
+	/** Default arc style overrides injected by the remark plugin from config */
+	arcs?: Record<string, unknown>;
+	/** Default callout overrides injected by the remark plugin from config */
+	callouts?: Record<string, unknown>;
 };
 
 export type AnnotationsData = {
@@ -56,4 +60,14 @@ export type RemarkCodeglossOptions = {
 	 * Accepts a bundled theme name (e.g. 'github-dark', 'dracula').
 	 */
 	theme?: string;
+	/**
+	 * Default arc style overrides applied to every emitted code block. Keys are
+	 * shallow-merged with the block's own `arcs` — per-block values win.
+	 */
+	arcs?: Record<string, unknown>;
+	/**
+	 * Default callout overrides applied to every emitted code block. Keys are
+	 * shallow-merged with the block's own `callouts` — per-block values win.
+	 */
+	callouts?: Record<string, unknown>;
 };

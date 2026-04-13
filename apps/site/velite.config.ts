@@ -9,6 +9,7 @@ const theme =
 	typeof codeglossConfig.theme === 'string'
 		? codeglossConfig.theme
 		: undefined;
+const { arcs, callouts } = codeglossConfig;
 
 /** Lucide `link` icon, inlined as hast for the autolink-headings
  *  build-time render. The check-icon swap happens client-side in
@@ -51,7 +52,9 @@ const LINK_ICON_HAST = {
 
 export default defineConfig({
   mdx: {
-    remarkPlugins: [[remarkCodegloss, { skipImport: true, theme }]],
+    remarkPlugins: [
+      [remarkCodegloss, { skipImport: true, theme, arcs, callouts }],
+    ],
     rehypePlugins: [
       rehypeSlug,
       [

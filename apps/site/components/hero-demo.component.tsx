@@ -1,9 +1,9 @@
 'use client';
 
-import { CodeGloss } from 'codegloss/react';
-import type { Annotation, Connection } from 'codegloss/react';
-import { useSiteTheme } from '@/hooks';
 import codeglossConfig from '@/codegloss.config';
+import { useSiteTheme } from '@/hooks';
+import type { Annotation, Connection } from 'codegloss/react';
+import { CodeGloss } from 'codegloss/react';
 
 const CODE = `function fibonacci(n) {
   const memo = {};
@@ -66,7 +66,9 @@ const CONNECTIONS = [
 	},
 ] satisfies Connection[];
 
-const ARC_STYLE = { arrowhead: true };
+const ARC_STYLE = {
+	arrowhead: true
+ };
 
 const LIGHT_THEME = String(codeglossConfig.theme ?? '');
 const DARK_THEME = String(

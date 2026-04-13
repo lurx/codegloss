@@ -1,0 +1,161 @@
+.dialog {
+	width: min(560px, 92vw);
+	max-height: 85vh;
+	overflow-y: auto;
+	background: var(--site-surface-raised);
+	color: var(--site-fg);
+	border: 1px solid var(--site-border);
+	border-radius: 12px;
+	padding: 20px;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	margin: 0;
+
+	&::backdrop {
+		background: rgba(0, 0, 0, 0.5);
+		backdrop-filter: blur(2px);
+	}
+
+	&[open] {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.heading {
+	font-family: var(--font-display);
+	font-size: 1.25rem;
+	color: var(--site-heading);
+	margin: 0;
+}
+
+.section {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	background: var(--site-surface);
+	border: 1px solid var(--site-border);
+	border-radius: 8px;
+	padding: 10px;
+}
+
+.sectionTitle {
+	font-size: 1rem;
+	color: var(--site-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.grid2 {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	gap: 6px;
+}
+
+.field {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	font-size: 1rem;
+	color: var(--site-muted);
+}
+
+.input,
+.select {
+	background: var(--site-bg);
+	color: var(--site-fg);
+	border: 1px solid var(--site-border);
+	border-radius: 6px;
+	padding: 4px 6px;
+	font-family: var(--font-mono);
+	font-size: 1rem;
+	width: 100%;
+	min-width: 0;
+
+	&:focus {
+		outline: none;
+		border-color: var(--accent);
+	}
+}
+
+.toggleRow {
+	display: flex;
+	gap: 12px;
+	font-size: 1rem;
+	color: var(--site-fg);
+}
+
+.preview {
+	max-height: 320px;
+	overflow: auto;
+	border-radius: 6px;
+}
+
+.configHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.copyButton {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	background: var(--site-bg);
+	color: var(--site-fg);
+	border: 1px solid var(--site-border);
+	border-radius: 6px;
+	padding: 4px 10px;
+	font-size: 1rem;
+	cursor: pointer;
+
+	&:hover {
+		border-color: var(--accent);
+	}
+}
+
+.configOutput {
+	background: var(--site-pre-bg);
+	color: var(--site-pre-fg);
+	border: 1px solid var(--site-border);
+	border-radius: 6px;
+	padding: 10px;
+	font-family: var(--font-mono);
+	font-size: 1rem;
+	line-height: 1.5;
+	max-height: 220px;
+	overflow: auto;
+	margin: 0;
+	white-space: pre;
+}
+
+.footer {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+	margin-top: 4px;
+}
+
+.doneButton {
+	background: var(--accent);
+	color: #fff;
+	border: 1px solid var(--accent);
+	border-radius: 6px;
+	padding: 6px 14px;
+	font-size: 1rem;
+	cursor: pointer;
+
+	&:hover {
+		filter: brightness(1.1);
+	}
+}
