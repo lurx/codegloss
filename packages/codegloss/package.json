@@ -5,16 +5,15 @@
   "type": "module",
   "sideEffects": [
     "./dist/index.js",
-    "./dist/index.cjs",
     "./dist/react/index.js",
-    "./dist/react/index.cjs",
     "./dist/vue/index.js",
-    "./dist/vue/index.cjs",
     "./dist/chunk-*.js"
   ],
-  "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "engines": {
+    "node": ">=18"
+  },
   "files": [
     "dist",
     "src/svelte/code-gloss.component.svelte"
@@ -22,18 +21,15 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": "./dist/index.js"
     },
     "./react": {
       "types": "./dist/react/index.d.ts",
-      "import": "./dist/react/index.js",
-      "require": "./dist/react/index.cjs"
+      "import": "./dist/react/index.js"
     },
     "./vue": {
       "types": "./dist/vue/index.d.ts",
-      "import": "./dist/vue/index.js",
-      "require": "./dist/vue/index.cjs"
+      "import": "./dist/vue/index.js"
     },
     "./svelte": {
       "svelte": "./src/svelte/code-gloss.component.svelte",
@@ -41,18 +37,15 @@
     },
     "./themes": {
       "types": "./dist/themes/index.d.ts",
-      "import": "./dist/themes/index.js",
-      "require": "./dist/themes/index.cjs"
+      "import": "./dist/themes/index.js"
     },
     "./config": {
       "types": "./dist/config/index.d.ts",
-      "import": "./dist/config/index.js",
-      "require": "./dist/config/index.cjs"
+      "import": "./dist/config/index.js"
     },
     "./config/node": {
       "types": "./dist/config/node.d.ts",
-      "import": "./dist/config/node.js",
-      "require": "./dist/config/node.cjs"
+      "import": "./dist/config/node.js"
     },
     "./remark": {
       "types": "./dist/remark/index.d.ts",
