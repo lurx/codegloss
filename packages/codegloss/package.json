@@ -36,16 +36,44 @@
       "types": "./dist/remark/index.d.ts",
       "import": "./dist/remark/index.js",
       "require": "./dist/remark/index.cjs"
+    },
+    "./highlighters": {
+      "types": "./dist/highlighters/index.d.ts",
+      "import": "./dist/highlighters/index.js"
+    },
+    "./highlighters/shiki": {
+      "types": "./dist/highlighters/shiki.d.ts",
+      "import": "./dist/highlighters/shiki.js"
+    },
+    "./highlighters/prism": {
+      "types": "./dist/highlighters/prism.d.ts",
+      "import": "./dist/highlighters/prism.js"
+    },
+    "./highlighters/hljs": {
+      "types": "./dist/highlighters/hljs.d.ts",
+      "import": "./dist/highlighters/hljs.js"
     }
   },
   "dependencies": {
     "unist-util-visit": "^5"
   },
   "peerDependencies": {
-    "unified": ">=11"
+    "unified": ">=11",
+    "shiki": ">=1.0.0",
+    "prismjs": ">=1.29.0",
+    "highlight.js": ">=11.0.0"
   },
   "peerDependenciesMeta": {
     "unified": {
+      "optional": true
+    },
+    "shiki": {
+      "optional": true
+    },
+    "prismjs": {
+      "optional": true
+    },
+    "highlight.js": {
       "optional": true
     }
   },

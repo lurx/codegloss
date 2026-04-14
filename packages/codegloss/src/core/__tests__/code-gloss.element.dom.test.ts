@@ -158,10 +158,9 @@ describe('CodeGlossElement', () => {
 		});
 
 		it('uses a custom highlighter when one is set on the element', () => {
-			const highlight = vi.fn(() => [
-				'<span class="hl">ONE</span>',
-				'<span class="hl">TWO</span>',
-			]);
+			const highlight = vi.fn(
+				() => '<span class="hl">ONE</span>\n<span class="hl">TWO</span>',
+			);
 			const element = mount({ lang: 'js', code: 'one\ntwo' }, { highlight });
 
 			expect(highlight).toHaveBeenCalledWith('one\ntwo', 'js');
@@ -171,7 +170,7 @@ describe('CodeGlossElement', () => {
 		});
 
 		it('injects annotation marks into pre-highlighted lines', () => {
-			const highlight = () => ['<span class="kw">foo</span> bar'];
+			const highlight = () => '<span class="kw">foo</span> bar';
 			const element = mount(
 				{
 					lang: 'js',

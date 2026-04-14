@@ -57,13 +57,14 @@ export type Connection = {
 };
 
 /**
- * Custom syntax highlighter. Receives the full code and language,
- * returns an array of HTML strings — one per line. Annotation marks
- * are injected into the highlighted HTML automatically.
+ * Custom syntax highlighter. Receives the full code and language and
+ * returns a single HTML string (no outer `<pre>` / `<code>` wrappers).
+ * codegloss splits the HTML into lines internally — so Shiki, Prism,
+ * hljs, or any highlighter that emits span-wrapped tokens just works.
  *
- * Works with Shiki, Prism, or any highlighter that outputs HTML.
+ * Ready-made adapters live under `codegloss/highlighters/*`.
  */
-export type Highlighter = (code: string, lang: string) => string[];
+export type Highlighter = (code: string, lang: string) => string;
 
 /**
  * Serializable configuration for `<code-gloss>`. This is what gets

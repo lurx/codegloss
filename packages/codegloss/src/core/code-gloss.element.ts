@@ -26,6 +26,7 @@ import { drawArcs } from './render/arcs.helpers';
 import type { AnnotationPosition } from './render/arcs.types';
 import { run } from './runners.helpers';
 import { buildLineHtmlFallback, findAnnotationHits } from './tokenize.helpers';
+import { splitHighlightedLines } from './split-lines.helpers';
 import { codeGlossStyles } from './code-gloss-styles.generated';
 import type {
 	Annotation,
@@ -120,8 +121,11 @@ export class CodeGlossElement extends SafeHTMLElement {
 			this.applyTheme(themeName);
 		}
 
+		const highlighted = this.highlight?.(this.config.code, this.config.lang);
 		this.highlightedLines =
-			this.highlight?.(this.config.code, this.config.lang) ?? undefined;
+			highlighted === undefined
+				? undefined
+				: splitHighlightedLines(highlighted);
 		this.primeInlineDefaultOpen();
 		this.buildDom();
 		this.attachListeners();

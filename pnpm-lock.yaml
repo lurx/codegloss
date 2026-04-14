@@ -407,6 +407,15 @@ importers:
 
   packages/codegloss:
     dependencies:
+      highlight.js:
+        specifier: '>=11.0.0'
+        version: 11.11.1
+      prismjs:
+        specifier: '>=1.29.0'
+        version: 1.30.0
+      shiki:
+        specifier: '>=1.0.0'
+        version: 4.0.2
       unist-util-visit:
         specifier: ^5
         version: 5.1.0
@@ -5972,6 +5981,10 @@ packages:
 
   hermes-parser@0.25.1:
     resolution: {integrity: sha512-6pEjquH3rqaI6cYAXYPcz9MS4rY6R4ngRgrgfDshRptUZIc3lw0MCIJIGDj9++mfySOuPTHB4nrSW99BCvOPIA==}
+
+  highlight.js@11.11.1:
+    resolution: {integrity: sha512-Xwwo44whKBVCYoliBQwaPvtd/2tYFkRQtXDWj1nackaV2JPXx3L0+Jvd8/qCJ2p+ML0/XVkJ2q+Mr+UVdpJK5w==}
+    engines: {node: '>=12.0.0'}
 
   history@4.10.1:
     resolution: {integrity: sha512-36nwAD620w12kuzPAsyINPWJqlNbij+hpK1k9XRloDtym8mxzGYl2c17LnV6IAGB2Dmg4tEa7G7DlawS0+qjew==}
@@ -16331,6 +16344,8 @@ snapshots:
   hermes-parser@0.25.1:
     dependencies:
       hermes-estree: 0.25.1
+
+  highlight.js@11.11.1: {}
 
   history@4.10.1:
     dependencies:
