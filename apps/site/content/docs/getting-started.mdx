@@ -11,17 +11,15 @@ It ships as a **Web Component** so it works in any framework — or no framework
 
 ## Installation
 
-````
-npm install codegloss
-````
+<InstallTabs packages="codegloss" />
 
 That installs the `<code-gloss>` web component, the remark plugin, themes, and the config helpers. If you're using a framework, add the matching wrapper:
 
-````
-npm install @codegloss/react    # React / Next / Docusaurus / Velite
-npm install @codegloss/vue      # Vue / Nuxt / VitePress
-npm install @codegloss/svelte   # Svelte / SvelteKit
-````
+<InstallTabs packages="@codegloss/react" />
+
+<InstallTabs packages="@codegloss/vue" />
+
+<InstallTabs packages="@codegloss/svelte" />
 
 Each wrapper is a thin workspace package that declares `codegloss` as a peer dependency — you only pay for the framework integration you actually use.
 
