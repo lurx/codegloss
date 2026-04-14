@@ -1,6 +1,7 @@
 import { defineCodeGloss } from './core/code-gloss.element';
 
 export { CodeGlossElement, defineCodeGloss } from './core/code-gloss.element';
+export { setDefaultHighlighter } from './core/default-highlighter.helpers';
 
 export type {
 	Annotation,

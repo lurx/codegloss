@@ -183,6 +183,17 @@ export class CodeGlossElement extends SafeHTMLElement {
 		if (this.animationFrameId) cancelAnimationFrame(this.animationFrameId);
 	}
 
+	/**
+	 * Tear the block down and re-run the full init flow. Call this after
+	 * swapping `.highlight` on already-mounted instances — for example when
+	 * an async highlighter like Shiki finishes loading.
+	 */
+	refresh(): void {
+		this.disconnectedCallback();
+		this.shadow.innerHTML = '';
+		this.connectedCallback();
+	}
+
 
 	private applyTheme(themeName: string | undefined): void {
 		// Remove existing theme stylesheet if any

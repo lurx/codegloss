@@ -38,6 +38,7 @@ export default defineConfig({
 				'src/core/render/arcs.helpers.ts',
 				'src/core/measure-line-end.helpers.ts',
 				'src/core/code-gloss.element.ts',
+				'src/core/default-highlighter.helpers.ts',
 				'src/core/split-lines.helpers.ts',
 				'src/highlighters/shiki.ts',
 				'src/highlighters/prism.ts',
