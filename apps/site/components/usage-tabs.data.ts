@@ -5,6 +5,7 @@ export const TABS: Tab[] = [
 		label: 'MDX / Remark',
 		content:
 			'Use fenced code blocks with a sandbox tag. The remark plugin detects them and emits CodeGloss components at build time.',
+		install: 'codegloss @codegloss/react',
 		blocks: [
 			{ htmlKey: 'MDX / Remark — Setup', label: 'Setup' },
 			{ htmlKey: 'MDX / Remark — Markdown', label: 'Markdown' },
@@ -14,16 +15,19 @@ export const TABS: Tab[] = [
 		label: 'React',
 		content:
 			'Import the wrapper and pass props. Works with React 16.14+. The React wrapper is a thin JSX adapter — zero React APIs beyond JSX itself.',
+		install: 'codegloss @codegloss/react',
 		blocks: [{ htmlKey: 'React' }],
 	},
 	{
 		label: 'Vue',
 		content: 'Import the Vue 3 wrapper component.',
+		install: 'codegloss @codegloss/vue',
 		blocks: [{ htmlKey: 'Vue' }],
 	},
 	{
 		label: 'Svelte',
 		content: 'Import the Svelte wrapper component.',
+		install: 'codegloss @codegloss/svelte',
 		blocks: [{ htmlKey: 'Svelte' }],
 	},
 	{

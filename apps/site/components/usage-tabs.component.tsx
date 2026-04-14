@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState, type MouseEvent } from 'react';
 import { useSiteTheme } from '@/hooks';
 import { CopyCodeButton } from './copy-code-button.component';
+import { InstallTabs } from './install-tabs.component';
 import highlightedHtml from './usage-tabs-html.generated.json';
 import type { CopyableBlockProps } from './usage-tabs.types';
 import type { HighlightedHtmlMap } from './highlighted-html.types';
@@ -68,6 +69,7 @@ export function UsageTabs() {
 			</div>
 			<div className="mdx-tabs-panel">
 				<p style={TAB_CONTENT_STYLE}>{tab.content}</p>
+				{tab.install ? <InstallTabs packages={tab.install} /> : null}
 				{tab.blocks.map(block => (
 					<CopyableBlock
 						key={block.htmlKey}
