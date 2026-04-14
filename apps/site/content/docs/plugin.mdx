@@ -131,6 +131,23 @@ export default {
 
 `skipImport: true` is recommended in Docusaurus because the component is provided via the swizzled MDX components map (see the [Docusaurus setup guide](/docs/setup/docusaurus)).
 
+#### Non-React MDX (Vue, Preact)
+
+The auto-injected import targets `@codegloss/react`, which matches the dominant `@mdx-js/react` consumers (Next.js, Docusaurus, Velite, Astro's MDX integration). If you're using `@mdx-js/vue` or `@mdx-js/preact`, set `skipImport: true` and provide `CodeGloss` via your MDX components mapping — point it at `@codegloss/vue` or your own wrapper:
+
+````js
+// mdx config
+remarkPlugins: [[remarkCodegloss, { skipImport: true }]],
+````
+
+````js
+// MDX components mapping
+import { CodeGloss } from '@codegloss/vue';
+export const components = { CodeGloss };
+````
+
+For SvelteKit (mdsvex) and VitePress, prefer `output: 'html'` instead — it emits a raw `<code-gloss>` element with no import at all.
+
 #### Generic MDX pipeline
 
 ````js
