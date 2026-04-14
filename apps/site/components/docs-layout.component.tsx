@@ -10,6 +10,7 @@ const SIDEBAR = [
     { label: 'Remark Plugin', slug: 'plugin' },
     { label: 'Component API', slug: 'api' },
     { label: 'Styles & Theming', slug: 'theming' },
+    { label: 'Syntax Highlighters', slug: 'highlighters' },
     { label: 'Examples', slug: 'examples' },
   ]},
   { title: 'Integrations', items: [

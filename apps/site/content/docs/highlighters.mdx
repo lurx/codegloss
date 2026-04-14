@@ -1,0 +1,130 @@
+---
+title: Syntax Highlighters
+sidebar_position: 5
+---
+
+# Syntax Highlighters
+
+CodeGloss ships a small built-in regex tokenizer that handles the common JS/TS cases well enough for demos. For production docs, plug in a real highlighter — Shiki, Prism, or highlight.js — via a tiny adapter. You bring the library, codegloss turns its HTML into annotated lines.
+
+## How it works
+
+The `<code-gloss>` element exposes a `highlight` property with the shape:
+
+````ts
+type Highlighter = (code: string, lang: string) => string;
+````
+
+Return a single HTML string for the whole code block — codegloss splits it into lines, preserving open spans across newlines, and weaves your annotation `<mark>`s into the tokenized HTML. Anything that emits span-wrapped tokens works: Shiki, Prism, highlight.js, Starry Night, or your own.
+
+When `highlight` is unset, the built-in 2.5 KB regex tokenizer runs as a fallback.
+
+## Shiki
+
+Shiki gives you TextMate-grade highlighting with real editor themes. Install it alongside codegloss:
+
+<InstallTabs packages="codegloss shiki" />
+
+Create a Shiki instance once (async — it loads grammars and themes), then build a codegloss highlighter from it:
+
+````ts
+import { createHighlighter } from 'shiki';
+import { createShikiHighlighter } from 'codegloss/highlighters/shiki';
+import { CodeGlossElement } from 'codegloss';
+
+const shiki = await createHighlighter({
+  themes: ['github-dark'],
+  langs: ['js', 'ts', 'tsx', 'py', 'rust'],
+});
+
+CodeGlossElement.prototype.highlight = createShikiHighlighter(shiki, {
+  theme: 'github-dark',
+});
+````
+
+For light/dark dual theming, pass `themes` instead:
+
+````ts
+createShikiHighlighter(shiki, {
+  themes: { light: 'github-light', dark: 'github-dark' },
+});
+````
+
+### React / Vue
+
+Apply the highlighter once at app startup, before the first block renders. With the React wrapper:
+
+````tsx
+import { createHighlighter } from 'shiki';
+import { createShikiHighlighter } from 'codegloss/highlighters/shiki';
+import { CodeGlossElement } from 'codegloss';
+
+async function setup() {
+  const shiki = await createHighlighter({
+    themes: ['github-dark'],
+    langs: ['js', 'ts', 'tsx'],
+  });
+  CodeGlossElement.prototype.highlight = createShikiHighlighter(shiki, {
+    theme: 'github-dark',
+  });
+}
+
+void setup();
+````
+
+## Prism
+
+Prism is smaller and synchronous — a good fit when you're already shipping Prism for the rest of your site.
+
+<InstallTabs packages="codegloss prismjs" />
+
+````ts
+import Prism from 'prismjs';
+import 'prismjs/components/prism-typescript';
+import 'prismjs/components/prism-python';
+import { createPrismHighlighter } from 'codegloss/highlighters/prism';
+import { CodeGlossElement } from 'codegloss';
+
+CodeGlossElement.prototype.highlight = createPrismHighlighter(Prism);
+````
+
+Load the languages you use — Prism throws if `Prism.languages[lang]` is missing. The adapter falls back to Prism's `plain` mapping so unknown languages still render as escaped text.
+
+## highlight.js
+
+Similar ergonomics, different theming model (class-based rather than inline).
+
+<InstallTabs packages="codegloss highlight.js" />
+
+````ts
+import hljs from 'highlight.js/lib/core';
+import javascript from 'highlight.js/lib/languages/javascript';
+import typescript from 'highlight.js/lib/languages/typescript';
+import { createHljsHighlighter } from 'codegloss/highlighters/hljs';
+import { CodeGlossElement } from 'codegloss';
+
+hljs.registerLanguage('javascript', javascript);
+hljs.registerLanguage('typescript', typescript);
+
+CodeGlossElement.prototype.highlight = createHljsHighlighter(hljs);
+````
+
+Remember to ship a highlight.js theme stylesheet (e.g. `highlight.js/styles/github-dark.css`) so the `hljs-*` class names get colors.
+
+## Rolling your own
+
+The contract is tiny — any function `(code, lang) => string` that returns span-wrapped HTML works. Use this for in-house highlighters, to post-process another tool's output, or to hard-code a preset for a single language:
+
+````ts
+CodeGlossElement.prototype.highlight = (code, lang) => {
+  if (lang !== 'sql') return code;
+  return code.replace(
+    /\b(SELECT|FROM|WHERE|JOIN|ON|AS)\b/g,
+    '<span class="cg-keyword">$&</span>',
+  );
+};
+````
+
+## Bundle cost
+
+Each adapter is ~100 B of glue; the library itself (Shiki / Prism / hljs) is declared as an **optional peer dependency** so you only install the one you're using. A codegloss user who sticks with the built-in tokenizer pays nothing extra.
