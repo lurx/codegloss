@@ -1,6 +1,4 @@
-import type { PackageManager } from './install-tabs.types';
-
-export const MANAGERS: readonly PackageManager[] = ['npm', 'yarn', 'pnpm'];
+import type { PackageManager } from '@/hooks';
 
 export const COMMAND_PREFIXES = {
 	npm: 'npm install',

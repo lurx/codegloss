@@ -1,35 +1,39 @@
 'use client';
 
-import { useCallback, useState, type MouseEvent } from 'react';
+import { useCallback, type MouseEvent } from 'react';
 import { CopyCodeButton } from './copy-code-button.component';
-import { COMMAND_PREFIXES, MANAGERS } from './install-tabs.constants';
-import type { InstallTabsProps, PackageManager } from './install-tabs.types';
+import { COMMAND_PREFIXES } from './install-tabs.constants';
+import type { InstallTabsProps } from './install-tabs.types';
+import { usePackageManager, VALID_MANAGERS, type PackageManager } from '@/hooks';
 
 export function InstallTabs({ packages }: Readonly<InstallTabsProps>) {
-	const [active, setActive] = useState<PackageManager>('npm');
+	const [manager, setManagerAction] = usePackageManager();
 
-	const command = `${COMMAND_PREFIXES[active]} ${packages}`;
+	const command = `${COMMAND_PREFIXES[manager]} ${packages}`;
 
-	const handleSelect = useCallback((event: MouseEvent<HTMLButtonElement>) => {
-		setActive(event.currentTarget.dataset.manager as PackageManager);
-	}, []);
+	const handleSelect = useCallback(
+		(event: MouseEvent<HTMLButtonElement>) => {
+			setManagerAction(event.currentTarget.dataset.manager as PackageManager);
+		},
+		[setManagerAction],
+	);
 
 	const getText = useCallback(() => command, [command]);
 
 	return (
 		<div className="install-tabs">
 			<div className="install-tabs-bar" role="tablist">
-				{MANAGERS.map(manager => (
+				{VALID_MANAGERS.map(pm => (
 					<button
-						key={manager}
+						key={pm}
 						type="button"
 						role="tab"
-						aria-selected={manager === active}
-						data-manager={manager}
-						className={`install-tabs-trigger${manager === active ? ' install-tabs-trigger-active' : ''}`}
+						aria-selected={pm === manager}
+						data-manager={pm}
+						className={`install-tabs-trigger${pm === manager ? ' install-tabs-trigger-active' : ''}`}
 						onClick={handleSelect}
 					>
-						{manager}
+						{pm}
 					</button>
 				))}
 			</div>
