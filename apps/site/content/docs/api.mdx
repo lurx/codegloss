@@ -107,26 +107,26 @@ Arcs render as dashed Bezier curves with dots at each endpoint. Multiple connect
 
 ## Custom syntax highlighting
 
-The Web Component uses a built-in regex highlighter by default (recognizes JS/TS keywords, strings, numbers, comments). To plug in Shiki, Prism, or any HTML-emitting highlighter, set the `highlight` property on the element directly:
+The Web Component uses a built-in regex highlighter by default (recognizes JS/TS keywords, strings, numbers, comments). For production-grade tokenization, register a real highlighter once at startup — the function runs for every block on the page:
 
-````js
-import { codeToTokens } from 'shiki';
+````ts
+import { setDefaultHighlighter } from 'codegloss';
+import { createShikiHighlighter } from 'codegloss/highlighters/shiki';
+import { createHighlighter } from 'shiki';
 
-const el = document.querySelector('code-gloss');
+const shiki = await createHighlighter({
+  themes: ['github-dark'],
+  langs: ['js', 'ts', 'tsx', 'py', 'rust'],
+});
 
-el.highlight = (code, lang) => {
-  const { tokens } = codeToTokens(code, { lang, theme: 'github-dark' });
-  return tokens.map((line) =>
-    line.map((token) =>
-      `<span style="color:${token.color}">${escapeHtml(token.content)}</span>`
-    ).join('')
-  );
-};
+setDefaultHighlighter(createShikiHighlighter(shiki, { theme: 'github-dark' }));
 ````
 
-The function receives the full code and language, and returns an array of HTML strings — one per line. Annotation marks are injected into the highlighted HTML automatically using position mapping through the tag structure.
+`setDefaultHighlighter(fn)` assigns the highlighter on every `<code-gloss>` instance — current and future — and refreshes mounted blocks so the swap is visible without a page reload. Pass `undefined` to revert to the built-in tokenizer.
 
-> Because functions can't be serialized to JSON, `highlight` is set as a property on the element, not via the JSON config child. The React wrapper exposes it through a ref / property setter.
+The `Highlighter` contract is `(code, lang) => string`: return one HTML blob for the whole code and codegloss splits it into lines internally. Anything that emits span-wrapped tokens works (Shiki, Prism, hljs, Starry Night, or your own). See [Syntax Highlighters](/docs/highlighters) for the bundled adapters and the rolling-your-own guide.
+
+> Functions can't live in the JSON config, so this is the dedicated API. Per-instance overrides are still possible via `element.highlight = ...` on a specific `<code-gloss>` reference.
 
 ## Theming
 

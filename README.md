@@ -138,6 +138,25 @@ applyGlobalTheme('github-dark');
 
 Themes cover both syntax token colors and UI chrome (background, borders, annotations). CSS variable overrides still win over theme values.
 
+### Syntax highlighter
+
+CodeGloss ships a small regex tokenizer by default. For production docs, plug in Shiki, Prism, or highlight.js once at startup via `setDefaultHighlighter`:
+
+```ts
+import { setDefaultHighlighter } from 'codegloss';
+import { createShikiHighlighter } from 'codegloss/highlighters/shiki';
+import { createHighlighter } from 'shiki';
+
+const shiki = await createHighlighter({
+  themes: ['github-dark'],
+  langs: ['js', 'ts', 'tsx'],
+});
+
+setDefaultHighlighter(createShikiHighlighter(shiki, { theme: 'github-dark' }));
+```
+
+Adapters are ~100 B each; the underlying library is an optional peer dependency — you only install the one you use. Full guide in the [Syntax Highlighters docs](https://lurx.github.io/codegloss/docs/highlighters/).
+
 ### Config file
 
 Set project-wide defaults in a `codegloss.config.ts` (or `.codeglossrc.json`, `codegloss.config.js`, etc.):

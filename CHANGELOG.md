@@ -9,9 +9,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 - New wrapper packages — `@codegloss/react`, `@codegloss/vue`, `@codegloss/svelte`. Each installs independently and declares `codegloss` as a peer dependency, so users only pay for the wrapper they actually use.
+- `setDefaultHighlighter(fn)` API on the `codegloss` entry — register a syntax highlighter once at startup and every `<code-gloss>` on the page picks it up (mounted blocks refresh in place).
+- Syntax-highlighter adapter subpaths — `codegloss/highlighters/shiki`, `codegloss/highlighters/prism`, `codegloss/highlighters/hljs`. Each is ~100 B of glue; `shiki`, `prismjs`, and `highlight.js` are declared as optional peer dependencies.
+- `CodeGlossElement.refresh()` — tears down listeners and rebuilds the shadow DOM. Mainly used internally by `setDefaultHighlighter`, but exposed for imperative consumers.
 
 ### Changed
 
+- `Highlighter` signature is now `(code, lang) => string` (a single HTML blob). codegloss splits it into lines internally, preserving open spans across newlines, so any tool that emits span-wrapped tokens works.
 - Framework wrappers moved out of the main package. Imports are now `@codegloss/react`, `@codegloss/vue`, `@codegloss/svelte` (previously `codegloss/react`, etc.). The remark plugin now injects the `@codegloss/react` import.
 - Main package ships as ESM only. The `./remark` subpath keeps a CJS twin for older remark/content pipelines (Docusaurus with jiti-loaded `.ts` configs, etc.); every other entry is ESM-only. Minimum Node for tooling is 18.
 - Core `codegloss` package footprint dropped further (179 KB → 85 KB unpacked) now that wrappers ship separately.
