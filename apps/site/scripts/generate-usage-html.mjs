@@ -78,6 +78,60 @@ import { CodeGloss } from '@codegloss/vue';
 />`,
 	},
 	{
+		label: 'Highlighter — Shiki',
+		lang: 'ts',
+		code: `import { setDefaultHighlighter } from 'codegloss';
+import { createShikiHighlighter } from 'codegloss/highlighters/shiki';
+import { createHighlighter } from 'shiki';
+
+const shiki = await createHighlighter({
+  themes: ['github-dark'],
+  langs: ['js', 'ts', 'tsx', 'py', 'rust'],
+});
+
+setDefaultHighlighter(
+  createShikiHighlighter(shiki, { theme: 'github-dark' }),
+);`,
+	},
+	{
+		label: 'Highlighter — Prism',
+		lang: 'ts',
+		code: `import Prism from 'prismjs';
+import 'prismjs/components/prism-typescript';
+import 'prismjs/components/prism-python';
+import { setDefaultHighlighter } from 'codegloss';
+import { createPrismHighlighter } from 'codegloss/highlighters/prism';
+
+setDefaultHighlighter(createPrismHighlighter(Prism));`,
+	},
+	{
+		label: 'Highlighter — hljs',
+		lang: 'ts',
+		code: `import hljs from 'highlight.js/lib/core';
+import javascript from 'highlight.js/lib/languages/javascript';
+import typescript from 'highlight.js/lib/languages/typescript';
+import { setDefaultHighlighter } from 'codegloss';
+import { createHljsHighlighter } from 'codegloss/highlighters/hljs';
+
+hljs.registerLanguage('javascript', javascript);
+hljs.registerLanguage('typescript', typescript);
+
+setDefaultHighlighter(createHljsHighlighter(hljs));`,
+	},
+	{
+		label: 'Highlighter — Custom',
+		lang: 'ts',
+		code: `import { setDefaultHighlighter } from 'codegloss';
+
+setDefaultHighlighter((code, lang) => {
+  if (lang !== 'sql') return code;
+  return code.replace(
+    /\\b(SELECT|FROM|WHERE|JOIN|ON|AS)\\b/g,
+    '<span class="cg-keyword">$&</span>',
+  );
+});`,
+	},
+	{
 		label: 'Vanilla HTML',
 		lang: 'html',
 		code: `<script type="module" src="https://unpkg.com/codegloss/dist/index.js"></script>

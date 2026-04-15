@@ -13,6 +13,7 @@ import type { CodeGlossProps } from '@codegloss/react';
 import { ThemeShowcase } from './theme-showcase.component';
 import { MdxTabs } from './mdx-tabs.component';
 import { UsageTabs } from './usage-tabs.component';
+import { HighlighterTabs } from './highlighter-tabs.component';
 import { InstallTabs } from './install-tabs.component';
 import { CodeBlock } from './code-block.component';
 import { DocLink } from './doc-link.component';
@@ -33,6 +34,7 @@ const MDX_COMPONENTS = {
   ThemeShowcase,
   MdxTabs,
   UsageTabs,
+  HighlighterTabs,
   InstallTabs,
   pre: CodeBlock,
   a: DocLink,
