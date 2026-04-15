@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Logo } from '@/components/logo.component';
 import { ThemeToggle } from '@/components/theme-toggle.component';
 import { Search } from '@/components/search.component';
+import { CodeglossShikiBootstrap } from '@/components/codegloss-shiki-bootstrap.component';
 import { COLOR_SCHEME_STORAGE_KEY } from '@/components/theme-toggle.constants';
 import type { RootLayoutProps } from './layout.types';
 
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
     'Interactive code annotations for MDX. Highlight tokens, add tooltips, draw connection arcs.',
 };
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
   return (
     <html lang="en" data-theme="dark" suppressHydrationWarning>
       <head>
@@ -55,6 +56,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           </div>
         </nav>
         {children}
+        <CodeglossShikiBootstrap />
       </body>
     </html>
   );
