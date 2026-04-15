@@ -13,7 +13,4 @@ export type Tab = {
 	blocks: CodeBlockEntry[];
 };
 
-export type CopyableBlockProps = {
-	html: string;
-	label?: string;
-};
+export type { CopyableBlockProps } from './copyable-block.types';

@@ -1,45 +1,16 @@
 'use client';
 
-import { useCallback, useRef, useState, type MouseEvent } from 'react';
+import { useCallback, useState, type MouseEvent } from 'react';
 import { useSiteTheme } from '@/hooks';
-import { CopyCodeButton } from './copy-code-button.component';
+import { CopyableBlock } from './copyable-block.component';
 import { InstallTabs } from './install-tabs.component';
 import highlightedHtml from './usage-tabs-html.generated.json';
-import type { CopyableBlockProps } from './usage-tabs.types';
 import type { HighlightedHtmlMap } from './highlighted-html.types';
 import { TABS } from './usage-tabs.data';
-import {
-	BLOCK_LABEL_STYLE,
-	BLOCK_WRAPPER_STYLE,
-	TAB_CONTENT_STYLE,
-} from './usage-tabs.constants';
+import { TAB_CONTENT_STYLE } from './usage-tabs.constants';
+import { renderInlineCode } from './render-inline-code.helpers';
 
 const htmlData = highlightedHtml as HighlightedHtmlMap;
-
-function CopyableBlock({ html, label }: CopyableBlockProps) {
-	const codeRef = useRef<HTMLDivElement>(null);
-
-	const getText = useCallback(() => codeRef.current?.textContent ?? '', []);
-
-	const renderLabel = () => {
-		if (!label) return null;
-		return <div style={BLOCK_LABEL_STYLE}>{label}</div>;
-	};
-
-	return (
-		<div style={BLOCK_WRAPPER_STYLE}>
-			{renderLabel()}
-			<div className="code-block-wrapper">
-				<div
-					ref={codeRef}
-					className="usage-code-block"
-					dangerouslySetInnerHTML={{ __html: html }}
-				/>
-				<CopyCodeButton getTextAction={getText} />
-			</div>
-		</div>
-	);
-}
 
 export function UsageTabs() {
 	const [active, setActive] = useState(0);
@@ -68,7 +39,7 @@ export function UsageTabs() {
 				))}
 			</div>
 			<div className="mdx-tabs-panel">
-				<p style={TAB_CONTENT_STYLE}>{tab.content}</p>
+				<p style={TAB_CONTENT_STYLE}>{renderInlineCode(tab.content)}</p>
 				{tab.install ? <InstallTabs packages={tab.install} /> : null}
 				{tab.blocks.map(block => (
 					<CopyableBlock
