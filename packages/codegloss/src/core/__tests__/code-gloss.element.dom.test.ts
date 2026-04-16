@@ -193,16 +193,18 @@ describe('CodeGlossElement', () => {
 			});
 			const element = mount({ lang: 'js', code: 'x' }, { highlight });
 
-			expect(element.style.getPropertyValue('--cg-bg')).toBe('#123456');
-			expect(element.style.getPropertyValue('--cg-text')).toBe('#abcdef');
+			const root = shadow(element).querySelector('.codegloss') as HTMLElement;
+			expect(root.style.getPropertyValue('--cg-bg')).toBe('#123456');
+			expect(root.style.getPropertyValue('--cg-text')).toBe('#abcdef');
 		});
 
 		it('leaves chrome untouched when the structured return omits colors', () => {
 			const highlight = () => ({ html: '<span>x</span>' });
 			const element = mount({ lang: 'js', code: 'x' }, { highlight });
 
-			expect(element.style.getPropertyValue('--cg-bg')).toBe('');
-			expect(element.style.getPropertyValue('--cg-text')).toBe('');
+			const root = shadow(element).querySelector('.codegloss') as HTMLElement;
+			expect(root.style.getPropertyValue('--cg-bg')).toBe('');
+			expect(root.style.getPropertyValue('--cg-text')).toBe('');
 		});
 
 		it('applies chrome colors from config.highlightBackground / highlightColor', () => {
@@ -214,8 +216,20 @@ describe('CodeGlossElement', () => {
 				highlightColor: '#eeeeee',
 			});
 
-			expect(element.style.getPropertyValue('--cg-bg')).toBe('#111111');
-			expect(element.style.getPropertyValue('--cg-text')).toBe('#eeeeee');
+			const root = shadow(element).querySelector('.codegloss') as HTMLElement;
+			expect(root.style.getPropertyValue('--cg-bg')).toBe('#111111');
+			expect(root.style.getPropertyValue('--cg-text')).toBe('#eeeeee');
+		});
+
+		it('does not write chrome onto the host style attribute (SSR-safe)', () => {
+			const element = mount({
+				lang: 'js',
+				code: 'x',
+				highlightedHtml: '<span>x</span>',
+				highlightBackground: '#111111',
+			});
+
+			expect(element.getAttribute('style')).toBeNull();
 		});
 	});
 

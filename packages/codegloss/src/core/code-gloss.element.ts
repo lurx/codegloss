@@ -150,10 +150,16 @@ export class CodeGlossElement extends SafeHTMLElement {
 				? undefined
 				: splitHighlightedLines(highlighted);
 
-		if (chromeBackground) this.style.setProperty('--cg-bg', chromeBackground);
-		if (chromeColor) this.style.setProperty('--cg-text', chromeColor);
 		this.primeInlineDefaultOpen();
 		this.buildDom();
+		// Apply chrome colors AFTER buildDom so they land on the shadow-internal
+		// root instead of the host's inline style attribute — writing them on
+		// the host would diverge from server-rendered HTML and trip React's
+		// hydration check.
+		if (this.root) {
+			if (chromeBackground) this.root.style.setProperty('--cg-bg', chromeBackground);
+			if (chromeColor) this.root.style.setProperty('--cg-text', chromeColor);
+		}
 		this.attachListeners();
 		this.applyFloatingDefaultOpens();
 	}
