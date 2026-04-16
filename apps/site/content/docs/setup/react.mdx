@@ -57,7 +57,6 @@ The React wrapper accepts the same props as the Web Component's JSON config:
 | `filename` | `string?` | Filename shown in the toolbar |
 | `annotations` | `Annotation[]?` | Token-level annotations. Each accepts optional `popover: true` (float instead of inline) and `defaultOpen: true` (pre-open on first render). |
 | `connections` | `Connection[]?` | Visual arcs between annotations. Each connection accepts optional `side: 'left' \| 'right'` (default `'left'`) and `defaultOpen: true` (pre-open the popover on first render). |
-| `runnable` | `boolean?` | Show the Run button (default: `true` if `lang === 'js'`) |
 | `theme` | `string?` | Named theme (`github-dark`, `dracula`, etc.) |
 | `arcs` | `object?` | Arc style overrides, including `arrowhead: true` for marker-end arrows at each `to` endpoint. |
 | `callouts` | `object?` | Block-level callout behavior, e.g. `popover: true` to flip every annotation to popover presentation. |
