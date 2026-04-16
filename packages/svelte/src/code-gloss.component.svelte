@@ -31,6 +31,11 @@
     text?: string;
   };
 
+  export type CodeGlossHighlighter = (
+    code: string,
+    lang: string,
+  ) => string | { html: string; background?: string; color?: string };
+
   export type CodeGlossProps = {
     code: string;
     lang: string;
@@ -39,6 +44,12 @@
     theme?: string;
     annotations?: CodeGlossAnnotation[];
     connections?: CodeGlossConnection[];
+    /**
+     * Optional highlighter invoked at render time. The wrapper calls
+     * highlight(code, lang) and bakes the result into the config so the
+     * runtime element renders pre-highlighted markup directly.
+     */
+    highlight?: CodeGlossHighlighter;
   };
 </script>
 
@@ -50,7 +61,17 @@
   export let theme: string | undefined = undefined;
   export let annotations: CodeGlossAnnotation[] | undefined = undefined;
   export let connections: CodeGlossConnection[] | undefined = undefined;
+  export let highlight: CodeGlossHighlighter | undefined = undefined;
 
+  $: highlightResult = highlight ? highlight(code, lang) : undefined;
+  $: highlightedHtml =
+    typeof highlightResult === 'string'
+      ? highlightResult
+      : highlightResult?.html;
+  $: highlightBackground =
+    typeof highlightResult === 'object' ? highlightResult?.background : undefined;
+  $: highlightColor =
+    typeof highlightResult === 'object' ? highlightResult?.color : undefined;
   $: payload = JSON.stringify(
     Object.fromEntries(
       Object.entries({
@@ -61,6 +82,9 @@
         theme,
         annotations,
         connections,
+        highlightedHtml,
+        highlightBackground,
+        highlightColor,
       }).filter(([, v]) => v !== undefined),
     ),
   ).replace(/<\/script/gi, '<\\/script');

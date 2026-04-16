@@ -1,5 +1,10 @@
 import { defineComponent, h, type PropType } from 'vue';
-import type { Annotation, CodeGlossConfig, Connection } from 'codegloss';
+import type {
+	Annotation,
+	CodeGlossConfig,
+	Connection,
+	Highlighter,
+} from 'codegloss';
 import { stripUndefined } from './strip-undefined.util';
 
 /**
@@ -28,9 +33,21 @@ export const CodeGloss = defineComponent({
 			type: Array as PropType<Connection[]>,
 			default: undefined,
 		},
+		highlight: {
+			type: Function as PropType<Highlighter>,
+			default: undefined,
+		},
 	},
 	setup(props) {
 		return () => {
+			const result = props.highlight?.(props.code, props.lang);
+			const highlightedHtml =
+				typeof result === 'string' ? result : result?.html;
+			const highlightBackground =
+				typeof result === 'object' ? result?.background : undefined;
+			const highlightColor =
+				typeof result === 'object' ? result?.color : undefined;
+
 			const payload: CodeGlossConfig = {
 				code: props.code,
 				lang: props.lang,
@@ -38,6 +55,9 @@ export const CodeGloss = defineComponent({
 				runnable: props.runnable,
 				annotations: props.annotations,
 				connections: props.connections,
+				highlightedHtml,
+				highlightBackground,
+				highlightColor,
 			};
 			// Strip undefined keys so the serialized payload matches the React
 			// wrapper byte-for-byte for the common case.
