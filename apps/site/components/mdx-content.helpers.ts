@@ -1,6 +1,4 @@
 import type { CodeGlossProps } from '@codegloss/react';
-import type { SiteTheme } from '@/hooks';
-import codeglossConfig from '@/codegloss.config';
 
 export function buildSourceFence(props: CodeGlossProps): string {
   const { code, lang, filename, annotations, connections, arcs } = props;
@@ -20,10 +18,4 @@ export function buildSourceFence(props: CodeGlossProps): string {
   const json = JSON.stringify(payload, null, 2);
 
   return `${fence}\n\n\`\`\`json annotations\n${json}\n\`\`\``;
-}
-
-export function resolveCodeglossTheme(siteTheme: SiteTheme): string {
-  const dark = codeglossConfig.darkTheme ?? codeglossConfig.theme ?? '';
-  const light = codeglossConfig.theme ?? '';
-  return String(siteTheme === 'dark' ? dark : light);
 }

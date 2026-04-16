@@ -1,7 +1,7 @@
 'use client';
 
-import { useCallback, useState, type MouseEvent } from 'react';
 import { CodeGloss } from '@codegloss/react';
+import { useCallback, useState, type MouseEvent } from 'react';
 import {
   ANNOTATIONS,
   CODE,

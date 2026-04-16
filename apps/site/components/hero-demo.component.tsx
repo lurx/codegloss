@@ -1,7 +1,5 @@
 'use client';
 
-import codeglossConfig from '@/codegloss.config';
-import { useSiteTheme } from '@/hooks';
 import { CodeGloss } from '@codegloss/react';
 import {
 	HERO_ANNOTATIONS,
@@ -11,11 +9,6 @@ import {
 } from './hero-demo.data';
 import type { HeroDemoProps } from './hero-demo.types';
 
-const LIGHT_THEME = String(codeglossConfig.theme ?? '');
-const DARK_THEME = String(
-	codeglossConfig.darkTheme ?? codeglossConfig.theme ?? '',
-);
-
 const LINES = HERO_CODE.split('\n');
 
 export function HeroDemo({
@@ -23,8 +16,6 @@ export function HeroDemo({
 	highlightBackground,
 	highlightColor,
 }: Readonly<HeroDemoProps>) {
-	const siteTheme = useSiteTheme();
-
 	return (
 		<div className="hero-compare">
 			<div className="hero-compare-panel">
@@ -40,7 +31,7 @@ export function HeroDemo({
 					</div>
 					<pre className="hero-plain-code">
 						{LINES.map((line, i) => (
-							<div key={i} className="hero-plain-line">
+							<div key={line+'-'+i} className="hero-plain-line">
 								<span className="hero-plain-num">{i + 1}</span>
 								<span>{line}</span>
 							</div>
@@ -54,7 +45,6 @@ export function HeroDemo({
 					code={HERO_CODE}
 					lang="js"
 					filename="fibonacci.js"
-					theme={siteTheme === 'dark' ? DARK_THEME : LIGHT_THEME}
 					annotations={HERO_ANNOTATIONS}
 					connections={HERO_CONNECTIONS}
 					arcs={HERO_ARC_STYLE}
