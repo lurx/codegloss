@@ -102,8 +102,6 @@ export type CodeGlossConfig = {
 	filename?: string;
 	annotations?: Annotation[];
 	connections?: Connection[];
-	/** Show Run button (default: true when lang === "js") */
-	runnable?: boolean;
 	/** Named theme or inline theme object for syntax + chrome colors */
 	theme?: string;
 	/**
@@ -145,11 +143,6 @@ export type CodeGlossConfig = {
 		 */
 		popover?: boolean;
 	};
-};
-
-export type RunResult = {
-	lines: string[];
-	error?: string;
 };
 
 export type AnnotationHit = {

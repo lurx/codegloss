@@ -14,9 +14,6 @@ import {
 	COPY_ICON,
 	COPY_LABEL,
 	FALLBACK_ERROR_HTML,
-	OUTPUT_LABEL,
-	RUN_AGAIN_LABEL,
-	RUN_LABEL,
 } from './code-gloss.strings';
 import { escapeHtml } from './escape-html.util';
 import { injectAnnotationsIntoHtml } from './inject-annotations.helpers';
@@ -24,7 +21,6 @@ import { measureTextRight } from './measure-line-end.helpers';
 import { readConfigFromHost } from './read-config.helpers';
 import { drawArcs } from './render/arcs.helpers';
 import type { AnnotationPosition } from './render/arcs.types';
-import { run } from './runners.helpers';
 import { buildLineHtmlFallback, findAnnotationHits } from './tokenize.helpers';
 import { splitHighlightedLines } from './split-lines.helpers';
 import { codeGlossStyles } from './code-gloss-styles.generated';
@@ -34,7 +30,6 @@ import type {
 	Connection,
 	ConnectionTooltipState,
 	Highlighter,
-	RunResult,
 } from './code-gloss.types';
 
 // SSR-safe HTMLElement stub. The real class is only ever instantiated in
@@ -83,7 +78,6 @@ export class CodeGlossElement extends SafeHTMLElement {
 	private svgEl!: SVGSVGElement;
 	private rightSvgEl!: SVGSVGElement;
 	private preEl!: HTMLPreElement;
-	private outputEl!: HTMLDivElement;
 	private copyBtn!: HTMLButtonElement;
 	private popoverEl!: HTMLDivElement;
 	private annotationPopoverEl!: HTMLDivElement;
@@ -297,11 +291,6 @@ export class CodeGlossElement extends SafeHTMLElement {
 
 		sandbox.append(this.codeArea);
 
-		this.outputEl = document.createElement('div');
-		this.outputEl.className = 'outputStrip';
-		this.outputEl.style.display = 'none';
-		sandbox.append(this.outputEl);
-
 		this.root.append(sandbox);
 
 		this.popoverEl = document.createElement('div');
@@ -359,16 +348,6 @@ export class CodeGlossElement extends SafeHTMLElement {
 		this.copyBtn.title = COPY_LABEL;
 		this.copyBtn.innerHTML = COPY_ICON;
 		right.append(this.copyBtn);
-
-		const isRunnable = this.config.runnable ?? this.config.lang === 'js';
-		if (isRunnable) {
-			const runBtn = document.createElement('button');
-			runBtn.type = 'button';
-			runBtn.className = 'runButton';
-			runBtn.textContent = RUN_LABEL;
-			runBtn.addEventListener('click', () => this.handleRun(runBtn));
-			right.append(runBtn);
-		}
 
 		toolbar.append(right);
 		return toolbar;
@@ -699,30 +678,6 @@ export class CodeGlossElement extends SafeHTMLElement {
 			this.copyBtn.setAttribute('aria-label', COPY_LABEL);
 			this.copyBtn.title = COPY_LABEL;
 		}, COPY_FEEDBACK_MS);
-	}
-
-	private handleRun(runBtn: HTMLButtonElement): void {
-		if (!this.config) return;
-		const result = run(this.config.lang, this.config.code);
-		this.renderOutput(result);
-		runBtn.textContent = RUN_AGAIN_LABEL;
-	}
-
-	private renderOutput(result: RunResult): void {
-		this.outputEl.innerHTML = '';
-		this.outputEl.style.display = 'block';
-
-		const label = document.createElement('span');
-		label.className = 'outputLabel';
-		label.textContent = OUTPUT_LABEL;
-		this.outputEl.append(label);
-
-		for (const line of result.lines) {
-			const lineElement = document.createElement('div');
-			lineElement.className = 'outputLine';
-			lineElement.textContent = `> ${line}`;
-			this.outputEl.append(lineElement);
-		}
 	}
 
 	private renderConnectionPopover(): void {

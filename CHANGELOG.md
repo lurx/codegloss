@@ -27,6 +27,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Main package ships as ESM only. The `./remark` subpath keeps a CJS twin for older remark/content pipelines (Docusaurus with jiti-loaded `.ts` configs, etc.); every other entry is ESM-only. Minimum Node for tooling is 18.
 - Core `codegloss` package footprint dropped further (179 KB → 85 KB unpacked) now that wrappers ship separately.
 
+### Removed
+
+- `runnable` config field, the in-place JS runner (`run()` + `runners` registry), and the toolbar Run button + output strip. The `<code-gloss>` element no longer ships an evaluator; per-block execution is being redesigned and will return as a separate, opt-in surface. `RunResult` is no longer exported.
+
 ## [0.1.0] — 2026-04-12
 
 ### Added

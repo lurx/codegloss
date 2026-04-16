@@ -9,7 +9,6 @@ export type {
 	Connection,
 	CodeGlossConfig,
 	Highlighter,
-	RunResult,
 } from './core/code-gloss.types';
 
 export { resolveTheme, applyGlobalTheme } from './themes';

@@ -105,7 +105,6 @@ describe('CodeGlossElement', () => {
 			expect(root.querySelector('.filename')?.textContent).toBe('app.js');
 			expect(root.querySelector('.langBadge')?.textContent).toBe('js');
 			expect(root.querySelector('.copyButton')).toBeTruthy();
-			expect(root.querySelector('.runButton')).toBeTruthy();
 			expect(root.querySelector('.pre')).toBeTruthy();
 			expect(root.querySelectorAll('.line')).toHaveLength(1);
 			expect(root.querySelector('.connectionTooltip')).toBeTruthy();
@@ -140,21 +139,6 @@ describe('CodeGlossElement', () => {
 		it('omits the filename node when no filename is configured', () => {
 			const element = mount({ lang: 'js', code: 'x' });
 			expect(shadow(element).querySelector('.filename')).toBeNull();
-		});
-
-		it('hides the run button for non-js languages by default', () => {
-			const element = mount({ lang: 'py', code: 'print(1)' });
-			expect(shadow(element).querySelector('.runButton')).toBeNull();
-		});
-
-		it('shows the run button for non-js languages when runnable is true', () => {
-			const element = mount({ lang: 'py', code: 'print(1)', runnable: true });
-			expect(shadow(element).querySelector('.runButton')).toBeTruthy();
-		});
-
-		it('hides the run button for js when runnable is explicitly false', () => {
-			const element = mount({ lang: 'js', code: 'x', runnable: false });
-			expect(shadow(element).querySelector('.runButton')).toBeNull();
 		});
 
 		it('uses a custom highlighter when one is set on the element', () => {
@@ -737,37 +721,6 @@ describe('CodeGlossElement', () => {
 		});
 	});
 
-	describe('run button', () => {
-		it('renders captured console output and switches the label to "Run again"', () => {
-			const element = mount({ lang: 'js', code: 'console.log("hi")' });
-			const btn =
-				shadow(element).querySelector<HTMLButtonElement>('.runButton')!;
-
-			btn.click();
-
-			const output = shadow(element).querySelector('.outputStrip')!;
-			expect(output.style.display).toBe('block');
-			expect(output.querySelector('.outputLabel')?.textContent).toBe('Output');
-			const lines = output.querySelectorAll('.outputLine');
-			expect(lines).toHaveLength(1);
-			expect(lines[0].textContent).toBe('> hi');
-			expect(btn.textContent).toBe('↻ Run again');
-		});
-
-		it('replaces previous output when run is clicked twice', () => {
-			const element = mount({ lang: 'js', code: 'console.log("first")' });
-			const btn =
-				shadow(element).querySelector<HTMLButtonElement>('.runButton')!;
-
-			btn.click();
-			btn.click();
-
-			const lines = shadow(element).querySelectorAll('.outputLine');
-			expect(lines).toHaveLength(1);
-			expect(lines[0].textContent).toBe('> first');
-		});
-	});
-
 	describe('resize handler', () => {
 		const config: Partial<CodeGlossConfig> = {
 			lang: 'js',
@@ -1244,7 +1197,6 @@ describe('CodeGlossElement', () => {
 				buildDom: () => void;
 				renderLines: () => void;
 				handleCopy: () => void;
-				handleRun: (btn: HTMLButtonElement) => void;
 				renderConnectionPopover: () => void;
 				buildToolbar: () => HTMLDivElement;
 			};
@@ -1254,9 +1206,6 @@ describe('CodeGlossElement', () => {
 			expect(() => internals.buildDom()).not.toThrow();
 			expect(() => internals.renderLines()).not.toThrow();
 			expect(() => internals.handleCopy()).not.toThrow();
-			expect(() =>
-				internals.handleRun(document.createElement('button')),
-			).not.toThrow();
 			expect(() => internals.renderConnectionPopover()).not.toThrow();
 			expect(() => internals.buildToolbar()).toThrow('config required');
 		});
