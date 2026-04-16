@@ -56,7 +56,12 @@ export default defineConfig({
           skipImport: true,
           arcs,
           callouts,
-          theme: SHIKI_THEME,
+          // No `theme` here on purpose: codegloss is syntax-agnostic, and
+          // forwarding a name (Shiki's theme) that isn't in codegloss's
+          // theme registry stamps a `theme="…"` attr that blocks the
+          // built-in `prefers-color-scheme: dark` rules — leaving the
+          // toolbar / border / line-number gutter on light defaults while
+          // the inner code area is dark from the highlighter's `--cg-bg`.
           highlight: codeglossHighlight,
         },
       ],
