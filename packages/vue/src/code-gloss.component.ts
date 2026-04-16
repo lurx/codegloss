@@ -23,7 +23,6 @@ export const CodeGloss = defineComponent({
 		code: { type: String, required: true },
 		lang: { type: String, required: true },
 		filename: { type: String, default: undefined },
-		runnable: { type: Boolean, default: undefined },
 		theme: { type: String, default: undefined },
 		annotations: {
 			type: Array as PropType<Annotation[]>,
@@ -52,7 +51,6 @@ export const CodeGloss = defineComponent({
 				code: props.code,
 				lang: props.lang,
 				filename: props.filename,
-				runnable: props.runnable,
 				annotations: props.annotations,
 				connections: props.connections,
 				highlightedHtml,

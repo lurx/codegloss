@@ -40,7 +40,6 @@ describe('CodeGloss (React wrapper)', () => {
 			code: 'console.log(1)',
 			lang: 'js',
 			filename: 'app.js',
-			runnable: true,
 			annotations: [
 				{
 					id: 'a1',

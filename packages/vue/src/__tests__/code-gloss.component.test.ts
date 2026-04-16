@@ -34,7 +34,6 @@ describe('CodeGloss (Vue wrapper)', () => {
 			code: 'console.log(1)',
 			lang: 'js',
 			filename: 'app.js',
-			runnable: true,
 			annotations: [
 				{
 					id: 'a1',
@@ -59,6 +58,5 @@ describe('CodeGloss (Vue wrapper)', () => {
 		expect(config).not.toHaveProperty('filename');
 		expect(config).not.toHaveProperty('annotations');
 		expect(config).not.toHaveProperty('connections');
-		expect(config).not.toHaveProperty('runnable');
 	});
 });
