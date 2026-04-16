@@ -21,11 +21,10 @@ describe('exportJsx', () => {
 		expect(out).toContain('/>');
 	});
 
-	it('serialises optional attributes including runnable shorthand', () => {
+	it('serialises every optional attribute', () => {
 		const out = exportJsx(
 			baseConfig({
 				filename: 'f.js',
-				runnable: true,
 				theme: 'dark',
 				arcs: { opacity: 0.5 },
 				callouts: { popover: true },
@@ -34,16 +33,10 @@ describe('exportJsx', () => {
 			}),
 		);
 		expect(out).toContain('filename="f.js"');
-		expect(out).toMatch(/\brunnable\b(?!=)/);
 		expect(out).toContain('theme="dark"');
 		expect(out).toContain('arcs={');
 		expect(out).toContain('callouts={');
 		expect(out).toContain('annotations={');
 		expect(out).toContain('connections={');
-	});
-
-	it('emits runnable={false} when disabled explicitly', () => {
-		const out = exportJsx(baseConfig({ runnable: false }));
-		expect(out).toContain('runnable={false}');
 	});
 });

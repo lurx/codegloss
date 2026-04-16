@@ -6,7 +6,6 @@ type RawPayload = {
 	code?: unknown;
 	lang?: unknown;
 	filename?: unknown;
-	runnable?: unknown;
 	theme?: unknown;
 	arcs?: unknown;
 	callouts?: unknown;
@@ -36,8 +35,6 @@ function coerceConfig(raw: RawPayload): EditorConfig {
 		code: raw.code,
 		lang: raw.lang,
 		filename: typeof raw.filename === 'string' ? raw.filename : undefined,
-		runnable:
-			typeof raw.runnable === 'boolean' ? raw.runnable : undefined,
 		theme: typeof raw.theme === 'string' ? raw.theme : undefined,
 		arcs:
 			raw.arcs && typeof raw.arcs === 'object'
@@ -141,13 +138,6 @@ function extractExpressionAttr(
 	return extractBracedBody(source, openIndex);
 }
 
-function resolveRunnable(attrs: string): boolean | undefined {
-	if (/\srunnable=\{false\}/.test(attrs)) return false;
-	const bare = /\srunnable(?:=\{true\})?(?=[\s/>])/.test(attrs);
-	if (bare) return true;
-	return undefined;
-}
-
 function parseJsx(input: string): EditorConfig {
 	if (!/<CodeGloss[\s>]/.test(input)) {
 		throw new Error('Could not find a <CodeGloss> element');
@@ -175,7 +165,6 @@ function parseJsx(input: string): EditorConfig {
 		code: pickString('code'),
 		lang: pickString('lang'),
 		filename: pickString('filename'),
-		runnable: resolveRunnable(attrs),
 		theme: pickString('theme'),
 		arcs: pickJson('arcs'),
 		callouts: pickJson('callouts'),

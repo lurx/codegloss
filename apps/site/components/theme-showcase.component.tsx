@@ -43,7 +43,6 @@ export function ThemeShowcase() {
         theme={activeTheme}
         annotations={ANNOTATIONS}
         connections={CONNECTIONS}
-        runnable={false}
       />
     </div>
   );

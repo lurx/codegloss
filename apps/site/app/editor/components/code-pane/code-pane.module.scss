@@ -7,7 +7,7 @@
 
 .fieldRow {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 	gap: 8px;
 
 	@media (max-width: 560px) {
@@ -36,15 +36,6 @@
 		outline: none;
 		border-color: var(--accent);
 	}
-}
-
-.checkbox {
-	display: flex;
-	align-items: center;
-	gap: 6px;
-	align-self: flex-end;
-	color: var(--site-fg);
-	font-size: 1.0625rem;
 }
 
 .codeArea {

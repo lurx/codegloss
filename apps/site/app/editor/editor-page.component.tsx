@@ -40,7 +40,6 @@ export function EditorPage() {
 		setCodeAction,
 		setLangAction,
 		setFilenameAction,
-		setRunnableAction,
 		addAnnotationAction,
 		updateAnnotationAction,
 		removeAnnotationAction,
@@ -173,11 +172,9 @@ export function EditorPage() {
 						code={config.code}
 						lang={config.lang}
 						filename={config.filename ?? ''}
-						runnable={config.runnable ?? false}
 						onCodeChangeAction={setCodeAction}
 						onLangChangeAction={setLangAction}
 						onFilenameChangeAction={setFilenameAction}
-						onRunnableChangeAction={setRunnableAction}
 					/>
 				</div>
 				<div data-tour="code-picker">

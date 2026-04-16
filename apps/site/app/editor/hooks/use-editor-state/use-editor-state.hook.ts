@@ -49,7 +49,6 @@ const INITIAL_PRESENT: EditorConfig = {
 	code: INITIAL_CODE,
 	lang: 'js',
 	filename: 'greet.js',
-	runnable: true,
 	annotations: [],
 	connections: [],
 };
@@ -75,8 +74,6 @@ function applyToPresent(
 			return { ...present, lang: action.value };
 		case 'setFilename':
 			return { ...present, filename: action.value };
-		case 'setRunnable':
-			return { ...present, runnable: action.value };
 		case 'addAnnotation':
 			return {
 				...present,
@@ -188,10 +185,6 @@ export function useEditorState(): UseEditorStateResult {
 		(value: string) => dispatch({ kind: 'setFilename', value }),
 		[],
 	);
-	const setRunnableAction = useCallback(
-		(value: boolean) => dispatch({ kind: 'setRunnable', value }),
-		[],
-	);
 	const addAnnotationAction = useCallback<
 		UseEditorStateResult['addAnnotationAction']
 	>((value) => dispatch({ kind: 'addAnnotation', value }), []);
@@ -228,7 +221,6 @@ export function useEditorState(): UseEditorStateResult {
 			setCodeAction,
 			setLangAction,
 			setFilenameAction,
-			setRunnableAction,
 			addAnnotationAction,
 			updateAnnotationAction,
 			removeAnnotationAction,
@@ -247,7 +239,6 @@ export function useEditorState(): UseEditorStateResult {
 			setCodeAction,
 			setLangAction,
 			setFilenameAction,
-			setRunnableAction,
 			addAnnotationAction,
 			updateAnnotationAction,
 			removeAnnotationAction,

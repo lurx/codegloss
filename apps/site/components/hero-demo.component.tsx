@@ -48,7 +48,6 @@ export function HeroDemo({
 					annotations={HERO_ANNOTATIONS}
 					connections={HERO_CONNECTIONS}
 					arcs={HERO_ARC_STYLE}
-					runnable={false}
 					highlightedHtml={highlightedHtml}
 					highlightBackground={highlightBackground}
 					highlightColor={highlightColor}

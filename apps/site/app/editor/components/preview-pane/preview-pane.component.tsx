@@ -16,7 +16,6 @@ export function PreviewPane({ config }: Readonly<PreviewPaneProps>) {
 				code={config.code}
 				lang={config.lang}
 				filename={config.filename}
-				runnable={config.runnable}
 				annotations={config.annotations}
 				connections={config.connections}
 				arcs={config.arcs}

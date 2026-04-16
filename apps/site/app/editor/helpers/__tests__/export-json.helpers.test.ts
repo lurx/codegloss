@@ -23,7 +23,6 @@ describe('exportJson', () => {
 			exportJson(
 				baseConfig({
 					filename: 'a.js',
-					runnable: true,
 					theme: 'dark',
 					arcs: { opacity: 0.5 },
 					callouts: { popover: true },
@@ -34,7 +33,6 @@ describe('exportJson', () => {
 		);
 		expect(out).toMatchObject({
 			filename: 'a.js',
-			runnable: true,
 			theme: 'dark',
 			arcs: { opacity: 0.5 },
 			callouts: { popover: true },
@@ -43,10 +41,10 @@ describe('exportJson', () => {
 		expect(out.connections).toHaveLength(1);
 	});
 
-	it('omits runnable=false is preserved but empty arcs/callouts objects are dropped', () => {
+	it('drops empty arcs/callouts objects', () => {
 		const out = JSON.parse(
-			exportJson(baseConfig({ runnable: false, arcs: {}, callouts: {} })),
+			exportJson(baseConfig({ arcs: {}, callouts: {} })),
 		);
-		expect(out).toEqual({ code: 'x', lang: 'js', runnable: false });
+		expect(out).toEqual({ code: 'x', lang: 'js' });
 	});
 });
