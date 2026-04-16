@@ -1,4 +1,5 @@
-import type { Highlighter } from '../core/code-gloss.types';
+import type { HighlightedCode, Highlighter } from '../core/code-gloss.types';
+import { parsePreChrome } from './parse-pre-style.helpers';
 
 /**
  * Minimal slice of Shiki's Highlighter API that we actually call.
@@ -25,15 +26,23 @@ const OUTER_WRAPPER_PATTERN = /^<pre[^>]*><code[^>]*>|<\/code><\/pre>$/g;
 /**
  * Build a codegloss-compatible highlighter from a pre-initialized Shiki
  * instance. codegloss handles splitting the HTML into lines, so this
- * adapter just strips Shiki's outer `<pre>` / `<code>` wrappers.
+ * adapter strips Shiki's outer `<pre>` / `<code>` wrappers and forwards
+ * the wrapper's background/color so codegloss can paint matching chrome.
  */
 export function createShikiHighlighter(
 	shiki: ShikiLikeHighlighter,
 	options: CreateShikiHighlighterOptions = {},
 ): Highlighter {
 	const { theme, themes } = options;
-	return (code, lang) =>
-		shiki
-			.codeToHtml(code, themes ? { lang, themes } : { lang, theme })
-			.replace(OUTER_WRAPPER_PATTERN, '');
+	return (code, lang): HighlightedCode => {
+		const raw = shiki.codeToHtml(
+			code,
+			themes ? { lang, themes } : { lang, theme },
+		);
+		const chrome = parsePreChrome(raw);
+		return {
+			html: raw.replace(OUTER_WRAPPER_PATTERN, ''),
+			...chrome,
+		};
+	};
 }

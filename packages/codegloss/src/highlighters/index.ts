@@ -5,7 +5,15 @@ export type {
 } from './shiki';
 
 export { createPrismHighlighter } from './prism';
-export type { PrismLikeHighlighter } from './prism';
+export type {
+	CreatePrismHighlighterOptions,
+	PrismLikeHighlighter,
+	PrismThemeName,
+} from './prism';
 
 export { createHljsHighlighter } from './hljs';
-export type { HljsLikeHighlighter } from './hljs';
+export type {
+	CreateHljsHighlighterOptions,
+	HljsLikeHighlighter,
+	HljsThemeName,
+} from './hljs';

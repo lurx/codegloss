@@ -7,7 +7,7 @@ describe('createShikiHighlighter', () => {
 	it('calls codeToHtml with lang and theme, and strips pre/code wrappers', () => {
 		const codeToHtml = vi.fn(
 			() =>
-				'<pre class="shiki github-dark" tabindex="0"><code><span class="line">const x = 1</span></code></pre>',
+				'<pre class="shiki github-dark" style="background-color:#0d1117;color:#e6edf3" tabindex="0"><code><span class="line">const x = 1</span></code></pre>',
 		);
 		const shiki = { codeToHtml };
 
@@ -18,7 +18,11 @@ describe('createShikiHighlighter', () => {
 			lang: 'ts',
 			theme: 'github-dark',
 		});
-		expect(html).toBe('<span class="line">const x = 1</span>');
+		expect(html).toEqual({
+			html: '<span class="line">const x = 1</span>',
+			background: '#0d1117',
+			color: '#e6edf3',
+		});
 	});
 
 	it('passes themes map through when provided', () => {
@@ -72,6 +76,42 @@ describe('createPrismHighlighter', () => {
 
 		expect(highlight).toHaveBeenCalledWith('x', plainGrammar, 'lolcode');
 	});
+
+	it('resolves chrome from a named Prism theme preset', () => {
+		const Prism = {
+			highlight: () => '<span>x</span>',
+			languages: { js: {}, plain: {} },
+		};
+
+		const result = createPrismHighlighter(Prism, { theme: 'tomorrow' })(
+			'x',
+			'js',
+		);
+
+		expect(result).toEqual({
+			html: '<span>x</span>',
+			background: '#2d2d2d',
+			color: '#ccc',
+		});
+	});
+
+	it('lets explicit background/color win over the preset', () => {
+		const Prism = {
+			highlight: () => 'html',
+			languages: { js: {}, plain: {} },
+		};
+
+		const result = createPrismHighlighter(Prism, {
+			theme: 'tomorrow',
+			background: '#111',
+		})('x', 'js');
+
+		expect(result).toEqual({
+			html: 'html',
+			background: '#111',
+			color: '#ccc',
+		});
+	});
 });
 
 describe('createHljsHighlighter', () => {
@@ -103,5 +143,65 @@ describe('createHljsHighlighter', () => {
 			language: 'plaintext',
 			ignoreIllegals: true,
 		});
+	});
+
+	it('resolves chrome from a named hljs theme preset', () => {
+		const hljs = {
+			highlight: () => ({ value: 'html' }),
+			getLanguage: () => ({}),
+		};
+
+		const result = createHljsHighlighter(hljs, { theme: 'atom-one-dark' })(
+			'x',
+			'js',
+		);
+
+		expect(result).toEqual({
+			html: 'html',
+			background: '#282c34',
+			color: '#abb2bf',
+		});
+	});
+
+	it('returns only the field that was set (background only)', () => {
+		const hljs = {
+			highlight: () => ({ value: 'html' }),
+			getLanguage: () => ({}),
+		};
+		const result = createHljsHighlighter(hljs, { background: '#111' })(
+			'x',
+			'js',
+		);
+		expect(result).toEqual({ html: 'html', background: '#111' });
+	});
+
+	it('returns only the field that was set (color only, via Prism)', () => {
+		const Prism = {
+			highlight: () => 'html',
+			languages: { js: {}, plain: {} },
+		};
+		const result = createPrismHighlighter(Prism, { color: '#eee' })('x', 'js');
+		expect(result).toEqual({ html: 'html', color: '#eee' });
+	});
+
+	it('returns only the color field set (via hljs)', () => {
+		const hljs = {
+			highlight: () => ({ value: 'html' }),
+			getLanguage: () => ({}),
+		};
+		const result = createHljsHighlighter(hljs, { color: '#aaa' })('x', 'js');
+		expect(result).toEqual({ html: 'html', color: '#aaa' });
+	});
+
+	it('returns only the background field set (via Prism)', () => {
+		const Prism = {
+			highlight: () => 'html',
+			languages: { js: {}, plain: {} },
+		};
+		const result = createPrismHighlighter(Prism, { background: '#222' })(
+			'x',
+			'js',
+		);
+		expect(result).toEqual({ html: 'html', background: '#222' });
 	});
 });
