@@ -1,8 +1,20 @@
 import Link from 'next/link';
 import { HeroDemo } from '@/components/hero-demo.component';
+import { HERO_CODE } from '@/components/hero-demo.data';
 import { CopyButton } from '@/components/copy-button.component';
 import { QuickStart } from '@/components/quick-start.component';
+import { highlight } from '@/lib/shiki';
 import { FEATURES, FRAMEWORKS, INSTALL_CMD } from './page.data';
+
+const HERO_HIGHLIGHT_RESULT = highlight(HERO_CODE, 'js');
+const HERO_HIGHLIGHT =
+	typeof HERO_HIGHLIGHT_RESULT === 'string'
+		? { highlightedHtml: HERO_HIGHLIGHT_RESULT }
+		: {
+				highlightedHtml: HERO_HIGHLIGHT_RESULT.html,
+				highlightBackground: HERO_HIGHLIGHT_RESULT.background,
+				highlightColor: HERO_HIGHLIGHT_RESULT.color,
+			};
 
 export default function HomePage() {
   return (
@@ -26,7 +38,7 @@ export default function HomePage() {
           </div>
         </div>
         <div className="fade-in fade-in-delay-1">
-          <HeroDemo />
+          <HeroDemo {...HERO_HIGHLIGHT} />
         </div>
         <div className="framework-strip fade-in fade-in-delay-2">
           <span className="framework-strip-label">Works with</span>

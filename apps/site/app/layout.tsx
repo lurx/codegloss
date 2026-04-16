@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { Logo } from '@/components/logo.component';
 import { ThemeToggle } from '@/components/theme-toggle.component';
 import { Search } from '@/components/search.component';
-import { CodeglossShikiBootstrap } from '@/components/codegloss-shiki-bootstrap.component';
 import { COLOR_SCHEME_STORAGE_KEY } from '@/components/theme-toggle.constants';
 import type { RootLayoutProps } from './layout.types';
 
@@ -56,7 +55,6 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
           </div>
         </nav>
         {children}
-        <CodeglossShikiBootstrap />
       </body>
     </html>
   );
