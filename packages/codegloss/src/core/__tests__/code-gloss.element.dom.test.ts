@@ -184,6 +184,39 @@ describe('CodeGlossElement', () => {
 			expect(html).toContain('data-ann-id="a1"');
 			expect(html).toContain('class="kw"');
 		});
+
+		it('applies chrome colors from a structured highlighter return', () => {
+			const highlight = () => ({
+				html: '<span>x</span>',
+				background: '#123456',
+				color: '#abcdef',
+			});
+			const element = mount({ lang: 'js', code: 'x' }, { highlight });
+
+			expect(element.style.getPropertyValue('--cg-bg')).toBe('#123456');
+			expect(element.style.getPropertyValue('--cg-text')).toBe('#abcdef');
+		});
+
+		it('leaves chrome untouched when the structured return omits colors', () => {
+			const highlight = () => ({ html: '<span>x</span>' });
+			const element = mount({ lang: 'js', code: 'x' }, { highlight });
+
+			expect(element.style.getPropertyValue('--cg-bg')).toBe('');
+			expect(element.style.getPropertyValue('--cg-text')).toBe('');
+		});
+
+		it('applies chrome colors from config.highlightBackground / highlightColor', () => {
+			const element = mount({
+				lang: 'js',
+				code: 'x',
+				highlightedHtml: '<span>x</span>',
+				highlightBackground: '#111111',
+				highlightColor: '#eeeeee',
+			});
+
+			expect(element.style.getPropertyValue('--cg-bg')).toBe('#111111');
+			expect(element.style.getPropertyValue('--cg-text')).toBe('#eeeeee');
+		});
 	});
 
 	describe('annotation interactions', () => {

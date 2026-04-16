@@ -64,8 +64,12 @@ export class CodeGlossElement extends SafeHTMLElement {
 		return ['theme'];
 	}
 
-	/** Optional custom syntax highlighter — set as a property, not an attribute. */
-	highlight: Highlighter | undefined;
+	/**
+	 * Optional custom syntax highlighter — set as a property, not an attribute.
+	 * Declared (not initialized) so `setDefaultHighlighter()` can install the
+	 * highlighter on the prototype without instance fields shadowing it.
+	 */
+	declare highlight: Highlighter | undefined;
 
 	private config: CodeGlossConfig | undefined;
 	private activeAnnotationId: string | undefined;
@@ -121,11 +125,33 @@ export class CodeGlossElement extends SafeHTMLElement {
 			this.applyTheme(themeName);
 		}
 
-		const highlighted = this.highlight?.(this.config.code, this.config.lang);
+		// Prefer pre-highlighted HTML from the config (baked at build time by
+		// the remark plugin or a wrapper's highlight prop); fall back to the
+		// runtime `highlight` property. Either source may also expose chrome
+		// colors that we apply as host CSS variables — codegloss itself
+		// ships no opinion on token or background colors.
+		let highlighted: string | undefined = this.config.highlightedHtml;
+		let chromeBackground: string | undefined = this.config.highlightBackground;
+		let chromeColor: string | undefined = this.config.highlightColor;
+
+		if (highlighted === undefined && this.highlight) {
+			const result = this.highlight(this.config.code, this.config.lang);
+			if (typeof result === 'string') {
+				highlighted = result;
+			} else {
+				highlighted = result.html;
+				chromeBackground = result.background ?? chromeBackground;
+				chromeColor = result.color ?? chromeColor;
+			}
+		}
+
 		this.highlightedLines =
 			highlighted === undefined
 				? undefined
 				: splitHighlightedLines(highlighted);
+
+		if (chromeBackground) this.style.setProperty('--cg-bg', chromeBackground);
+		if (chromeColor) this.style.setProperty('--cg-text', chromeColor);
 		this.primeInlineDefaultOpen();
 		this.buildDom();
 		this.attachListeners();

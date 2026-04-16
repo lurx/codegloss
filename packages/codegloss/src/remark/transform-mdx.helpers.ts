@@ -92,6 +92,25 @@ export function buildCodeGlossMdxNode(pair: DetectedPair): MdxJsxFlowElement {
 		);
 	}
 
+	if (pair.highlightedHtml) {
+		attributes.push(
+			jsxExpressionAttribute(
+				'highlightedHtml',
+				JSON.stringify(pair.highlightedHtml),
+			),
+		);
+	}
+
+	if (pair.highlightBackground) {
+		attributes.push(
+			jsxAttribute('highlightBackground', pair.highlightBackground),
+		);
+	}
+
+	if (pair.highlightColor) {
+		attributes.push(jsxAttribute('highlightColor', pair.highlightColor));
+	}
+
 	return {
 		type: 'mdxJsxFlowElement',
 		name: 'CodeGloss',

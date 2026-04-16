@@ -43,6 +43,7 @@ export default defineConfig({
 				'src/highlighters/shiki.ts',
 				'src/highlighters/prism.ts',
 				'src/highlighters/hljs.ts',
+				'src/highlighters/parse-pre-style.helpers.ts',
 				'src/themes/theme-css.helpers.ts',
 				'src/themes/index.ts',
 				'src/remark/index.ts',

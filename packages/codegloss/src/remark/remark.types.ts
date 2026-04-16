@@ -13,6 +13,12 @@ export type DetectedPair = {
 	arcs?: Record<string, unknown>;
 	/** Default callout overrides injected by the remark plugin from config */
 	callouts?: Record<string, unknown>;
+	/** Pre-highlighted HTML produced by the build-time highlighter, if any */
+	highlightedHtml?: string;
+	/** Optional chrome background color extracted by the highlighter */
+	highlightBackground?: string;
+	/** Optional chrome foreground color extracted by the highlighter */
+	highlightColor?: string;
 };
 
 export type AnnotationsData = {
@@ -70,4 +76,24 @@ export type RemarkCodeglossOptions = {
 	 * shallow-merged with the block's own `callouts` — per-block values win.
 	 */
 	callouts?: Record<string, unknown>;
+	/**
+	 * Optional build-time highlighter. When provided, the plugin pre-highlights
+	 * each block's code at build time and bakes the resulting HTML into the
+	 * emitted config — the runtime element then renders the pre-highlighted
+	 * markup directly, skipping any client-side highlight pass.
+	 *
+	 * Pair this with the same Shiki instance you pass to `@shikijs/rehype` so
+	 * regular fenced code blocks and codegloss blocks share one source of truth
+	 * for languages, themes, and tokenization output.
+	 *
+	 * Returns either an HTML string or a `HighlightedCode` object that also
+	 * carries chrome colors — use the latter shape to forward the highlighter's
+	 * background/foreground to codegloss as host CSS variables.
+	 */
+	highlight?: (
+		code: string,
+		lang: string,
+	) =>
+		| string
+		| { html: string; background?: string; color?: string };
 };

@@ -24,6 +24,22 @@ export function remarkCodegloss(options: RemarkCodeglossOptions = {}) {
 				const pair = detectSandboxPair(parent.children, index);
 
 				if (pair) {
+					const highlightResult = options.highlight?.(pair.code, pair.lang);
+					const highlightFields =
+						highlightResult === undefined
+							? {}
+							: typeof highlightResult === 'string'
+								? { highlightedHtml: highlightResult }
+								: {
+										highlightedHtml: highlightResult.html,
+										...(highlightResult.background
+											? { highlightBackground: highlightResult.background }
+											: {}),
+										...(highlightResult.color
+											? { highlightColor: highlightResult.color }
+											: {}),
+									};
+
 					const pairWithDefaults = {
 						...pair,
 						...(options.theme ? { theme: options.theme } : {}),
@@ -33,6 +49,7 @@ export function remarkCodegloss(options: RemarkCodeglossOptions = {}) {
 						...(options.callouts && Object.keys(options.callouts).length > 0
 							? { callouts: options.callouts }
 							: {}),
+						...highlightFields,
 					};
 					const node =
 						output === 'html'

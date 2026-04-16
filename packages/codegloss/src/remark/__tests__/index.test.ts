@@ -258,6 +258,75 @@ describe('remarkCodegloss (full pipeline)', () => {
 		});
 	});
 
+	describe('options.highlight', () => {
+		it('bakes string-returning highlighter output into the mdx node', () => {
+			const tree = run(SANDBOX_MD, {
+				highlight: () => '<span class="kw">const</span>',
+			});
+			const jsx = tree.children.find(
+				n => (n as { type: string }).type === 'mdxJsxFlowElement',
+			) as { attributes: Array<{ name: string; value: unknown }> };
+			const html = jsx.attributes.find(a => a.name === 'highlightedHtml') as {
+				value: { value: string };
+			};
+			expect(JSON.parse(html.value.value)).toBe('<span class="kw">const</span>');
+			expect(
+				jsx.attributes.find(a => a.name === 'highlightBackground'),
+			).toBeUndefined();
+		});
+
+		it('threads chrome fields through the mdx node', () => {
+			const tree = run(SANDBOX_MD, {
+				highlight: () => ({
+					html: '<span>x</span>',
+					background: '#111',
+					color: '#eee',
+				}),
+			});
+			const jsx = tree.children.find(
+				n => (n as { type: string }).type === 'mdxJsxFlowElement',
+			) as { attributes: Array<{ name: string; value: unknown }> };
+			const background = jsx.attributes.find(
+				a => a.name === 'highlightBackground',
+			);
+			const color = jsx.attributes.find(a => a.name === 'highlightColor');
+			expect(background?.value).toBe('#111');
+			expect(color?.value).toBe('#eee');
+		});
+
+		it('omits chrome attributes when the structured return only carries html', () => {
+			const tree = run(SANDBOX_MD, {
+				highlight: () => ({ html: '<span>x</span>' }),
+			});
+			const jsx = tree.children.find(
+				n => (n as { type: string }).type === 'mdxJsxFlowElement',
+			) as { attributes: Array<{ name: string }> };
+			expect(
+				jsx.attributes.find(a => a.name === 'highlightBackground'),
+			).toBeUndefined();
+			expect(
+				jsx.attributes.find(a => a.name === 'highlightColor'),
+			).toBeUndefined();
+		});
+
+		it('threads highlighted HTML + chrome into the html node', () => {
+			const tree = run(SANDBOX_MD, {
+				output: 'html',
+				highlight: () => ({
+					html: '<span>x</span>',
+					background: '#222',
+					color: '#ddd',
+				}),
+			});
+			const html = tree.children.find(n => n.type === 'html') as {
+				value: string;
+			};
+			expect(html.value).toContain('"highlightedHtml":"<span>x</span>"');
+			expect(html.value).toContain('"highlightBackground":"#222"');
+			expect(html.value).toContain('"highlightColor":"#ddd"');
+		});
+	});
+
 	describe('default export', () => {
 		it('matches the named export', async () => {
 			const { default: defaultExport } = await import('../index');

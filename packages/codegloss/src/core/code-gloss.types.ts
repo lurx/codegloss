@@ -57,14 +57,33 @@ export type Connection = {
 };
 
 /**
+ * Output of a highlighter when it carries chrome information. Codegloss
+ * applies `background` / `color` to its host as CSS variables so the block
+ * matches the highlighter's own theme — codegloss itself stays
+ * syntax-agnostic and ships no opinion on token colors or backgrounds.
+ */
+export type HighlightedCode = {
+	/** Tokenized HTML with no outer `<pre>` / `<code>` wrappers. */
+	html: string;
+	/** Optional block background (e.g. `#27212e`). Applied to `--cg-bg`. */
+	background?: string;
+	/** Optional default foreground color. Applied to `--cg-text`. */
+	color?: string;
+};
+
+/**
  * Custom syntax highlighter. Receives the full code and language and
- * returns a single HTML string (no outer `<pre>` / `<code>` wrappers).
- * codegloss splits the HTML into lines internally — so Shiki, Prism,
- * hljs, or any highlighter that emits span-wrapped tokens just works.
+ * returns either a plain HTML string or a `HighlightedCode` object that
+ * also carries the highlighter's chrome colors. codegloss splits the
+ * HTML into lines internally — so Shiki, Prism, hljs, or any highlighter
+ * that emits span-wrapped tokens just works.
  *
  * Ready-made adapters live under `codegloss/highlighters/*`.
  */
-export type Highlighter = (code: string, lang: string) => string;
+export type Highlighter = (
+	code: string,
+	lang: string,
+) => string | HighlightedCode;
 
 /**
  * Serializable configuration for `<code-gloss>`. This is what gets
@@ -87,6 +106,22 @@ export type CodeGlossConfig = {
 	runnable?: boolean;
 	/** Named theme or inline theme object for syntax + chrome colors */
 	theme?: string;
+	/**
+	 * Pre-highlighted HTML produced at build time (e.g. by the remark plugin's
+	 * `highlight` option). When present, the element renders this directly and
+	 * skips any client-side highlight pass.
+	 */
+	highlightedHtml?: string;
+	/**
+	 * Chrome background color extracted from the highlighter's output. Applied
+	 * to `--cg-bg` on the host so the block matches the highlighter theme.
+	 */
+	highlightBackground?: string;
+	/**
+	 * Chrome foreground color extracted from the highlighter's output. Applied
+	 * to `--cg-text` on the host.
+	 */
+	highlightColor?: string;
 	/** Style overrides for connection arcs */
 	arcs?: {
 		dotRadius?: number;

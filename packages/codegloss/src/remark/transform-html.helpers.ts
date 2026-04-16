@@ -58,6 +58,18 @@ export function buildCodeGlossHtmlNode(pair: DetectedPair): Html {
 		config.callouts = mergedCallouts;
 	}
 
+	if (pair.highlightedHtml) {
+		config.highlightedHtml = pair.highlightedHtml;
+	}
+
+	if (pair.highlightBackground) {
+		config.highlightBackground = pair.highlightBackground;
+	}
+
+	if (pair.highlightColor) {
+		config.highlightColor = pair.highlightColor;
+	}
+
 	// Escape `</script` so the JSON payload can't break out of the script tag.
 	const json = JSON.stringify(config).replaceAll(
 		/<\/script/gi,
