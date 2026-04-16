@@ -10,5 +10,4 @@ export type {
 	Connection,
 	CodeGlossConfig,
 	Highlighter,
-	RunResult,
 } from 'codegloss';
