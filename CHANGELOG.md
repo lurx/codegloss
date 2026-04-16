@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- `highlight` field on the project-level config (`defineConfig({ highlight })`) — declare your `Highlighter` once and every render path picks it up: the remark plugin reads it at build time, hand-written blocks pass `config.highlight` to the wrapper, and `initCodegloss(config)` wires it into the runtime web component.
+- `initCodegloss(config)` API on the `codegloss` entry — one-shot bootstrap for client apps. Reads the project config and registers `config.highlight` as the default for every `<code-gloss>` on the page (current and future). Pair with the same `codegloss.config.ts` your remark plugin reads.
 - New wrapper packages — `@codegloss/react`, `@codegloss/vue`, `@codegloss/svelte`. Each installs independently and declares `codegloss` as a peer dependency, so users only pay for the wrapper they actually use.
 - `setDefaultHighlighter(fn)` API on the `codegloss` entry — register a syntax highlighter once at startup and every `<code-gloss>` on the page picks it up (mounted blocks refresh in place).
 - `highlight` option on the remark plugin — pre-highlights each codegloss block at build time and bakes the resulting HTML into the emitted config. Pair it with the same Shiki instance you pass to `@shikijs/rehype` so fenced and codegloss blocks share one source of truth, with no client-side highlighter download.

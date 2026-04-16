@@ -1,3 +1,4 @@
+import type { Highlighter } from '../core/code-gloss.types';
 import type { CodeGlossTheme } from '../themes/theme.types';
 
 export type CodeGlossArcStyle = {
@@ -36,4 +37,12 @@ export type CodeGlossUserConfig = {
 	arcs?: CodeGlossArcStyle;
 	/** Block-level callout behavior for annotations. */
 	callouts?: CodeGlossCallouts;
+	/**
+	 * Project-wide syntax highlighter. Used by the remark plugin at build
+	 * time and by `initCodegloss(config)` at runtime to drive every
+	 * `<code-gloss>` block on the page. Plug in any adapter — Shiki,
+	 * Prism, hljs, or your own `(code, lang) => string | HighlightedCode`
+	 * function — and codegloss stays out of theming.
+	 */
+	highlight?: Highlighter;
 };
