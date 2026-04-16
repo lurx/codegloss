@@ -52,6 +52,34 @@ describe('CodeGloss (Vue wrapper)', () => {
 		expect(extractConfig(html)).toEqual(props);
 	});
 
+	it('invokes a highlight function returning a string and bakes the HTML into the payload', async () => {
+		const html = await render({
+			code: 'x',
+			lang: 'js',
+			highlight: (code) => `<span>${code}</span>`,
+		});
+		const payload = extractConfig(html) as Record<string, unknown>;
+		expect(payload.highlightedHtml).toBe('<span>x</span>');
+		expect(payload).not.toHaveProperty('highlightBackground');
+		expect(payload).not.toHaveProperty('highlightColor');
+	});
+
+	it('forwards background + color from a structured highlight return', async () => {
+		const html = await render({
+			code: 'x',
+			lang: 'js',
+			highlight: () => ({
+				html: '<span>x</span>',
+				background: '#111',
+				color: '#eee',
+			}),
+		});
+		const payload = extractConfig(html) as Record<string, unknown>;
+		expect(payload.highlightedHtml).toBe('<span>x</span>');
+		expect(payload.highlightBackground).toBe('#111');
+		expect(payload.highlightColor).toBe('#eee');
+	});
+
 	it('omits undefined props from the serialized payload', async () => {
 		const html = await render({ code: 'x', lang: 'js' });
 		const config = extractConfig(html) as Record<string, unknown>;

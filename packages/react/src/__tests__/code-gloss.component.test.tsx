@@ -1,5 +1,5 @@
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { CodeGloss } from '../code-gloss.component';
 import type { CodeGlossProps } from '../code-gloss.types';
 
@@ -57,6 +57,67 @@ describe('CodeGloss (React wrapper)', () => {
 
 		const html = renderToStaticMarkup(<CodeGloss {...props} />);
 		expect(extractConfig(html)).toEqual(props);
+	});
+
+	it('invokes a highlight function returning a string and bakes the HTML into the payload', () => {
+		const html = renderToStaticMarkup(
+			<CodeGloss
+				code="x"
+				lang="js"
+				highlight={(code) => `<span>${code}</span>`}
+			/>,
+		);
+		const payload = extractConfig(html) as Record<string, unknown>;
+		expect(payload.highlightedHtml).toBe('<span>x</span>');
+		expect(payload).not.toHaveProperty('highlightBackground');
+		expect(payload).not.toHaveProperty('highlightColor');
+	});
+
+	it('forwards background + color from a structured highlight return', () => {
+		const html = renderToStaticMarkup(
+			<CodeGloss
+				code="x"
+				lang="js"
+				highlight={() => ({
+					html: '<span>x</span>',
+					background: '#111',
+					color: '#eee',
+				})}
+			/>,
+		);
+		const payload = extractConfig(html) as Record<string, unknown>;
+		expect(payload.highlightedHtml).toBe('<span>x</span>');
+		expect(payload.highlightBackground).toBe('#111');
+		expect(payload.highlightColor).toBe('#eee');
+	});
+
+	it('omits chrome attributes when the structured return only carries html', () => {
+		const html = renderToStaticMarkup(
+			<CodeGloss
+				code="x"
+				lang="js"
+				highlight={() => ({ html: '<span>x</span>' })}
+			/>,
+		);
+		const payload = extractConfig(html) as Record<string, unknown>;
+		expect(payload.highlightedHtml).toBe('<span>x</span>');
+		expect(payload).not.toHaveProperty('highlightBackground');
+		expect(payload).not.toHaveProperty('highlightColor');
+	});
+
+	it('skips the highlight call when the config already carries highlightedHtml', () => {
+		const highlight = vi.fn(() => '<span>nope</span>');
+		const html = renderToStaticMarkup(
+			<CodeGloss
+				code="x"
+				lang="js"
+				highlightedHtml="<span>baked</span>"
+				highlight={highlight}
+			/>,
+		);
+		const payload = extractConfig(html) as Record<string, unknown>;
+		expect(highlight).not.toHaveBeenCalled();
+		expect(payload.highlightedHtml).toBe('<span>baked</span>');
 	});
 
 	it('renders the theme attribute on the custom element when provided', () => {
