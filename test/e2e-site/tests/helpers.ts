@@ -40,10 +40,6 @@ export function filenameInput(page: Page) {
 	return page.getByLabel('Filename', { exact: true });
 }
 
-export function runnableCheckbox(page: Page) {
-	return page.getByLabel('Runnable', { exact: true });
-}
-
 export function addAnnotationButton(page: Page) {
 	return page.getByRole('button', { name: 'Add' }).first();
 }

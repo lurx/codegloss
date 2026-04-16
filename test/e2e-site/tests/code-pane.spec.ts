@@ -5,7 +5,6 @@ import {
 	codeTextarea,
 	langInput,
 	filenameInput,
-	runnableCheckbox,
 } from './helpers';
 
 test.describe('code pane', () => {
@@ -37,16 +36,6 @@ test.describe('code pane', () => {
 		await gotoEditor(page);
 		await filenameInput(page).fill('example.ts');
 		await expect(filenameInput(page)).toHaveValue('example.ts');
-	});
-
-	test('runnable checkbox toggles', async ({ page }) => {
-		await gotoEditor(page);
-		const box = runnableCheckbox(page);
-		await expect(box).toBeChecked();
-		await box.uncheck();
-		await expect(box).not.toBeChecked();
-		await box.check();
-		await expect(box).toBeChecked();
 	});
 
 	test('edits are written to localStorage', async ({ page }) => {
