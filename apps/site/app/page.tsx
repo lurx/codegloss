@@ -3,10 +3,10 @@ import { HeroDemo } from '@/components/hero-demo.component';
 import { HERO_CODE } from '@/components/hero-demo.data';
 import { CopyButton } from '@/components/copy-button.component';
 import { QuickStart } from '@/components/quick-start.component';
-import { highlight } from '@/lib/shiki';
+import codeglossConfig from '@/codegloss.config';
 import { FEATURES, FRAMEWORKS, INSTALL_CMD } from './page.data';
 
-const HERO_HIGHLIGHT_RESULT = highlight(HERO_CODE, 'js');
+const HERO_HIGHLIGHT_RESULT = codeglossConfig.highlight!(HERO_CODE, 'js');
 const HERO_HIGHLIGHT =
 	typeof HERO_HIGHLIGHT_RESULT === 'string'
 		? { highlightedHtml: HERO_HIGHLIGHT_RESULT }

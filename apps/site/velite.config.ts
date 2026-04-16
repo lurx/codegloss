@@ -1,49 +1,12 @@
 import rehypeShikiFromHighlighter from '@shikijs/rehype/core';
-import {
-	createShikiHighlighter,
-	type ShikiLikeHighlighter,
-} from 'codegloss/highlighters/shiki';
 import remarkCodegloss from 'codegloss/remark';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeSlug from 'rehype-slug';
-import { createHighlighter } from 'shiki';
 import { defineConfig, s } from 'velite';
-import codeglossConfig from './codegloss.config';
+import codeglossConfig, { shiki } from './codegloss.config';
 
-const { arcs, callouts } = codeglossConfig;
-const SHIKI_THEME = String(codeglossConfig.theme ?? 'github-dark');
-const SHIKI_DARK_THEME = String(codeglossConfig.darkTheme ?? SHIKI_THEME);
-
-// One Shiki instance, shared by rehype (regular fenced blocks) and the
-// codegloss remark plugin (build-time pre-highlight for <code-gloss>). Same
-// languages, same theme, no drift between the two render paths.
-const sharedShiki = await createHighlighter({
-	themes: Array.from(new Set([SHIKI_THEME, SHIKI_DARK_THEME])),
-	langs: [
-		'js',
-		'ts',
-		'tsx',
-		'jsx',
-		'json',
-		'md',
-		'mdx',
-		'bash',
-		'shell',
-		'html',
-		'css',
-		'scss',
-		'vue',
-		'svelte',
-		'python',
-		'rust',
-		'go',
-	],
-});
-
-const codeglossHighlight = createShikiHighlighter(
-	sharedShiki as unknown as ShikiLikeHighlighter,
-	{ theme: SHIKI_THEME },
-);
+const { arcs, callouts, highlight: codeglossHighlight } = codeglossConfig;
+const SHIKI_THEME = String(codeglossConfig.theme);
 
 /** Lucide `link` icon, inlined as hast for the autolink-headings
  *  build-time render. The check-icon swap happens client-side in
@@ -111,7 +74,7 @@ export default defineConfig({
           content: LINK_ICON_HAST,
         },
       ],
-      [rehypeShikiFromHighlighter, sharedShiki, { theme: SHIKI_THEME }],
+      [rehypeShikiFromHighlighter, shiki, { theme: SHIKI_THEME }],
     ],
   },
   collections: {
