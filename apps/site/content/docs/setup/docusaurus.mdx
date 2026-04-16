@@ -13,20 +13,22 @@ Set up CodeGloss with [Docusaurus](https://docusaurus.io/) v3.
 
 ## Configure the remark plugin
 
-Add `remark-codegloss` to your `docusaurus.config.js`. Use `skipImport: true` because we'll provide the component via Docusaurus's MDX components map (next step):
+Add `remark-codegloss` to your `docusaurus.config.js`. Use `skipImport: true` because we'll provide the component via Docusaurus's MDX components map (next step). If you've declared a `highlight` in `codegloss.config.ts` (see [Syntax Highlighters](/docs/highlighters)), thread it through so blocks are pre-highlighted at build:
 
 ````js
 import remarkCodegloss from 'codegloss/remark';
+import codeglossConfig from './codegloss.config';
+
+const codeglossPlugin = [
+  remarkCodegloss,
+  { skipImport: true, highlight: codeglossConfig.highlight },
+];
 
 export default {
   presets: [
     ['classic', {
-      docs: {
-        remarkPlugins: [[remarkCodegloss, { skipImport: true }]],
-      },
-      blog: {
-        remarkPlugins: [[remarkCodegloss, { skipImport: true }]],
-      },
+      docs: { remarkPlugins: [codeglossPlugin] },
+      blog: { remarkPlugins: [codeglossPlugin] },
     }],
   ],
 };

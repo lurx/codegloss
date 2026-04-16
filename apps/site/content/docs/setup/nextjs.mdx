@@ -56,11 +56,12 @@ No CSS import needed. The Web Component bundles its own styles via Shadow DOM.
 
 ## MDX authoring with @next/mdx
 
-Configure the remark plugin in `next.config.ts`:
+Configure the remark plugin in `next.config.ts`. If you've declared a `highlight` in `codegloss.config.ts` (see [Syntax Highlighters](/docs/highlighters)), thread it through so blocks are pre-highlighted at build:
 
 ````js
 import createMdx from '@next/mdx';
 import remarkCodegloss from 'codegloss/remark';
+import codeglossConfig from './codegloss.config';
 
 const nextConfig = {
   pageExtensions: ['ts', 'tsx', 'mdx'],
@@ -68,7 +69,9 @@ const nextConfig = {
 
 const withMdx = createMdx({
   options: {
-    remarkPlugins: [remarkCodegloss],
+    remarkPlugins: [
+      [remarkCodegloss, { highlight: codeglossConfig.highlight }],
+    ],
   },
 });
 
@@ -131,10 +134,13 @@ When loading the component this way, set `skipImport: true` on the remark plugin
 
 ````js
 import remarkCodegloss from 'codegloss/remark';
+import codeglossConfig from './codegloss.config';
 
 const source = await serialize(mdxContent, {
   mdxOptions: {
-    remarkPlugins: [[remarkCodegloss, { skipImport: true }]],
+    remarkPlugins: [
+      [remarkCodegloss, { skipImport: true, highlight: codeglossConfig.highlight }],
+    ],
   },
 });
 ````

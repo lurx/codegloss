@@ -140,10 +140,11 @@ Themes cover both syntax token colors and UI chrome (background, borders, annota
 
 ### Syntax highlighter
 
-CodeGloss ships a small regex tokenizer by default. For production docs, plug in Shiki, Prism, or highlight.js once at startup via `setDefaultHighlighter`:
+CodeGloss ships a small regex tokenizer by default. For production docs, declare a real highlighter (Shiki, Prism, or highlight.js) once in your `codegloss.config.ts` — every render path picks it up: the remark plugin reads it at build time, hand-written wrapper instances pass `highlight={config.highlight}`, and `initCodegloss(config)` registers it for runtime/dynamic blocks.
 
 ```ts
-import { setDefaultHighlighter } from 'codegloss';
+// codegloss.config.ts
+import { defineConfig } from 'codegloss/config';
 import { createShikiHighlighter } from 'codegloss/highlighters/shiki';
 import { createHighlighter } from 'shiki';
 
@@ -152,10 +153,21 @@ const shiki = await createHighlighter({
   langs: ['js', 'ts', 'tsx'],
 });
 
-setDefaultHighlighter(createShikiHighlighter(shiki, { theme: 'github-dark' }));
+export default defineConfig({
+  theme: 'github-dark',
+  highlight: createShikiHighlighter(shiki, { theme: 'github-dark' }),
+});
 ```
 
-Adapters are ~100 B each; the underlying library is an optional peer dependency — you only install the one you use. Full guide in the [Syntax Highlighters docs](https://lurx.github.io/codegloss/docs/highlighters/).
+```ts
+// app root (only needed if you have dynamic / interactive blocks)
+import { initCodegloss } from 'codegloss';
+import codeglossConfig from './codegloss.config';
+
+initCodegloss(codeglossConfig);
+```
+
+Adapters are ~100 B each; the underlying library is an optional peer dependency — you only install the one you use. The lower-level `setDefaultHighlighter(fn)` is still exported for cases where you'd rather not bundle the config. Full guide in the [Syntax Highlighters docs](https://lurx.github.io/codegloss/docs/highlighters/).
 
 ### Config file
 
@@ -166,6 +178,7 @@ import { defineConfig } from 'codegloss/config';
 
 export default defineConfig({
   theme: 'github-dark',
+  // highlight: createShikiHighlighter(...),  // see above
   arcs: {
     strokeDasharray: 'none',  // solid arcs
     opacity: 0.7,
@@ -173,7 +186,7 @@ export default defineConfig({
 });
 ```
 
-The config file sets defaults for themes, connection arc styles, and more. See the [Component API docs](https://lurx.github.io/codegloss/docs/api/) for all options.
+The config file sets defaults for themes, the highlighter, connection arc styles, and more. See the [Component API docs](https://lurx.github.io/codegloss/docs/api/) for all options.
 
 ### Markdown / MDX
 

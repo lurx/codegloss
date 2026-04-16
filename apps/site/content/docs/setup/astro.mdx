@@ -13,12 +13,13 @@ CodeGloss works with Astro (and [Starlight](https://starlight.astro.build/)) usi
 
 ## Configure the remark plugin
 
-Add `remark-codegloss` to your `astro.config.mjs` with `output: 'html'`:
+Add `remark-codegloss` to your `astro.config.mjs` with `output: 'html'`. If you've declared a `highlight` in `codegloss.config.ts` (see [Syntax Highlighters](/docs/highlighters)), thread it through so blocks are pre-highlighted at build:
 
 ````js
 import starlight from '@astrojs/starlight';
 import { defineConfig } from 'astro/config';
 import remarkCodegloss from 'codegloss/remark';
+import codeglossConfig from './codegloss.config';
 
 export default defineConfig({
   integrations: [
@@ -36,7 +37,12 @@ export default defineConfig({
     }),
   ],
   markdown: {
-    remarkPlugins: [[remarkCodegloss, { output: 'html' }]],
+    remarkPlugins: [
+      [
+        remarkCodegloss,
+        { output: 'html', highlight: codeglossConfig.highlight },
+      ],
+    ],
   },
 });
 ````
