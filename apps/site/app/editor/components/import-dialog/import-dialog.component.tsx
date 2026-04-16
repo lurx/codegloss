@@ -79,7 +79,7 @@ export function ImportDialog({
 			<div className={styles.header}>
 				<h2 className={styles.heading}>Import</h2>
 				<p className={styles.hint}>
-					Paste JSON, MDX (sandbox + annotations), or a &lt;CodeGloss/&gt;
+					Paste JSON, MDX (codegloss + annotations), or a &lt;CodeGloss/&gt;
 					element
 				</p>
 			</div>

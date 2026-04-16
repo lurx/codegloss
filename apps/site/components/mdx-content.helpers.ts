@@ -2,7 +2,7 @@ import type { CodeGlossProps } from '@codegloss/react';
 
 export function buildSourceFence(props: CodeGlossProps): string {
   const { code, lang, filename, annotations, connections, arcs } = props;
-  const header = filename ? `${lang} sandbox ${filename}` : `${lang} sandbox`;
+  const header = filename ? `${lang} codegloss ${filename}` : `${lang} codegloss`;
   const fence = `\`\`\`${header}\n${code}\n\`\`\``;
 
   const hasAnnotations = annotations && annotations.length > 0;

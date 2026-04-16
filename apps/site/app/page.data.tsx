@@ -20,7 +20,7 @@ export const FEATURES: Feature[] = [
     icon: <FileCode2 size={16} />,
     title: 'MDX Native',
     description:
-      'Write fenced code blocks with a sandbox tag. The remark plugin detects them and emits CodeGloss components at build time.',
+      'Write fenced code blocks with a `codegloss` tag. The remark plugin detects them and emits CodeGloss components at build time.',
   },
 ];
 

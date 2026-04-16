@@ -18,7 +18,7 @@ const withMdx = createMdx({
 	{
 		label: 'MDX / Remark — Markdown',
 		lang: 'md',
-		code: `\`\`\`js sandbox greet.js
+		code: `\`\`\`js codegloss greet.js
 function greet(name) {
   return "Hello, " + name + "!";
 }
@@ -201,7 +201,7 @@ const withMdx = createMdx({
 	{
 		label: 'mdx',
 		lang: 'md',
-		code: `\`\`\`js sandbox fibonacci.js
+		code: `\`\`\`js codegloss fibonacci.js
 function fibonacci(n) {
   const memo = {};
   // ...

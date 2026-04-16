@@ -4,7 +4,7 @@ export const TABS: Tab[] = [
 	{
 		label: 'MDX / Remark',
 		content:
-			'Use fenced code blocks with a sandbox tag. The remark plugin detects them and emits CodeGloss components at build time.',
+			'Use fenced code blocks with a `codegloss` tag. The remark plugin detects them and emits CodeGloss components at build time.',
 		install: 'codegloss @codegloss/react',
 		blocks: [
 			{ htmlKey: 'MDX / Remark — Setup', label: 'Setup' },

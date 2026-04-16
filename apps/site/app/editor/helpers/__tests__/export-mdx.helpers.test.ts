@@ -13,14 +13,14 @@ function baseConfig(overrides: Partial<EditorConfig> = {}): EditorConfig {
 }
 
 describe('exportMdx', () => {
-	it('emits only the sandbox fence when there is no metadata', () => {
+	it('emits only the codegloss fence when there is no metadata', () => {
 		const out = exportMdx(baseConfig());
-		expect(out).toBe('```js sandbox\nconsole.log(1);\n```');
+		expect(out).toBe('```js codegloss\nconsole.log(1);\n```');
 	});
 
 	it('appends the filename to the fence header', () => {
 		const out = exportMdx(baseConfig({ filename: 'demo.js' }));
-		expect(out.startsWith('```js sandbox demo.js\n')).toBe(true);
+		expect(out.startsWith('```js codegloss demo.js\n')).toBe(true);
 	});
 
 	it('adds an annotations block when annotations or connections exist', () => {

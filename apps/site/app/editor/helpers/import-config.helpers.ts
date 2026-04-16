@@ -13,8 +13,8 @@ type RawPayload = {
 	connections?: unknown;
 };
 
-const MDX_SANDBOX_PATTERN =
-	/```(\w+)\s+sandbox(?:\s+([^\n`]+))?\n([\s\S]*?)\n```/;
+const MDX_CODEGLOSS_PATTERN =
+	/```(\w+)\s+codegloss(?:\s+([^\n`]+))?\n([\s\S]*?)\n```/;
 const MDX_ANNOTATIONS_PATTERN =
 	/```json\s+annotations\n([\s\S]*?)\n```/;
 
@@ -55,11 +55,11 @@ function parseJson(input: string): EditorConfig {
 }
 
 function parseMdx(input: string): EditorConfig {
-	const sandboxMatch = MDX_SANDBOX_PATTERN.exec(input);
-	if (!sandboxMatch) {
-		throw new Error('Could not find a ```<lang> sandbox block');
+	const fenceMatch = MDX_CODEGLOSS_PATTERN.exec(input);
+	if (!fenceMatch) {
+		throw new Error('Could not find a ```<lang> codegloss block');
 	}
-	const [, lang, filename, code] = sandboxMatch;
+	const [, lang, filename, code] = fenceMatch;
 	const annotationsMatch = MDX_ANNOTATIONS_PATTERN.exec(input);
 	const annotationsPayload = annotationsMatch
 		? (JSON.parse(annotationsMatch[1]) as RawPayload)

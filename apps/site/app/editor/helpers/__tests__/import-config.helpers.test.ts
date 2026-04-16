@@ -81,9 +81,9 @@ describe('importConfig JSON', () => {
 });
 
 describe('importConfig MDX', () => {
-	it('parses a sandbox fence with filename and annotations block', () => {
+	it('parses a codegloss fence with filename and annotations block', () => {
 		const input = [
-			'```js sandbox demo.js',
+			'```js codegloss demo.js',
 			'const x = 1;',
 			'```',
 			'',
@@ -110,15 +110,15 @@ describe('importConfig MDX', () => {
 		expect(result.config.arcs).toEqual({ opacity: 0.5 });
 	});
 
-	it('treats an unfiltered sandbox fence as an mdx import without filename', () => {
-		const input = '```js sandbox\nconst x = 1;\n```';
+	it('treats an unfiltered codegloss fence as an mdx import without filename', () => {
+		const input = '```js codegloss\nconst x = 1;\n```';
 		const result = importConfig(input);
 		if (!result.ok) throw new Error('expected success');
 		expect(result.format).toBe('mdx');
 		expect(result.config.filename).toBeUndefined();
 	});
 
-	it('errors when no sandbox fence is present', () => {
+	it('errors when no codegloss fence is present', () => {
 		const result = importConfig('some plain markdown');
 		expect(result.ok).toBe(false);
 		if (!result.ok) expect(result.error).toMatch(/MDX: Could not find/);
