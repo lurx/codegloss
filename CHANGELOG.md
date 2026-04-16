@@ -27,6 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Framework wrappers moved out of the main package. Imports are now `@codegloss/react`, `@codegloss/vue`, `@codegloss/svelte` (previously `codegloss/react`, etc.). The remark plugin now injects the `@codegloss/react` import.
 - Main package ships as ESM only. The `./remark` subpath keeps a CJS twin for older remark/content pipelines (Docusaurus with jiti-loaded `.ts` configs, etc.); every other entry is ESM-only. Minimum Node for tooling is 18.
 - Core `codegloss` package footprint dropped further (179 KB → 85 KB unpacked) now that wrappers ship separately.
+- Fence keyword: codegloss blocks are now detected as ` ```{lang} codegloss {filename?} ` (previously ` ```{lang} sandbox … `). The word "sandbox" suggested an in-page execution sandbox the element doesn't actually provide. Detector function renamed to `detectCodeglossPair`.
 
 ### Removed
 

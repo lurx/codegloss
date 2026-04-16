@@ -16,7 +16,7 @@ It supports two output modes:
 
 The plugin walks the markdown AST looking for a specific pattern:
 
-1. A fenced code block with `sandbox` in its metadata
+1. A fenced code block with `codegloss` in its metadata
 2. Optionally followed by a `json annotations` code block
 
 When it finds a match, it:
@@ -30,16 +30,16 @@ When it finds a match, it:
 The code block metadata must match this format:
 
 ````
-```{lang} sandbox {filename?}
+```{lang} codegloss {filename?}
 ````
 
 - **`lang`** (required) — the language identifier (`js`, `ts`, `py`, `css`, etc.)
-- **`sandbox`** (required) — the keyword that triggers detection
+- **`codegloss`** (required) — the keyword that triggers detection
 - **`filename`** (optional) — displayed in the toolbar
 
 ### Annotations block
 
-The annotations block must immediately follow the sandbox block:
+The annotations block must immediately follow the codegloss block:
 
 ````
 ```json annotations
@@ -198,7 +198,7 @@ This pattern works with `marked`, `markdown-it`, and any static site generator t
 ## Edge cases
 
 - **Invalid JSON** — if the annotations block contains malformed JSON, the plugin logs a warning and renders the code block without annotations
-- **Missing annotations block** — the sandbox block renders as a CodeGloss instance with just the code, no annotations
+- **Missing annotations block** — the codegloss block renders as a CodeGloss instance with just the code, no annotations
 - **Duplicate imports** — in `mdx` mode, the plugin checks for existing CodeGloss imports before injecting one
-- **Nested blocks** — the plugin traverses child nodes recursively, so sandbox blocks inside blockquotes or other containers are detected
+- **Nested blocks** — the plugin traverses child nodes recursively, so codegloss blocks inside blockquotes or other containers are detected
 - **Script tag escaping** — in `html` mode, the JSON payload escapes `</script` sequences to prevent breaking out of the script tag

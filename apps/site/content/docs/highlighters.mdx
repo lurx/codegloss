@@ -68,7 +68,7 @@ The same `Highlighter` function works in every consumer pattern. **Pick the one(
 
 ### Build time — the `remark` plugin
 
-For MDX/markdown, hand the highlighter to the remark plugin (typically by spreading the config). Each fenced sandbox is pre-highlighted at build, baked into the emitted config, and rendered straight from HTML — no client-side highlighter download, no flicker.
+For MDX/markdown, hand the highlighter to the remark plugin (typically by spreading the config). Each fenced codegloss block is pre-highlighted at build, baked into the emitted config, and rendered straight from HTML — no client-side highlighter download, no flicker.
 
 ````ts
 import remarkCodegloss from 'codegloss/remark';

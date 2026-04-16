@@ -191,7 +191,7 @@ The config file sets defaults for themes, the highlighter, connection arc styles
 ### Markdown / MDX
 
 ````md
-```js sandbox fib.js
+```js codegloss fib.js
 function fib(n) { return n < 2 ? n : fib(n-1) + fib(n-2); }
 ```
 

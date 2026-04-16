@@ -64,10 +64,10 @@ const config = {
 export default config;
 ````
 
-Now use the fenced sandbox syntax in any `.md` or `.svx` file:
+Now use the fenced codegloss syntax in any `.md` or `.svx` file:
 
 `````md
-```js sandbox fib.js
+```js codegloss fib.js
 function fib(n) {
   return n < 2 ? n : fib(n - 1) + fib(n - 2);
 }
@@ -103,4 +103,4 @@ This gives you full prop typing via `svelte-check`.
 
 ## Both approaches together
 
-You can mix both styles on the same page. Fenced sandbox blocks are ideal for documentation-heavy pages, while the direct wrapper is useful when you need dynamic props or programmatic control.
+You can mix both styles on the same page. Fenced codegloss blocks are ideal for documentation-heavy pages, while the direct wrapper is useful when you need dynamic props or programmatic control.

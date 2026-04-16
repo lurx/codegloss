@@ -1,10 +1,10 @@
 # codegloss · Next.js + @next/mdx
 
-This page is rendered from an MDX file. The fenced sandbox below is rewritten
+This page is rendered from an MDX file. The fenced codegloss block below is rewritten
 into a `<CodeGloss />` component by `remark-codegloss`, which the import map in
 `next.config.mjs` registers as a remark plugin.
 
-```js sandbox fib.js
+```js codegloss fib.js
 function fib(n) {
   return n < 2 ? n : fib(n - 1) + fib(n - 2);
 }
