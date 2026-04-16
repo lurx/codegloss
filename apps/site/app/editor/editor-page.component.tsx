@@ -1,8 +1,10 @@
 'use client';
 
 import type { Annotation, Connection } from '@codegloss/react';
+import { initCodegloss } from 'codegloss';
 import { HelpCircle, Redo2, Settings, Undo2, Upload } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import codeglossConfig from '@/codegloss.config';
 import { AnnotationsPanel } from './components/annotations-panel';
 import { nextAutoId } from './components/annotations-panel/annotations-panel.helpers';
 import { CodePane } from './components/code-pane';
@@ -18,6 +20,13 @@ import { validateConfig } from './helpers/validate-config.helpers';
 import { useCodeglossTheme } from './hooks/use-codegloss-theme';
 import { useEditorState } from './hooks/use-editor-state';
 import { useEditorTour } from './hooks/use-editor-tour';
+
+// One-shot global registration of the project highlighter so every
+// `<code-gloss>` rendered on this page (the live preview, plus anything
+// dynamic) shares the same Shiki output as the rest of the site. Static
+// pages already get pre-baked HTML at build time; only the editor needs
+// runtime registration.
+initCodegloss(codeglossConfig);
 
 export function EditorPage() {
 	const {
