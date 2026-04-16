@@ -16,8 +16,8 @@ const run = (
 	return tree;
 };
 
-const SANDBOX_MD = [
-	'```js sandbox fib.js',
+const CODEGLOSS_MD = [
+	'```js codegloss fib.js',
 	'const x = 1',
 	'```',
 	'',
@@ -38,8 +38,8 @@ const PLAIN_MD = [
 
 describe('remarkCodegloss (full pipeline)', () => {
 	describe('output: "mdx" (default)', () => {
-		it('replaces a sandbox + annotations pair with a single mdxJsxFlowElement', () => {
-			const tree = run(SANDBOX_MD);
+		it('replaces a codegloss + annotations pair with a single mdxJsxFlowElement', () => {
+			const tree = run(CODEGLOSS_MD);
 
 			// Original two code nodes are gone, replaced by a single jsx element.
 			const jsxNodes = tree.children.filter(
@@ -52,7 +52,7 @@ describe('remarkCodegloss (full pipeline)', () => {
 		});
 
 		it('auto-injects the CodeGloss import at the top of the document', () => {
-			const tree = run(SANDBOX_MD);
+			const tree = run(CODEGLOSS_MD);
 
 			const first = tree.children[0] as { type: string; value?: string };
 			expect(first.type).toBe('mdxjsEsm');
@@ -61,7 +61,7 @@ describe('remarkCodegloss (full pipeline)', () => {
 		});
 
 		it('does not inject the import when skipImport is true', () => {
-			const tree = run(SANDBOX_MD, { skipImport: true });
+			const tree = run(CODEGLOSS_MD, { skipImport: true });
 			expect(
 				tree.children.find(n => (n as { type: string }).type === 'mdxjsEsm'),
 			).toBeUndefined();
@@ -74,8 +74,8 @@ describe('remarkCodegloss (full pipeline)', () => {
 			).toBeUndefined();
 		});
 
-		it('handles a sandbox fence with no following annotations block', () => {
-			const md = ['```js sandbox', 'let x = 1', '```'].join('\n');
+		it('handles a codegloss fence with no following annotations block', () => {
+			const md = ['```js codegloss', 'let x = 1', '```'].join('\n');
 			const tree = run(md);
 
 			const jsx = tree.children.find(
@@ -84,15 +84,15 @@ describe('remarkCodegloss (full pipeline)', () => {
 			expect(jsx).toBeDefined();
 		});
 
-		it('transforms multiple sandboxes in a single document', () => {
+		it('transforms multiple codegloss blocks in a single document', () => {
 			const md = [
-				'```js sandbox a.js',
+				'```js codegloss a.js',
 				'let a = 1',
 				'```',
 				'',
 				'Some prose between them.',
 				'',
-				'```js sandbox b.js',
+				'```js codegloss b.js',
 				'let b = 2',
 				'```',
 			].join('\n');
@@ -105,7 +105,7 @@ describe('remarkCodegloss (full pipeline)', () => {
 		});
 
 		it('recurses into block-level children (e.g. blockquotes)', () => {
-			const md = ['> ```js sandbox nested.js', '> let n = 1', '> ```'].join(
+			const md = ['> ```js codegloss nested.js', '> let n = 1', '> ```'].join(
 				'\n',
 			);
 			const tree = run(md);
@@ -130,7 +130,7 @@ describe('remarkCodegloss (full pipeline)', () => {
 				// Noop
 			});
 			const md = [
-				'```js sandbox a.js',
+				'```js codegloss a.js',
 				'let x = 1',
 				'```',
 				'',
@@ -151,8 +151,8 @@ describe('remarkCodegloss (full pipeline)', () => {
 	});
 
 	describe('output: "html"', () => {
-		it('replaces the sandbox pair with a raw html node', () => {
-			const tree = run(SANDBOX_MD, { output: 'html' });
+		it('replaces the codegloss pair with a raw html node', () => {
+			const tree = run(CODEGLOSS_MD, { output: 'html' });
 
 			const htmlNodes = tree.children.filter(n => n.type === 'html');
 			expect(htmlNodes).toHaveLength(1);
@@ -165,21 +165,21 @@ describe('remarkCodegloss (full pipeline)', () => {
 		});
 
 		it('does not inject any mdxjsEsm import in html mode', () => {
-			const tree = run(SANDBOX_MD, { output: 'html' });
+			const tree = run(CODEGLOSS_MD, { output: 'html' });
 			expect(
 				tree.children.find(n => (n as { type: string }).type === 'mdxjsEsm'),
 			).toBeUndefined();
 		});
 
 		it('does not inject an import even when skipImport is also set', () => {
-			const tree = run(SANDBOX_MD, { output: 'html', skipImport: true });
+			const tree = run(CODEGLOSS_MD, { output: 'html', skipImport: true });
 			expect(
 				tree.children.find(n => (n as { type: string }).type === 'mdxjsEsm'),
 			).toBeUndefined();
 		});
 
-		it('produces an html node for a sandbox nested inside a blockquote', () => {
-			const md = ['> ```js sandbox nested.js', '> let n = 1', '> ```'].join(
+		it('produces an html node for a codegloss block nested inside a blockquote', () => {
+			const md = ['> ```js codegloss nested.js', '> let n = 1', '> ```'].join(
 				'\n',
 			);
 			const tree = run(md, { output: 'html' });
@@ -194,7 +194,7 @@ describe('remarkCodegloss (full pipeline)', () => {
 
 	describe('options.theme', () => {
 		it('forwards the theme into the emitted html node', () => {
-			const tree = run(SANDBOX_MD, { output: 'html', theme: 'github-dark' });
+			const tree = run(CODEGLOSS_MD, { output: 'html', theme: 'github-dark' });
 			const html = tree.children.find(n => n.type === 'html') as
 				| { value: string }
 				| undefined;
@@ -202,7 +202,7 @@ describe('remarkCodegloss (full pipeline)', () => {
 		});
 
 		it('forwards the theme into the emitted mdxJsxFlowElement', () => {
-			const tree = run(SANDBOX_MD, { theme: 'one-dark' });
+			const tree = run(CODEGLOSS_MD, { theme: 'one-dark' });
 			const jsx = tree.children.find(
 				n => (n as { type: string }).type === 'mdxJsxFlowElement',
 			) as { attributes: Array<{ name: string; value: unknown }> };
@@ -213,7 +213,7 @@ describe('remarkCodegloss (full pipeline)', () => {
 
 	describe('options.arcs and options.callouts', () => {
 		it('forwards arcs/callouts defaults into the emitted mdx node', () => {
-			const tree = run(SANDBOX_MD, {
+			const tree = run(CODEGLOSS_MD, {
 				arcs: { opacity: 0.65, arrowhead: true },
 				callouts: { popover: true },
 			});
@@ -236,7 +236,7 @@ describe('remarkCodegloss (full pipeline)', () => {
 		});
 
 		it('forwards arcs/callouts defaults into the emitted html node', () => {
-			const tree = run(SANDBOX_MD, {
+			const tree = run(CODEGLOSS_MD, {
 				output: 'html',
 				arcs: { opacity: 0.5 },
 				callouts: { popover: true },
@@ -249,7 +249,7 @@ describe('remarkCodegloss (full pipeline)', () => {
 		});
 
 		it('ignores empty arcs/callouts objects', () => {
-			const tree = run(SANDBOX_MD, { arcs: {}, callouts: {} });
+			const tree = run(CODEGLOSS_MD, { arcs: {}, callouts: {} });
 			const jsx = tree.children.find(
 				n => (n as { type: string }).type === 'mdxJsxFlowElement',
 			) as { attributes: Array<{ name: string }> };
@@ -260,7 +260,7 @@ describe('remarkCodegloss (full pipeline)', () => {
 
 	describe('options.highlight', () => {
 		it('bakes string-returning highlighter output into the mdx node', () => {
-			const tree = run(SANDBOX_MD, {
+			const tree = run(CODEGLOSS_MD, {
 				highlight: () => '<span class="kw">const</span>',
 			});
 			const jsx = tree.children.find(
@@ -276,7 +276,7 @@ describe('remarkCodegloss (full pipeline)', () => {
 		});
 
 		it('threads chrome fields through the mdx node', () => {
-			const tree = run(SANDBOX_MD, {
+			const tree = run(CODEGLOSS_MD, {
 				highlight: () => ({
 					html: '<span>x</span>',
 					background: '#111',
@@ -295,7 +295,7 @@ describe('remarkCodegloss (full pipeline)', () => {
 		});
 
 		it('omits chrome attributes when the structured return only carries html', () => {
-			const tree = run(SANDBOX_MD, {
+			const tree = run(CODEGLOSS_MD, {
 				highlight: () => ({ html: '<span>x</span>' }),
 			});
 			const jsx = tree.children.find(
@@ -310,7 +310,7 @@ describe('remarkCodegloss (full pipeline)', () => {
 		});
 
 		it('threads highlighted HTML + chrome into the html node', () => {
-			const tree = run(SANDBOX_MD, {
+			const tree = run(CODEGLOSS_MD, {
 				output: 'html',
 				highlight: () => ({
 					html: '<span>x</span>',

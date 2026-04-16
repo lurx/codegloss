@@ -1,5 +1,5 @@
 import type { Root } from 'mdast';
-import { detectSandboxPair } from './detect.helpers';
+import { detectCodeglossPair } from './detect.helpers';
 import { buildCodeGlossMdxNode } from './transform-mdx.helpers';
 import { buildCodeGlossHtmlNode } from './transform-html.helpers';
 import { injectImportIfNeeded } from './inject-import.helpers';
@@ -21,7 +21,7 @@ export function remarkCodegloss(options: RemarkCodeglossOptions = {}) {
 			let index = 0;
 
 			while (index < parent.children.length) {
-				const pair = detectSandboxPair(parent.children, index);
+				const pair = detectCodeglossPair(parent.children, index);
 
 				if (pair) {
 					const highlightResult = options.highlight?.(pair.code, pair.lang);
