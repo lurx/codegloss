@@ -7,15 +7,9 @@ import {
 	GUTTER_WIDTH,
 	RESIZE_DEBOUNCE_MS,
 } from './code-gloss.constants';
-import {
-	CHECK_ICON,
-	COPIED_LABEL,
-	COPIED_TITLE,
-	COPY_ICON,
-	COPY_LABEL,
-	FALLBACK_ERROR_HTML,
-} from './code-gloss.strings';
+import { CHECK_ICON, COPY_ICON } from './code-gloss.strings';
 import { escapeHtml } from './escape-html.util';
+import { getLabels } from './labels.helpers';
 import { injectAnnotationsIntoHtml } from './inject-annotations.helpers';
 import { measureTextRight } from './measure-line-end.helpers';
 import { readConfigFromHost } from './read-config.helpers';
@@ -109,7 +103,7 @@ export class CodeGlossElement extends SafeHTMLElement {
 		this.config = readConfigFromHost(this);
 
 		if (!this.config) {
-			this.shadow.innerHTML = FALLBACK_ERROR_HTML;
+			this.shadow.innerHTML = `<div style="color:#c00;font-family:monospace;font-size:12px">${escapeHtml(getLabels().invalidConfig)}</div>`;
 			return;
 		}
 
@@ -341,11 +335,12 @@ export class CodeGlossElement extends SafeHTMLElement {
 		langBadge.textContent = this.config.lang;
 		right.append(langBadge);
 
+		const labels = getLabels();
 		this.copyBtn = document.createElement('button');
 		this.copyBtn.type = 'button';
 		this.copyBtn.className = 'copyButton';
-		this.copyBtn.setAttribute('aria-label', COPY_LABEL);
-		this.copyBtn.title = COPY_LABEL;
+		this.copyBtn.setAttribute('aria-label', labels.copy);
+		this.copyBtn.title = labels.copy;
 		this.copyBtn.innerHTML = COPY_ICON;
 		right.append(this.copyBtn);
 
@@ -437,7 +432,7 @@ export class CodeGlossElement extends SafeHTMLElement {
 		const closeBtn = document.createElement('button');
 		closeBtn.type = 'button';
 		closeBtn.className = 'calloutClose';
-		closeBtn.setAttribute('aria-label', 'Close annotation');
+		closeBtn.setAttribute('aria-label', getLabels().closeAnnotation);
 		closeBtn.textContent = '×';
 		closeBtn.addEventListener('click', () => this.dismissCallout());
 		callout.append(closeBtn);
@@ -669,14 +664,15 @@ export class CodeGlossElement extends SafeHTMLElement {
 	private handleCopy(): void {
 		if (!this.config) return;
 		void navigator.clipboard.writeText(this.config.code);
+		const labels = getLabels();
 		this.copyBtn.innerHTML = CHECK_ICON;
-		this.copyBtn.setAttribute('aria-label', COPIED_LABEL);
-		this.copyBtn.title = COPIED_TITLE;
+		this.copyBtn.setAttribute('aria-label', labels.copied);
+		this.copyBtn.title = labels.copiedTitle;
 		if (this.copyTimer) clearTimeout(this.copyTimer);
 		this.copyTimer = setTimeout(() => {
 			this.copyBtn.innerHTML = COPY_ICON;
-			this.copyBtn.setAttribute('aria-label', COPY_LABEL);
-			this.copyBtn.title = COPY_LABEL;
+			this.copyBtn.setAttribute('aria-label', labels.copy);
+			this.copyBtn.title = labels.copy;
 		}, COPY_FEEDBACK_MS);
 	}
 

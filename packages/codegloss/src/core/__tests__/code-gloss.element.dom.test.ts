@@ -702,6 +702,25 @@ describe('CodeGlossElement', () => {
 			expect(btn.title).toBe('Copy code');
 		});
 
+		it('honors localized labels from setDefaultLabels on both the idle and copied states', async () => {
+			const { setDefaultLabels } = await import('../labels.helpers');
+			setDefaultLabels({ copy: 'Kopieren', copied: 'Kopiert', copiedTitle: 'Kopiert!' });
+			try {
+				vi.useFakeTimers();
+				const element = mount({ lang: 'js', code: 'x' });
+				const btn =
+					shadow(element).querySelector<HTMLButtonElement>('.copyButton')!;
+				expect(btn.getAttribute('aria-label')).toBe('Kopieren');
+				expect(btn.title).toBe('Kopieren');
+
+				btn.click();
+				expect(btn.getAttribute('aria-label')).toBe('Kopiert');
+				expect(btn.title).toBe('Kopiert!');
+			} finally {
+				setDefaultLabels(undefined);
+			}
+		});
+
 		it('resets a pending feedback timer when the button is clicked again', () => {
 			vi.useFakeTimers();
 			const element = mount({ lang: 'js', code: 'x' });

@@ -1,4 +1,5 @@
 import type { Highlighter } from '../core/code-gloss.types';
+import type { CodeGlossLabels } from '../core/labels.types';
 import type { CodeGlossTheme } from '../themes/theme.types';
 
 export type CodeGlossArcStyle = {
@@ -45,4 +46,10 @@ export type CodeGlossUserConfig = {
 	 * function — and codegloss stays out of theming.
 	 */
 	highlight?: Highlighter;
+	/**
+	 * Localizable strings rendered by the element itself (copy button
+	 * labels, callout close button, fallback error). Pass any subset; the
+	 * rest fall back to English defaults. Applied via `initCodegloss`.
+	 */
+	labels?: CodeGlossLabels;
 };
