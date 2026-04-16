@@ -98,25 +98,31 @@ setDefaultHighlighter(
 		lang: 'ts',
 		code: `import Prism from 'prismjs';
 import 'prismjs/components/prism-typescript';
-import 'prismjs/components/prism-python';
+import 'prismjs/themes/prism-tomorrow.css';
 import { setDefaultHighlighter } from 'codegloss';
 import { createPrismHighlighter } from 'codegloss/highlighters/prism';
 
-setDefaultHighlighter(createPrismHighlighter(Prism));`,
+// Name a built-in Prism theme for auto chrome, or pass
+// { background, color } directly for a custom stylesheet.
+setDefaultHighlighter(
+  createPrismHighlighter(Prism, { theme: 'tomorrow' }),
+);`,
 	},
 	{
 		label: 'Highlighter — hljs',
 		lang: 'ts',
 		code: `import hljs from 'highlight.js/lib/core';
 import javascript from 'highlight.js/lib/languages/javascript';
-import typescript from 'highlight.js/lib/languages/typescript';
+import 'highlight.js/styles/atom-one-dark.css';
 import { setDefaultHighlighter } from 'codegloss';
 import { createHljsHighlighter } from 'codegloss/highlighters/hljs';
 
 hljs.registerLanguage('javascript', javascript);
-hljs.registerLanguage('typescript', typescript);
 
-setDefaultHighlighter(createHljsHighlighter(hljs));`,
+// Named hljs preset resolves the bg/fg so codegloss's chrome matches.
+setDefaultHighlighter(
+  createHljsHighlighter(hljs, { theme: 'atom-one-dark' }),
+);`,
 	},
 	{
 		label: 'Highlighter — Custom',

@@ -1,23 +1,23 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { HelpCircle, Redo2, Settings, Undo2, Upload } from 'lucide-react';
 import type { Annotation, Connection } from '@codegloss/react';
-import { useEditorState } from './hooks/use-editor-state';
-import { useCodeglossTheme } from './hooks/use-codegloss-theme';
-import { useEditorTour } from './hooks/use-editor-tour';
-import { CodePane } from './components/code-pane';
-import { CodePicker } from './components/code-picker';
-import type { TokenPick } from './components/code-picker';
-import { PreviewPane } from './components/preview-pane';
+import { HelpCircle, Redo2, Settings, Undo2, Upload } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AnnotationsPanel } from './components/annotations-panel';
+import { nextAutoId } from './components/annotations-panel/annotations-panel.helpers';
+import { CodePane } from './components/code-pane';
+import type { TokenPick } from './components/code-picker';
+import { CodePicker } from './components/code-picker';
 import { ConnectionsPanel } from './components/connections-panel';
 import { ExportPanel } from './components/export-panel';
 import { ImportDialog } from './components/import-dialog';
+import { PreviewPane } from './components/preview-pane';
 import { SettingsDialog } from './components/settings-dialog';
-import { validateConfig } from './helpers/validate-config.helpers';
-import { nextAutoId } from './components/annotations-panel/annotations-panel.helpers';
 import styles from './editor-page.module.scss';
+import { validateConfig } from './helpers/validate-config.helpers';
+import { useCodeglossTheme } from './hooks/use-codegloss-theme';
+import { useEditorState } from './hooks/use-editor-state';
+import { useEditorTour } from './hooks/use-editor-tour';
 
 export function EditorPage() {
 	const {

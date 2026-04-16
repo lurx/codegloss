@@ -28,7 +28,6 @@ export function PreviewPane({ config }: Readonly<PreviewPaneProps>) {
 				connections={config.connections}
 				arcs={config.arcs}
 				callouts={config.callouts}
-				theme={theme}
 			/>
 		</div>
 	);

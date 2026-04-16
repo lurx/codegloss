@@ -12,17 +12,69 @@ CodeGloss ships a small built-in regex tokenizer that handles the common JS/TS c
 A `Highlighter` is just a function:
 
 ````ts
-type Highlighter = (code: string, lang: string) => string;
+type Highlighter = (
+  code: string,
+  lang: string,
+) => string | { html: string; background?: string; color?: string };
 ````
 
-Return a single HTML string for the whole code block — codegloss splits it into lines, preserving open spans across newlines, and weaves your annotation `<mark>`s into the tokenized HTML. Anything that emits span-wrapped tokens works: Shiki, Prism, highlight.js, Starry Night, or your own.
+Return the tokenized HTML for the whole code block (no outer `<pre>` / `<code>` wrappers) — codegloss splits it into lines, preserves open spans across newlines, and weaves your annotation `<mark>`s into the tokenized output. Anything that emits span-wrapped tokens works: Shiki, Prism, highlight.js, Starry Night, or your own.
 
-Register the highlighter once at startup via **`setDefaultHighlighter(fn)`** — it applies to every `<code-gloss>` instance on the page, current and future, and refreshes already-mounted blocks so the swap is visible immediately. Pass `undefined` to revert to the built-in 2.5 KB regex tokenizer.
+**Codegloss stays syntax-agnostic.** Colors come from *your* highlighter, not from codegloss. When the highlighter reports its chrome (via the `{ background, color }` return) codegloss applies those as `--cg-bg` and `--cg-text` on the host so the block matches the highlighter's theme. No named codegloss theme required.
+
+## Three places to plug it in
+
+The same `Highlighter` function works in every consumer pattern. **Pick the one that matches where your code lives** — they're all the same shape, the wrapper just decides when to invoke it.
+
+### Build time — the `remark` plugin
+
+For MDX/markdown, hand the highlighter to the remark plugin. Each fenced sandbox is pre-highlighted at build, baked into the emitted config, and rendered straight from HTML — no client-side highlighter download, no flicker.
+
+````ts
+import remarkCodegloss from 'codegloss/remark';
+import { highlight } from './lib/shiki'; // your shared adapter
+
+remarkPlugins: [[remarkCodegloss, { highlight }]];
+````
+
+### Render time — the framework wrapper `highlight` prop
+
+`<CodeGloss>` accepts a `highlight` prop on every wrapper. The wrapper invokes it during render, drops the resulting HTML into the config, and the element renders pre-highlighted markup. Use this for handwritten React/Vue/Svelte blocks (homepage hero, theme showcase, anything that doesn't go through remark).
+
+````tsx
+import { CodeGloss } from '@codegloss/react';
+import { highlight } from './lib/shiki';
+
+<CodeGloss code="..." lang="js" highlight={highlight} />
+````
+
+### Runtime — `setDefaultHighlighter`
+
+For dynamic blocks where the code isn't known at build time (a code editor, a live preview), register the highlighter once on the page. It applies to every `<code-gloss>` instance — current and future — and refreshes mounted blocks so async highlighters (Shiki) take effect without a reload.
 
 ````ts
 import { setDefaultHighlighter } from 'codegloss';
-setDefaultHighlighter(myHighlighter);
+setDefaultHighlighter(highlight);
 ````
+
+## A shared adapter
+
+Define your highlighter once and reuse it across all three call sites:
+
+````ts
+// lib/shiki.ts
+import { createHighlighter } from 'shiki';
+import { createShikiHighlighter } from 'codegloss/highlighters/shiki';
+
+const shiki = await createHighlighter({
+  themes: ['github-dark'],
+  langs: ['js', 'ts', 'tsx', 'py', 'rust'],
+});
+
+export const highlight = createShikiHighlighter(shiki, { theme: 'github-dark' });
+````
+
+Top-level await keeps the file straightforward in Node-side / build-time contexts (Velite config, Next server components, Vite plugins). For purely client-side runtime registration, wrap the init in an async bootstrap and call `setDefaultHighlighter` once Shiki resolves.
 
 ## Pick your highlighter
 

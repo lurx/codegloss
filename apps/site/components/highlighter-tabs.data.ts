@@ -11,14 +11,14 @@ export const HIGHLIGHTER_TABS: Tab[] = [
 	{
 		label: 'Prism',
 		content:
-			"Smaller and fully synchronous — a good fit when you're already shipping Prism for the rest of your site. Load the languages you use before rendering; the adapter falls back to Prism's plain mapping when a language isn't registered.",
+			"Smaller and fully synchronous — a good fit when you're already shipping Prism for the rest of your site. Load the languages you use, pick your theme CSS, and pass the matching preset name to `createPrismHighlighter` so codegloss's chrome matches the Prism stylesheet. For a custom theme, pass `{ background, color }` directly.",
 		install: 'codegloss prismjs',
 		blocks: [{ htmlKey: 'Highlighter — Prism' }],
 	},
 	{
 		label: 'highlight.js',
 		content:
-			'Similar ergonomics, different theming model — class-based rather than inline. Ship a highlight.js theme stylesheet (e.g. `highlight.js/styles/github-dark.css`) so the `hljs-*` class names get colors.',
+			'Similar ergonomics, different theming model — class-based rather than inline. Ship a highlight.js theme stylesheet and pass the matching preset name to `createHljsHighlighter` so codegloss picks up the bg/fg. Unknown or custom theme? Hand `{ background, color }` in directly.',
 		install: 'codegloss highlight.js',
 		blocks: [{ htmlKey: 'Highlighter — hljs' }],
 	},
