@@ -15,7 +15,6 @@ import { MdxTabs } from './mdx-tabs.component';
 import { UsageTabs } from './usage-tabs.component';
 import { HighlighterTabs } from './highlighter-tabs.component';
 import { InstallTabs } from './install-tabs.component';
-import { CodeBlock } from './code-block.component';
 import { DocLink } from './doc-link.component';
 import { useCopyHeadingAnchors } from '@/hooks';
 import type {
@@ -33,7 +32,6 @@ const MDX_COMPONENTS = {
   UsageTabs,
   HighlighterTabs,
   InstallTabs,
-  pre: CodeBlock,
   a: DocLink,
 };
 

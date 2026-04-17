@@ -4,6 +4,7 @@ import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeSlug from 'rehype-slug';
 import { defineConfig, s } from 'velite';
 import codeglossConfig, { shiki } from './codegloss.config';
+import { rehypeCodeglossPre } from '@codegloss/shiki';
 
 const { arcs, callouts, highlight: codeglossHighlight } = codeglossConfig;
 const SHIKI_THEME = String(codeglossConfig.theme);
@@ -80,6 +81,7 @@ export default defineConfig({
         },
       ],
       [rehypeShikiFromHighlighter, shiki, { theme: SHIKI_THEME }],
+      rehypeCodeglossPre,
     ],
   },
   collections: {

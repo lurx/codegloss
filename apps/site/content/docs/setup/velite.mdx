@@ -107,3 +107,27 @@ export default nextConfig;
 ````
 
 The remark plugin runs during Velite's build step, so `remarkPlugins` goes in `velite.config.ts` only — not in any Next.js MDX config.
+
+## Consistent chrome on every code block (optional)
+
+By default, only fences tagged with `codegloss` get the codegloss chrome (toolbar, line numbers, copy button). Plain fenced code blocks render as regular `<pre>` elements. If you'd rather have every code block on your site use the same visual, install `@codegloss/shiki` and add `rehypeCodeglossPre` to your rehype pipeline — it runs **after** rehype-shiki and rewrites every `<pre><code>` into a `<code-gloss>` element with the highlighted HTML baked in.
+
+<InstallTabs packages="@codegloss/shiki" />
+
+````ts
+import { rehypeCodeglossPre } from '@codegloss/shiki';
+
+export default defineConfig({
+  mdx: {
+    rehypePlugins: [
+      [rehypeShikiFromHighlighter, shiki, { theme: 'github-dark' }],
+      rehypeCodeglossPre,
+    ],
+    // ... remarkPlugins as before
+  },
+});
+````
+
+Now every `<pre><code>` on your site renders inside a `<code-gloss>` element — same toolbar, line numbers, and copy button as your annotated blocks, with Shiki's highlighted HTML baked in at build time.
+
+`@codegloss/shiki` also re-exports `createShikiHighlighter` and `ShikiLikeHighlighter` from `codegloss/highlighters/shiki`, so Shiki users can import everything from one package.

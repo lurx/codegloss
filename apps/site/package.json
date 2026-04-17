@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@codegloss/react": "workspace:*",
+    "@codegloss/shiki": "workspace:*",
     "@codegloss/svelte": "workspace:*",
     "@codegloss/vue": "workspace:*",
     "@shikijs/rehype": "^4.0.2",

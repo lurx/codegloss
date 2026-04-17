@@ -2,7 +2,7 @@ import { defineConfig } from 'codegloss/config';
 import {
 	createShikiHighlighter,
 	type ShikiLikeHighlighter,
-} from 'codegloss/highlighters/shiki';
+} from '@codegloss/shiki';
 import { createHighlighter } from 'shiki';
 
 const SHIKI_THEME = 'laserwave';
