@@ -34,17 +34,16 @@ Publish misbehaves without these.
       `shiki`, `rehype`, `web-components`, `custom-element`, `remark`,
       `mdx`, `code-blocks`).
 - [ ] **Trusted Publisher** registered on npmjs.com for each of the five
-      packages, pointing at this repo and both workflow files (`release.yml`
-      and `pr-snapshot.yml`) — **user action required**. Short-lived OIDC
-      credentials replace the long-lived `NPM_TOKEN` secret; nothing to
-      store in GitHub, nothing to rotate. Look for the "Package doesn't
-      exist yet" / pending-publisher option while registering so the first
-      publish can claim each name.
-- [x] `.github/workflows/pr-snapshot.yml` written (per-PR preview
-      publishes — see below). Ready to dispatch once merged to `main`.
-- [x] `.github/workflows/release.yml` written using `changesets/action`
-      (the Version Packages PR flow — see below). Activates on merge to
-      `main`.
+      packages, pointing at this repo and `publish.yml` — **user action
+      required**. Short-lived OIDC credentials replace the long-lived
+      `NPM_TOKEN` secret; nothing to store in GitHub, nothing to rotate.
+      Walk-through with exact field values lives in `PUBLISHERS.md`.
+- [x] `.github/workflows/publish.yml` written. One file, two triggers:
+      push-to-main runs the Changesets release flow (Version Packages PR →
+      publish to `latest`); manual dispatch runs the PR snapshot flow
+      (publishes every package under a branch-derived dist-tag). npm's
+      trusted publisher config only allows one workflow per package, so
+      both flows share a single file.
 - [x] Changesets installed (`@changesets/cli` as workspace devDep) and
       configured with the five-package `fixed` group in
       `.changeset/config.json`.
@@ -93,52 +92,13 @@ assume OIDC auth and won't succeed otherwise.
 
 Reviewers install a PR's changes straight from npm under a scoped dist-tag,
 without the PR ever merging. Snapshots are opt-in per PR via the Actions UI.
+The snapshot job lives inside `.github/workflows/publish.yml` alongside the
+release job; the `workflow_dispatch` trigger selects the snapshot branch.
 
-`.github/workflows/pr-snapshot.yml`:
-
-```yaml
-name: Publish PR snapshot
-
-on:
-  workflow_dispatch:
-    inputs:
-      ref:
-        description: Branch or any ref to publish from
-        required: true
-        type: string
-
-permissions:
-  contents: read
-  id-token: write  # OIDC exchange with npm for trusted publishing
-
-jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.ref }}
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-          registry-url: https://registry.npmjs.org
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm -w run build:packages
-      - name: Derive snapshot tag
-        id: tag
-        run: |
-          t=$(echo "${{ inputs.ref }}" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
-          echo "tag=$t" >> "$GITHUB_OUTPUT"
-      - run: pnpm changeset version --snapshot ${{ steps.tag.outputs.tag }}
-      - run: pnpm -r publish --no-git-tag-version --tag ${{ steps.tag.outputs.tag }}
-```
-
-**Dispatch:** Actions tab → *Publish PR snapshot* → *Run workflow* → leave
-*Use workflow from* on `main` and paste the PR branch name into the `ref`
-input. The workflow definition is always read from `main`, so every open PR
-is dispatchable regardless of when it branched off.
+**Dispatch:** Actions tab → *Publish* → *Run workflow* → leave *Use workflow
+from* on `main` and paste the PR branch name into the `ref` input. The
+workflow definition is always read from `main`, so every open PR is
+dispatchable regardless of when it branched off.
 
 The resulting tarball publishes at e.g.
 `codegloss@0.1.0-<branch-slug>-20260418124500` under dist-tag
@@ -170,11 +130,10 @@ a published version.
    ]]
    ```
 3. Install the `changesets/action` GitHub Action on `main`. No `NPM_TOKEN`
-   secret needed — both release and snapshot workflows authenticate via
-   npm Trusted Publishing (OIDC), which is why they set
-   `permissions: id-token: write`.
+   secret needed — `publish.yml` authenticates via npm Trusted Publishing
+   (OIDC), which is why it sets `permissions: id-token: write`.
 4. Register this repo as a Trusted Publisher for each of the five packages
-   on npmjs.com (both `release.yml` and `pr-snapshot.yml`).
+   on npmjs.com, pointing at `publish.yml`. Details in `PUBLISHERS.md`.
 
 **Per feature, starting on `main`:**
 
