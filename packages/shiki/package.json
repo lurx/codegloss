@@ -13,11 +13,20 @@
   "publishConfig": {
     "access": "public"
   },
+  "keywords": [
+    "codegloss",
+    "code-annotation",
+    "annotated-code",
+    "syntax-highlighting",
+    "shiki",
+    "rehype",
+    "rehype-plugin"
+  ],
   "type": "module",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "files": ["dist"],
   "exports": {

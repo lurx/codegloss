@@ -13,10 +13,18 @@
   "publishConfig": {
     "access": "public"
   },
+  "keywords": [
+    "codegloss",
+    "code-annotation",
+    "annotated-code",
+    "syntax-highlighting",
+    "svelte",
+    "svelte-component"
+  ],
   "type": "module",
   "types": "./src/code-gloss.component.svelte",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "files": ["src"],
   "exports": {

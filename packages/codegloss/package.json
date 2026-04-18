@@ -10,6 +10,17 @@
     "directory": "packages/codegloss"
   },
   "bugs": "https://github.com/lurx/codegloss/issues",
+  "keywords": [
+    "codegloss",
+    "code-annotation",
+    "annotated-code",
+    "web-components",
+    "custom-element",
+    "syntax-highlighting",
+    "remark",
+    "mdx",
+    "code-blocks"
+  ],
   "type": "module",
   "sideEffects": [
     "./dist/index.js",
@@ -18,7 +29,7 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "files": [
     "dist"
