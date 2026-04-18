@@ -1,0 +1,105 @@
+name: Publish
+
+# Single workflow for both publish flows because npm's trusted publisher
+# config allows only one workflow per package. Each trigger runs exactly
+# one of the two jobs below.
+#
+# - push → main      → Changesets opens/updates a Version Packages PR;
+#                      merging that PR re-triggers this workflow and
+#                      publishes to npm under the default `latest` tag.
+# - workflow_dispatch → publishes every package under a branch-derived
+#                      dist-tag (snapshot), so reviewers can install a PR
+#                      straight from npm without it touching main.
+#
+# Auth via npm Trusted Publishing (OIDC); no NPM_TOKEN secret.
+# See PRE-RELEASE.md for the full workflow.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Branch or any ref to publish a snapshot from
+        required: true
+        type: string
+
+permissions:
+  contents: write       # changesets/action opens/updates the Version Packages PR
+  pull-requests: write  # same
+  id-token: write       # OIDC exchange with npm for trusted publishing
+
+jobs:
+  release:
+    name: Release (main)
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    concurrency: release-${{ github.ref }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build local packages
+        run: pnpm -w run build:packages
+
+      - name: Create release PR or publish
+        uses: changesets/action@v1
+        with:
+          version: pnpm changeset version
+          publish: pnpm changeset publish
+          commit: "chore(release): version packages"
+          title: "chore(release): version packages"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  snapshot:
+    name: PR snapshot
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    concurrency: snapshot-${{ inputs.ref }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build local packages
+        run: pnpm -w run build:packages
+
+      - name: Derive snapshot tag from ref
+        id: tag
+        run: |
+          t=$(echo "${{ inputs.ref }}" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
+          echo "tag=$t" >> "$GITHUB_OUTPUT"
+
+      - name: Version packages as snapshot
+        run: pnpm changeset version --snapshot ${{ steps.tag.outputs.tag }}
+
+      - name: Publish to npm under the snapshot tag
+        run: pnpm -r publish --no-git-tag-version --tag ${{ steps.tag.outputs.tag }}
