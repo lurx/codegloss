@@ -1,4 +1,4 @@
-import { CodeGloss } from 'codegloss/react';
+import { CodeGloss } from '@codegloss/react';
 
 import type { MDXComponents } from 'mdx/types';
 

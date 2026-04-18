@@ -9,18 +9,17 @@ CodeGloss works with Astro (and [Starlight](https://starlight.astro.build/)) usi
 
 ## Install
 
-````
-npm install codegloss
-````
+<InstallTabs packages="codegloss" />
 
 ## Configure the remark plugin
 
-Add `remark-codegloss` to your `astro.config.mjs` with `output: 'html'`:
+Add `remark-codegloss` to your `astro.config.mjs` with `output: 'html'`. If you've declared a `highlight` in `codegloss.config.ts` (see [Syntax Highlighters](/docs/highlighters)), thread it through so blocks are pre-highlighted at build:
 
 ````js
 import starlight from '@astrojs/starlight';
 import { defineConfig } from 'astro/config';
 import remarkCodegloss from 'codegloss/remark';
+import codeglossConfig from './codegloss.config';
 
 export default defineConfig({
   integrations: [
@@ -38,7 +37,12 @@ export default defineConfig({
     }),
   ],
   markdown: {
-    remarkPlugins: [[remarkCodegloss, { output: 'html' }]],
+    remarkPlugins: [
+      [
+        remarkCodegloss,
+        { output: 'html', highlight: codeglossConfig.highlight },
+      ],
+    ],
   },
 });
 ````
@@ -52,17 +56,15 @@ Astro serves static assets from `public/`. Create a prebuild script that copies 
 ````js
 // scripts/copy-runtime.mjs
 import { copyFile, mkdir, readdir } from 'node:fs/promises';
-import { createRequire } from 'node:module';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const publicDir = resolve(here, '..', 'public');
-const require = createRequire(import.meta.url);
 
 await mkdir(publicDir, { recursive: true });
 
-const runtimeEntry = require.resolve('codegloss');
+const runtimeEntry = fileURLToPath(import.meta.resolve('codegloss'));
 await copyFile(runtimeEntry, resolve(publicDir, 'codegloss.js'));
 
 // Copy any chunk files the runtime imports
@@ -87,10 +89,10 @@ Add it to your build script:
 
 ## Write annotated code blocks
 
-Use the standard fenced sandbox syntax in any `.md` or `.mdx` content file:
+Use the standard fenced codegloss syntax in any `.md` or `.mdx` content file:
 
 `````md
-```js sandbox fib.js
+```js codegloss fib.js
 function fib(n) {
   return n < 2 ? n : fib(n - 1) + fib(n - 2);
 }

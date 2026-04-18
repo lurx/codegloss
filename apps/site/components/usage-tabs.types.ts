@@ -8,10 +8,8 @@ export type CodeBlockEntry = {
 export type Tab = {
 	label: string;
 	content: string;
+	/** Space-separated packages to install; rendered as an <InstallTabs />. */
+	install?: string;
 	blocks: CodeBlockEntry[];
 };
 
-export type CopyableBlockProps = {
-	html: string;
-	label?: string;
-};

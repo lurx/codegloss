@@ -11,11 +11,14 @@ It ships as a **Web Component** so it works in any framework — or no framework
 
 ## Installation
 
-````
-npm install codegloss
-````
+<InstallTabs packages="codegloss" />
 
-That's it. One package — the web component, framework wrappers, remark plugin, themes, and config are all included. Framework-specific peer dependencies (`react`, `vue`, `unified`) are optional.
+That installs the `<code-gloss>` web component, the remark plugin, themes, and the config helpers. If you're using a framework, pick the matching wrapper in the **Pick your usage** section below — each tab shows the exact install command.
+
+### Requirements
+
+- **Node 18+** for build tooling.
+- **ESM consumers.** The package ships as ES modules only; use a bundler (Vite, Next, webpack 5, Rollup, esbuild) or import from an ESM Node config. The `codegloss/remark` subpath keeps a CJS build for older remark config pipelines (Docusaurus with `.ts` configs, etc.).
 
 ## Pick your usage
 
@@ -27,7 +30,7 @@ See the [Remark Plugin docs](/docs/plugin) for output modes (`mdx` for React/MDX
 
 This is a live CodeGloss block — click any underlined token to expand its annotation, or click a connection arc in the gutter:
 
-```js sandbox greet.js
+```js codegloss greet.js
 function greet(name) {
   const message = "Hello, " + name + "!";
   console.log(message);
@@ -37,6 +40,16 @@ function greet(name) {
 greet("world");
 ```
 
+```js
+function greet(name) {
+  const message = "Hello, " + name + "!";
+  console.log(message);
+  return message;
+}
+
+greet("world");
+```
+{/*
 ```json annotations
 {
   "annotations": [
@@ -75,7 +88,7 @@ greet("world");
     }
   ]
 }
-```
+``` */}
 
 ## Next steps
 

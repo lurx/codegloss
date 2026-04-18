@@ -7,25 +7,16 @@ import {
 	GUTTER_WIDTH,
 	RESIZE_DEBOUNCE_MS,
 } from './code-gloss.constants';
-import {
-	CHECK_ICON,
-	COPIED_LABEL,
-	COPIED_TITLE,
-	COPY_ICON,
-	COPY_LABEL,
-	FALLBACK_ERROR_HTML,
-	OUTPUT_LABEL,
-	RUN_AGAIN_LABEL,
-	RUN_LABEL,
-} from './code-gloss.strings';
+import { CHECK_ICON, COPY_ICON } from './code-gloss.strings';
 import { escapeHtml } from './escape-html.util';
+import { getLabels } from './labels.helpers';
 import { injectAnnotationsIntoHtml } from './inject-annotations.helpers';
 import { measureTextRight } from './measure-line-end.helpers';
 import { readConfigFromHost } from './read-config.helpers';
 import { drawArcs } from './render/arcs.helpers';
 import type { AnnotationPosition } from './render/arcs.types';
-import { run } from './runners.helpers';
 import { buildLineHtmlFallback, findAnnotationHits } from './tokenize.helpers';
+import { splitHighlightedLines } from './split-lines.helpers';
 import { codeGlossStyles } from './code-gloss-styles.generated';
 import type {
 	Annotation,
@@ -33,7 +24,6 @@ import type {
 	Connection,
 	ConnectionTooltipState,
 	Highlighter,
-	RunResult,
 } from './code-gloss.types';
 
 // SSR-safe HTMLElement stub. The real class is only ever instantiated in
@@ -63,8 +53,12 @@ export class CodeGlossElement extends SafeHTMLElement {
 		return ['theme'];
 	}
 
-	/** Optional custom syntax highlighter — set as a property, not an attribute. */
-	highlight: Highlighter | undefined;
+	/**
+	 * Optional custom syntax highlighter — set as a property, not an attribute.
+	 * Declared (not initialized) so `setDefaultHighlighter()` can install the
+	 * highlighter on the prototype without instance fields shadowing it.
+	 */
+	declare highlight: Highlighter | undefined;
 
 	private config: CodeGlossConfig | undefined;
 	private activeAnnotationId: string | undefined;
@@ -78,7 +72,6 @@ export class CodeGlossElement extends SafeHTMLElement {
 	private svgEl!: SVGSVGElement;
 	private rightSvgEl!: SVGSVGElement;
 	private preEl!: HTMLPreElement;
-	private outputEl!: HTMLDivElement;
 	private copyBtn!: HTMLButtonElement;
 	private popoverEl!: HTMLDivElement;
 	private annotationPopoverEl!: HTMLDivElement;
@@ -110,7 +103,7 @@ export class CodeGlossElement extends SafeHTMLElement {
 		this.config = readConfigFromHost(this);
 
 		if (!this.config) {
-			this.shadow.innerHTML = FALLBACK_ERROR_HTML;
+			this.shadow.innerHTML = `<div style="color:#c00;font-family:monospace;font-size:12px">${escapeHtml(getLabels().invalidConfig)}</div>`;
 			return;
 		}
 
@@ -120,10 +113,41 @@ export class CodeGlossElement extends SafeHTMLElement {
 			this.applyTheme(themeName);
 		}
 
+		// Prefer pre-highlighted HTML from the config (baked at build time by
+		// the remark plugin or a wrapper's highlight prop); fall back to the
+		// runtime `highlight` property. Either source may also expose chrome
+		// colors that we apply as host CSS variables — codegloss itself
+		// ships no opinion on token or background colors.
+		let highlighted: string | undefined = this.config.highlightedHtml;
+		let chromeBackground: string | undefined = this.config.highlightBackground;
+		let chromeColor: string | undefined = this.config.highlightColor;
+
+		if (highlighted === undefined && this.highlight) {
+			const result = this.highlight(this.config.code, this.config.lang);
+			if (typeof result === 'string') {
+				highlighted = result;
+			} else {
+				highlighted = result.html;
+				chromeBackground = result.background ?? chromeBackground;
+				chromeColor = result.color ?? chromeColor;
+			}
+		}
+
 		this.highlightedLines =
-			this.highlight?.(this.config.code, this.config.lang) ?? undefined;
+			highlighted === undefined
+				? undefined
+				: splitHighlightedLines(highlighted);
+
 		this.primeInlineDefaultOpen();
 		this.buildDom();
+		// Apply chrome colors AFTER buildDom so they land on the shadow-internal
+		// root instead of the host's inline style attribute — writing them on
+		// the host would diverge from server-rendered HTML and trip React's
+		// hydration check.
+		if (this.root) {
+			if (chromeBackground) this.root.style.setProperty('--cg-bg', chromeBackground);
+			if (chromeColor) this.root.style.setProperty('--cg-text', chromeColor);
+		}
 		this.attachListeners();
 		this.applyFloatingDefaultOpens();
 	}
@@ -177,6 +201,17 @@ export class CodeGlossElement extends SafeHTMLElement {
 		if (this.resizeTimer) clearTimeout(this.resizeTimer);
 		if (this.copyTimer) clearTimeout(this.copyTimer);
 		if (this.animationFrameId) cancelAnimationFrame(this.animationFrameId);
+	}
+
+	/**
+	 * Tear the block down and re-run the full init flow. Call this after
+	 * swapping `.highlight` on already-mounted instances — for example when
+	 * an async highlighter like Shiki finishes loading.
+	 */
+	refresh(): void {
+		this.disconnectedCallback();
+		this.shadow.innerHTML = '';
+		this.connectedCallback();
 	}
 
 
@@ -250,11 +285,6 @@ export class CodeGlossElement extends SafeHTMLElement {
 
 		sandbox.append(this.codeArea);
 
-		this.outputEl = document.createElement('div');
-		this.outputEl.className = 'outputStrip';
-		this.outputEl.style.display = 'none';
-		sandbox.append(this.outputEl);
-
 		this.root.append(sandbox);
 
 		this.popoverEl = document.createElement('div');
@@ -305,23 +335,14 @@ export class CodeGlossElement extends SafeHTMLElement {
 		langBadge.textContent = this.config.lang;
 		right.append(langBadge);
 
+		const labels = getLabels();
 		this.copyBtn = document.createElement('button');
 		this.copyBtn.type = 'button';
 		this.copyBtn.className = 'copyButton';
-		this.copyBtn.setAttribute('aria-label', COPY_LABEL);
-		this.copyBtn.title = COPY_LABEL;
+		this.copyBtn.setAttribute('aria-label', labels.copy);
+		this.copyBtn.title = labels.copy;
 		this.copyBtn.innerHTML = COPY_ICON;
 		right.append(this.copyBtn);
-
-		const isRunnable = this.config.runnable ?? this.config.lang === 'js';
-		if (isRunnable) {
-			const runBtn = document.createElement('button');
-			runBtn.type = 'button';
-			runBtn.className = 'runButton';
-			runBtn.textContent = RUN_LABEL;
-			runBtn.addEventListener('click', () => this.handleRun(runBtn));
-			right.append(runBtn);
-		}
 
 		toolbar.append(right);
 		return toolbar;
@@ -411,7 +432,7 @@ export class CodeGlossElement extends SafeHTMLElement {
 		const closeBtn = document.createElement('button');
 		closeBtn.type = 'button';
 		closeBtn.className = 'calloutClose';
-		closeBtn.setAttribute('aria-label', 'Close annotation');
+		closeBtn.setAttribute('aria-label', getLabels().closeAnnotation);
 		closeBtn.textContent = '×';
 		closeBtn.addEventListener('click', () => this.dismissCallout());
 		callout.append(closeBtn);
@@ -643,39 +664,16 @@ export class CodeGlossElement extends SafeHTMLElement {
 	private handleCopy(): void {
 		if (!this.config) return;
 		void navigator.clipboard.writeText(this.config.code);
+		const labels = getLabels();
 		this.copyBtn.innerHTML = CHECK_ICON;
-		this.copyBtn.setAttribute('aria-label', COPIED_LABEL);
-		this.copyBtn.title = COPIED_TITLE;
+		this.copyBtn.setAttribute('aria-label', labels.copied);
+		this.copyBtn.title = labels.copiedTitle;
 		if (this.copyTimer) clearTimeout(this.copyTimer);
 		this.copyTimer = setTimeout(() => {
 			this.copyBtn.innerHTML = COPY_ICON;
-			this.copyBtn.setAttribute('aria-label', COPY_LABEL);
-			this.copyBtn.title = COPY_LABEL;
+			this.copyBtn.setAttribute('aria-label', labels.copy);
+			this.copyBtn.title = labels.copy;
 		}, COPY_FEEDBACK_MS);
-	}
-
-	private handleRun(runBtn: HTMLButtonElement): void {
-		if (!this.config) return;
-		const result = run(this.config.lang, this.config.code);
-		this.renderOutput(result);
-		runBtn.textContent = RUN_AGAIN_LABEL;
-	}
-
-	private renderOutput(result: RunResult): void {
-		this.outputEl.innerHTML = '';
-		this.outputEl.style.display = 'block';
-
-		const label = document.createElement('span');
-		label.className = 'outputLabel';
-		label.textContent = OUTPUT_LABEL;
-		this.outputEl.append(label);
-
-		for (const line of result.lines) {
-			const lineElement = document.createElement('div');
-			lineElement.className = 'outputLine';
-			lineElement.textContent = `> ${line}`;
-			this.outputEl.append(lineElement);
-		}
 	}
 
 	private renderConnectionPopover(): void {

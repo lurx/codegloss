@@ -1,5 +1,5 @@
 <script>
-  import CodeGloss from 'codegloss/svelte';
+  import CodeGloss from '@codegloss/svelte';
 
   const fibAnnotations = [
     {
@@ -20,7 +20,7 @@ markdown page.
 
 ## 1 — Manual `<CodeGloss />` invocation (via the typed Svelte wrapper)
 
-This path imports the wrapper from `codegloss/svelte` and invokes it directly.
+This path imports the wrapper from `@codegloss/svelte` and invokes it directly.
 It gives you full prop typing in `svelte-check`.
 
 <CodeGloss
@@ -32,13 +32,13 @@ It gives you full prop typing in `svelte-check`.
   annotations={fibAnnotations}
 />
 
-## 2 — Fenced sandbox (via `remark-codegloss` in HTML mode)
+## 2 — Fenced codegloss block (via `remark-codegloss` in HTML mode)
 
 This path uses `remark-codegloss` registered in `mdsvex` with `output: 'html'`,
 so the fenced block below is rewritten into a raw `<code-gloss>` HTML node that
 mdsvex passes through verbatim.
 
-```js sandbox greet.js
+```js codegloss greet.js
 const greet = (name) => `hello, ${name}`;
 greet('world');
 ```

@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     'Interactive code annotations for MDX. Highlight tokens, add tooltips, draw connection arcs.',
 };
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
   return (
     <html lang="en" data-theme="dark" suppressHydrationWarning>
       <head>

@@ -5,7 +5,6 @@ import {
 	codeTextarea,
 	langInput,
 	filenameInput,
-	runnableCheckbox,
 } from './helpers';
 
 test.describe('editor smoke', () => {
@@ -23,7 +22,6 @@ test.describe('editor smoke', () => {
 		await expect(codeTextarea(page)).toHaveValue(/function greet/);
 		await expect(langInput(page)).toHaveValue('js');
 		await expect(filenameInput(page)).toHaveValue('greet.js');
-		await expect(runnableCheckbox(page)).toBeChecked();
 
 		await expect(page.getByText('Annotations', { exact: true })).toBeVisible();
 		await expect(page.getByText('Connections', { exact: true })).toBeVisible();

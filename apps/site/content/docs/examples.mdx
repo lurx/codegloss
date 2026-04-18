@@ -1,6 +1,6 @@
 ---
 title: Examples
-sidebar_position: 5
+sidebar_position: 7
 ---
 
 # Examples
@@ -15,7 +15,7 @@ Click any underlined token to expand its annotation. Click a connection arc (or 
 
 A classic memoization pattern. Annotations explain the cache lifecycle, and connections link the table declaration to its lookups.
 
-```js sandbox fibonacci.js
+```js codegloss fibonacci.js
 function fibonacci(n) {
   const memo = {};
 
@@ -101,7 +101,7 @@ console.log(fibonacci(10));
 
 A pattern where a single listener on a parent element handles events for multiple children.
 
-```js sandbox delegation.js
+```js codegloss delegation.js
 function delegate(parent, selector, event, handler) {
   parent.addEventListener(event, function (e) {
     const target = e.target.closest(selector);
@@ -172,7 +172,7 @@ Connections can render on the right side of the code block via [`"side": "right"
 
 `arrowhead` is set **per block**, not per connection — the example below applies arrowheads to all three arcs, the two left-side ones (`q1→q2`, `q4→q2`) as well as the single right-side one (`q3→q5`).
 
-```ts sandbox fetch-queue.ts
+```ts codegloss fetch-queue.ts
 async function processQueue(ids) {
   const results = new Map();
 
@@ -254,7 +254,7 @@ Annotation callouts normally render inline — clicking a token expands a row of
 
 Annotation and connection popovers are independent surfaces: a reader can have an annotation popover and an arc popover open at the same time. Inline and popover presentations of the *same* annotation are mutually exclusive.
 
-```js sandbox lru.js
+```js codegloss lru.js
 class LruCache {
   constructor(limit) {
     this.limit = limit;
@@ -318,7 +318,7 @@ class LruCache {
 
 For in-doc walkthroughs you can surface a specific annotation or connection on first render via [`defaultOpen`](/docs/api#pre-opening-callouts). At most **one annotation callout** and **one connection popover** can be pre-opened per block — if multiple are marked, the last one in its array wins (CSS-cascade style).
 
-```ts sandbox debounce.ts
+```ts codegloss debounce.ts
 function debounce(fn, wait) {
   let timer;
   return function (...args) {
@@ -365,9 +365,9 @@ function debounce(fn, wait) {
 
 ## Minimal — No Annotations
 
-A sandbox block without a following annotations block renders as a plain code viewer with line numbers and a toolbar.
+A codegloss block without a following annotations block renders as a plain code viewer with line numbers and a toolbar.
 
-```js sandbox counter.js
+```js codegloss counter.js
 let count = 0;
 
 function increment() {
@@ -388,10 +388,10 @@ The examples above all use the MDX fenced code block syntax with the remark plug
 
 ### React (direct)
 
-Import `CodeGloss` from `codegloss/react` and pass props directly — no remark plugin or MDX needed:
+Import `CodeGloss` from `@codegloss/react` and pass props directly — no remark plugin or MDX needed:
 
 ````tsx
-import { CodeGloss } from 'codegloss/react';
+import { CodeGloss } from '@codegloss/react';
 
 export function Example() {
   return (

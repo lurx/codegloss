@@ -1,6 +1,6 @@
 import DefaultTheme from 'vitepress/theme';
 
-import { CodeGloss } from 'codegloss/vue';
+import { CodeGloss } from '@codegloss/vue';
 
 import type { Theme } from 'vitepress';
 

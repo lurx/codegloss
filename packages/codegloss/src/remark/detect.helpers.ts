@@ -1,9 +1,9 @@
 import type { Code } from 'mdast';
 import type { DetectedPair } from './remark.types';
 
-const SANDBOX_PATTERN = /^(\w+)\s+sandbox(?:\s+(.+))?$/;
+const CODEGLOSS_PATTERN = /^(\w+)\s+codegloss(?:\s+(.+))?$/;
 
-export function detectSandboxPair(
+export function detectCodeglossPair(
 	children: unknown[],
 	index: number,
 ): DetectedPair | undefined {
@@ -12,7 +12,7 @@ export function detectSandboxPair(
 	if (node?.type !== 'code') return undefined;
 
 	const langMeta = [node.lang, node.meta].filter(Boolean).join(' ');
-	const match = SANDBOX_PATTERN.exec(langMeta);
+	const match = CODEGLOSS_PATTERN.exec(langMeta);
 
 	if (!match) return undefined;
 

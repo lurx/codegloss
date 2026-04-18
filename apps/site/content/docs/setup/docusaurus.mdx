@@ -9,26 +9,26 @@ Set up CodeGloss with [Docusaurus](https://docusaurus.io/) v3.
 
 ## Install
 
-````
-npm install codegloss
-````
+<InstallTabs packages="codegloss @codegloss/react" />
 
 ## Configure the remark plugin
 
-Add `remark-codegloss` to your `docusaurus.config.js`. Use `skipImport: true` because we'll provide the component via Docusaurus's MDX components map (next step):
+Add `remark-codegloss` to your `docusaurus.config.js`. Use `skipImport: true` because we'll provide the component via Docusaurus's MDX components map (next step). If you've declared a `highlight` in `codegloss.config.ts` (see [Syntax Highlighters](/docs/highlighters)), thread it through so blocks are pre-highlighted at build:
 
 ````js
 import remarkCodegloss from 'codegloss/remark';
+import codeglossConfig from './codegloss.config';
+
+const codeglossPlugin = [
+  remarkCodegloss,
+  { skipImport: true, highlight: codeglossConfig.highlight },
+];
 
 export default {
   presets: [
     ['classic', {
-      docs: {
-        remarkPlugins: [[remarkCodegloss, { skipImport: true }]],
-      },
-      blog: {
-        remarkPlugins: [[remarkCodegloss, { skipImport: true }]],
-      },
+      docs: { remarkPlugins: [codeglossPlugin] },
+      blog: { remarkPlugins: [codeglossPlugin] },
     }],
   ],
 };
@@ -41,7 +41,7 @@ Swizzle MDX components to make CodeGloss available everywhere:
 ````js
 // src/theme/MDXComponents.js
 import MDXComponents from '@theme-original/MDXComponents';
-import { CodeGloss } from 'codegloss/react';
+import { CodeGloss } from '@codegloss/react';
 
 export default {
   ...MDXComponents,
@@ -49,7 +49,7 @@ export default {
 };
 ````
 
-That's it. Every `js sandbox` block in your docs and blog now renders as an interactive CodeGloss instance.
+That's it. Every `js codegloss` block in your docs and blog now renders as an interactive CodeGloss instance.
 
 ## No CSS import needed
 
@@ -79,4 +79,4 @@ These variables propagate into the Shadow DOM through `:host` inheritance.
 
 ## Why use the React subpath?
 
-The `codegloss/react` subpath is a thin JSX wrapper around the underlying Web Component. Docusaurus runs on React, so importing the React wrapper is the most natural fit. Under the hood, both the React wrapper and the vanilla Web Component render the same `<code-gloss>` element with a Shadow DOM tree.
+The `@codegloss/react` subpath is a thin JSX wrapper around the underlying Web Component. Docusaurus runs on React, so importing the React wrapper is the most natural fit. Under the hood, both the React wrapper and the vanilla Web Component render the same `<code-gloss>` element with a Shadow DOM tree.

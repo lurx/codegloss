@@ -1014,6 +1014,69 @@ a:hover {
 	margin-top: 0;
 }
 
+/* ─── Install tabs ─── */
+.install-tabs {
+	margin: 1.25rem 0 1.5rem;
+}
+
+.install-tabs-bar {
+	display: inline-flex;
+	padding: 3px;
+	border: 1px solid var(--site-border);
+	background: var(--site-surface);
+	border-radius: 8px;
+	margin-bottom: 8px;
+	gap: 2px;
+}
+
+.install-tabs-trigger {
+	font-family: var(--font-mono);
+	font-size: 0.875rem;
+	font-weight: 500;
+	padding: 4px 12px;
+	background: transparent;
+	border: 0;
+	border-radius: 5px;
+	color: var(--site-muted);
+	cursor: pointer;
+	transition:
+		color 150ms ease,
+		background 150ms ease;
+	letter-spacing: 0.02em;
+}
+
+.install-tabs-trigger:hover {
+	color: var(--site-heading);
+}
+
+.install-tabs-trigger-active {
+	background: var(--accent-subtle);
+	color: var(--accent-light);
+}
+
+.install-tabs-trigger-active:hover {
+	color: var(--accent-light);
+}
+
+.install-tabs-command {
+	margin: 0;
+	padding: 12px 16px;
+	font-family: var(--font-mono);
+	font-size: 1rem;
+	line-height: 1.5;
+	background: var(--site-pre-bg);
+	color: var(--site-pre-fg);
+	border: 1px solid var(--site-border);
+	border-radius: 8px;
+	overflow-x: auto;
+}
+
+.install-tabs-command::before {
+	content: '$ ';
+	color: var(--site-muted);
+	user-select: none;
+}
+
 /* ─── Search ─── */
 .search-trigger {
 	display: inline-flex;

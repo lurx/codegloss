@@ -3,7 +3,7 @@
 This file is rendered to HTML by `unified()` + `remark-codegloss({ output: 'html' })`.
 The output is a regular static HTML file you could drop into any blog.
 
-```js sandbox fib.js
+```js codegloss fib.js
 function fib(n) {
   return n < 2 ? n : fib(n - 1) + fib(n - 2);
 }

@@ -12,6 +12,10 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@codegloss/react": "workspace:*",
+    "@codegloss/shiki": "workspace:*",
+    "@codegloss/svelte": "workspace:*",
+    "@codegloss/vue": "workspace:*",
     "@shikijs/rehype": "^4.0.2",
     "codegloss": "workspace:*",
     "driver.js": "^1.4.0",

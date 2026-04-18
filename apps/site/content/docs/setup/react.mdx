@@ -5,15 +5,13 @@ sidebar_position: 0
 
 # React
 
-CodeGloss ships a thin React wrapper at `codegloss/react`. It works with React 16.14+ and renders the same `<code-gloss>` Web Component under the hood.
+CodeGloss ships a thin React wrapper at `@codegloss/react`. It works with React 16.14+ and renders the same `<code-gloss>` Web Component under the hood.
 
 ## Install
 
-````
-npm install codegloss
-````
+<InstallTabs packages="codegloss @codegloss/react" />
 
-`codegloss` declares `react` as an **optional** peer dependency with a permissive range (`>=16.14.0`) — npm/pnpm/yarn won't error on any modern React version.
+`@codegloss/react` declares `codegloss` and `react` as peer dependencies with a permissive React range (`>=16.14.0`) — npm/pnpm/yarn won't error on any modern React version.
 
 ## Usage
 
@@ -22,7 +20,7 @@ Import and use it as a regular component. The `'use client'` directive is needed
 ````tsx
 'use client';
 
-import { CodeGloss } from 'codegloss/react';
+import { CodeGloss } from '@codegloss/react';
 
 export function Example() {
   return (
@@ -59,10 +57,10 @@ The React wrapper accepts the same props as the Web Component's JSON config:
 | `filename` | `string?` | Filename shown in the toolbar |
 | `annotations` | `Annotation[]?` | Token-level annotations. Each accepts optional `popover: true` (float instead of inline) and `defaultOpen: true` (pre-open on first render). |
 | `connections` | `Connection[]?` | Visual arcs between annotations. Each connection accepts optional `side: 'left' \| 'right'` (default `'left'`) and `defaultOpen: true` (pre-open the popover on first render). |
-| `runnable` | `boolean?` | Show the Run button (default: `true` if `lang === 'js'`) |
 | `theme` | `string?` | Named theme (`github-dark`, `dracula`, etc.) |
 | `arcs` | `object?` | Arc style overrides, including `arrowhead: true` for marker-end arrows at each `to` endpoint. |
 | `callouts` | `object?` | Block-level callout behavior, e.g. `popover: true` to flip every annotation to popover presentation. |
+| `highlight` | `Highlighter?` | Optional syntax highlighter — usually passed as `highlight={codeglossConfig.highlight}` from your `codegloss.config.ts`. When provided, the wrapper invokes it during render and bakes the result into the config so the element renders pre-highlighted markup. See [Syntax Highlighters](/docs/highlighters) for the config-driven pattern. |
 
 See [Component API](/docs/api) for full type definitions, [Arc style options](/docs/api#arc-style-options) for every `arcs` field, and [Callout options](/docs/api#callout-options) for `callouts`.
 

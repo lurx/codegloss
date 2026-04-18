@@ -1,4 +1,4 @@
-import type { Annotation } from 'codegloss/react';
+import type { Annotation } from '@codegloss/react';
 
 const AUTO_ID_PREFIX = 'a';
 

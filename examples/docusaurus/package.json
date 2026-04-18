@@ -9,6 +9,7 @@
     "test": "docusaurus build && node ./test.mjs"
   },
   "dependencies": {
+    "@codegloss/react": "workspace:*",
     "@docusaurus/core": "3.9.2",
     "@docusaurus/preset-classic": "3.9.2",
     "@mdx-js/react": "^3.0.0",
@@ -25,7 +26,11 @@
     "typescript": "^5.9.3"
   },
   "browserslist": {
-    "production": [">0.5%", "not dead", "not op_mini all"],
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
     "development": [
       "last 3 chrome version",
       "last 3 firefox version",

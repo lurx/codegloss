@@ -1,7 +1,7 @@
 'use client';
 
+import { CodeGloss } from '@codegloss/react';
 import { useCallback, useState, type MouseEvent } from 'react';
-import { CodeGloss } from 'codegloss/react';
 import {
   ANNOTATIONS,
   CODE,
@@ -43,7 +43,6 @@ export function ThemeShowcase() {
         theme={activeTheme}
         annotations={ANNOTATIONS}
         connections={CONNECTIONS}
-        runnable={false}
       />
     </div>
   );

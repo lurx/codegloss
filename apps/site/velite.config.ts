@@ -1,15 +1,13 @@
-import { defineConfig, s } from 'velite';
-import rehypeShiki from '@shikijs/rehype';
+import rehypeShikiFromHighlighter from '@shikijs/rehype/core';
+import remarkCodegloss from 'codegloss/remark';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeSlug from 'rehype-slug';
-import remarkCodegloss from 'codegloss/remark';
-import codeglossConfig from './codegloss.config';
+import { defineConfig, s } from 'velite';
+import codeglossConfig, { shiki } from './codegloss.config';
+import { rehypeCodeglossPre } from '@codegloss/shiki';
 
-const theme =
-	typeof codeglossConfig.theme === 'string'
-		? codeglossConfig.theme
-		: undefined;
-const { arcs, callouts } = codeglossConfig;
+const { arcs, callouts, highlight: codeglossHighlight } = codeglossConfig;
+const SHIKI_THEME = String(codeglossConfig.theme);
 
 /** Lucide `link` icon, inlined as hast for the autolink-headings
  *  build-time render. The check-icon swap happens client-side in
@@ -53,7 +51,21 @@ const LINK_ICON_HAST = {
 export default defineConfig({
   mdx: {
     remarkPlugins: [
-      [remarkCodegloss, { skipImport: true, theme, arcs, callouts }],
+      [
+        remarkCodegloss,
+        {
+          skipImport: true,
+          arcs,
+          callouts,
+          // No `theme` here on purpose: codegloss is syntax-agnostic, and
+          // forwarding a name (Shiki's theme) that isn't in codegloss's
+          // theme registry stamps a `theme="…"` attr that blocks the
+          // built-in `prefers-color-scheme: dark` rules — leaving the
+          // toolbar / border / line-number gutter on light defaults while
+          // the inner code area is dark from the highlighter's `--cg-bg`.
+          highlight: codeglossHighlight,
+        },
+      ],
     ],
     rehypePlugins: [
       rehypeSlug,
@@ -68,7 +80,8 @@ export default defineConfig({
           content: LINK_ICON_HAST,
         },
       ],
-      [rehypeShiki, { theme: 'github-dark' }],
+      [rehypeShikiFromHighlighter, shiki, { theme: SHIKI_THEME }],
+      rehypeCodeglossPre,
     ],
   },
   collections: {

@@ -30,8 +30,10 @@ for await (const file of walk(dist)) {
   if (file.endsWith('.html')) {
     htmlText += await readFile(file, 'utf8');
     htmlText += '\n';
-  } else if (file.endsWith('codegloss.js')) {
+  } else if (file.endsWith('codegloss.js') || /\/chunk-[^/]+\.js$/.test(file)) {
+    // codegloss ships split chunks — the registration lives in a sibling.
     runtimeText += await readFile(file, 'utf8');
+    runtimeText += '\n';
   }
 }
 

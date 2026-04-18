@@ -1,11 +1,11 @@
 import type { Root } from 'mdast';
-import { detectSandboxPair } from './detect.helpers';
+import { detectCodeglossPair } from './detect.helpers';
 import { buildCodeGlossMdxNode } from './transform-mdx.helpers';
 import { buildCodeGlossHtmlNode } from './transform-html.helpers';
 import { injectImportIfNeeded } from './inject-import.helpers';
 import type { RemarkCodeglossOptions } from './remark.types';
 
-export function remarkCodegloss(options: RemarkCodeglossOptions = {}) {
+function remarkCodegloss(options: RemarkCodeglossOptions = {}) {
 	const output = options.output ?? 'mdx';
 
 	return (tree: Root) => {
@@ -21,9 +21,25 @@ export function remarkCodegloss(options: RemarkCodeglossOptions = {}) {
 			let index = 0;
 
 			while (index < parent.children.length) {
-				const pair = detectSandboxPair(parent.children, index);
+				const pair = detectCodeglossPair(parent.children, index);
 
 				if (pair) {
+					const highlightResult = options.highlight?.(pair.code, pair.lang);
+					const highlightFields =
+						highlightResult === undefined
+							? {}
+							: typeof highlightResult === 'string'
+								? { highlightedHtml: highlightResult }
+								: {
+										highlightedHtml: highlightResult.html,
+										...(highlightResult.background
+											? { highlightBackground: highlightResult.background }
+											: {}),
+										...(highlightResult.color
+											? { highlightColor: highlightResult.color }
+											: {}),
+									};
+
 					const pairWithDefaults = {
 						...pair,
 						...(options.theme ? { theme: options.theme } : {}),
@@ -33,6 +49,7 @@ export function remarkCodegloss(options: RemarkCodeglossOptions = {}) {
 						...(options.callouts && Object.keys(options.callouts).length > 0
 							? { callouts: options.callouts }
 							: {}),
+						...highlightFields,
 					};
 					const node =
 						output === 'html'

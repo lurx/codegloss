@@ -105,7 +105,6 @@ describe('CodeGlossElement', () => {
 			expect(root.querySelector('.filename')?.textContent).toBe('app.js');
 			expect(root.querySelector('.langBadge')?.textContent).toBe('js');
 			expect(root.querySelector('.copyButton')).toBeTruthy();
-			expect(root.querySelector('.runButton')).toBeTruthy();
 			expect(root.querySelector('.pre')).toBeTruthy();
 			expect(root.querySelectorAll('.line')).toHaveLength(1);
 			expect(root.querySelector('.connectionTooltip')).toBeTruthy();
@@ -142,26 +141,10 @@ describe('CodeGlossElement', () => {
 			expect(shadow(element).querySelector('.filename')).toBeNull();
 		});
 
-		it('hides the run button for non-js languages by default', () => {
-			const element = mount({ lang: 'py', code: 'print(1)' });
-			expect(shadow(element).querySelector('.runButton')).toBeNull();
-		});
-
-		it('shows the run button for non-js languages when runnable is true', () => {
-			const element = mount({ lang: 'py', code: 'print(1)', runnable: true });
-			expect(shadow(element).querySelector('.runButton')).toBeTruthy();
-		});
-
-		it('hides the run button for js when runnable is explicitly false', () => {
-			const element = mount({ lang: 'js', code: 'x', runnable: false });
-			expect(shadow(element).querySelector('.runButton')).toBeNull();
-		});
-
 		it('uses a custom highlighter when one is set on the element', () => {
-			const highlight = vi.fn(() => [
-				'<span class="hl">ONE</span>',
-				'<span class="hl">TWO</span>',
-			]);
+			const highlight = vi.fn(
+				() => '<span class="hl">ONE</span>\n<span class="hl">TWO</span>',
+			);
 			const element = mount({ lang: 'js', code: 'one\ntwo' }, { highlight });
 
 			expect(highlight).toHaveBeenCalledWith('one\ntwo', 'js');
@@ -171,7 +154,7 @@ describe('CodeGlossElement', () => {
 		});
 
 		it('injects annotation marks into pre-highlighted lines', () => {
-			const highlight = () => ['<span class="kw">foo</span> bar'];
+			const highlight = () => '<span class="kw">foo</span> bar';
 			const element = mount(
 				{
 					lang: 'js',
@@ -184,6 +167,53 @@ describe('CodeGlossElement', () => {
 			const html = shadow(element).querySelector('.lineContent')!.innerHTML;
 			expect(html).toContain('data-ann-id="a1"');
 			expect(html).toContain('class="kw"');
+		});
+
+		it('applies chrome colors from a structured highlighter return', () => {
+			const highlight = () => ({
+				html: '<span>x</span>',
+				background: '#123456',
+				color: '#abcdef',
+			});
+			const element = mount({ lang: 'js', code: 'x' }, { highlight });
+
+			const root = shadow(element).querySelector('.codegloss') as HTMLElement;
+			expect(root.style.getPropertyValue('--cg-bg')).toBe('#123456');
+			expect(root.style.getPropertyValue('--cg-text')).toBe('#abcdef');
+		});
+
+		it('leaves chrome untouched when the structured return omits colors', () => {
+			const highlight = () => ({ html: '<span>x</span>' });
+			const element = mount({ lang: 'js', code: 'x' }, { highlight });
+
+			const root = shadow(element).querySelector('.codegloss') as HTMLElement;
+			expect(root.style.getPropertyValue('--cg-bg')).toBe('');
+			expect(root.style.getPropertyValue('--cg-text')).toBe('');
+		});
+
+		it('applies chrome colors from config.highlightBackground / highlightColor', () => {
+			const element = mount({
+				lang: 'js',
+				code: 'x',
+				highlightedHtml: '<span>x</span>',
+				highlightBackground: '#111111',
+				highlightColor: '#eeeeee',
+			});
+
+			const root = shadow(element).querySelector('.codegloss') as HTMLElement;
+			expect(root.style.getPropertyValue('--cg-bg')).toBe('#111111');
+			expect(root.style.getPropertyValue('--cg-text')).toBe('#eeeeee');
+		});
+
+		it('does not write chrome onto the host style attribute (SSR-safe)', () => {
+			const element = mount({
+				lang: 'js',
+				code: 'x',
+				highlightedHtml: '<span>x</span>',
+				highlightBackground: '#111111',
+			});
+
+			expect(element.getAttribute('style')).toBeNull();
 		});
 	});
 
@@ -672,6 +702,25 @@ describe('CodeGlossElement', () => {
 			expect(btn.title).toBe('Copy code');
 		});
 
+		it('honors localized labels from setDefaultLabels on both the idle and copied states', async () => {
+			const { setDefaultLabels } = await import('../labels.helpers');
+			setDefaultLabels({ copy: 'Kopieren', copied: 'Kopiert', copiedTitle: 'Kopiert!' });
+			try {
+				vi.useFakeTimers();
+				const element = mount({ lang: 'js', code: 'x' });
+				const btn =
+					shadow(element).querySelector<HTMLButtonElement>('.copyButton')!;
+				expect(btn.getAttribute('aria-label')).toBe('Kopieren');
+				expect(btn.title).toBe('Kopieren');
+
+				btn.click();
+				expect(btn.getAttribute('aria-label')).toBe('Kopiert');
+				expect(btn.title).toBe('Kopiert!');
+			} finally {
+				setDefaultLabels(undefined);
+			}
+		});
+
 		it('resets a pending feedback timer when the button is clicked again', () => {
 			vi.useFakeTimers();
 			const element = mount({ lang: 'js', code: 'x' });
@@ -688,37 +737,6 @@ describe('CodeGlossElement', () => {
 
 			vi.advanceTimersByTime(500);
 			expect(btn.getAttribute('aria-label')).toBe('Copy code');
-		});
-	});
-
-	describe('run button', () => {
-		it('renders captured console output and switches the label to "Run again"', () => {
-			const element = mount({ lang: 'js', code: 'console.log("hi")' });
-			const btn =
-				shadow(element).querySelector<HTMLButtonElement>('.runButton')!;
-
-			btn.click();
-
-			const output = shadow(element).querySelector('.outputStrip')!;
-			expect(output.style.display).toBe('block');
-			expect(output.querySelector('.outputLabel')?.textContent).toBe('Output');
-			const lines = output.querySelectorAll('.outputLine');
-			expect(lines).toHaveLength(1);
-			expect(lines[0].textContent).toBe('> hi');
-			expect(btn.textContent).toBe('↻ Run again');
-		});
-
-		it('replaces previous output when run is clicked twice', () => {
-			const element = mount({ lang: 'js', code: 'console.log("first")' });
-			const btn =
-				shadow(element).querySelector<HTMLButtonElement>('.runButton')!;
-
-			btn.click();
-			btn.click();
-
-			const lines = shadow(element).querySelectorAll('.outputLine');
-			expect(lines).toHaveLength(1);
-			expect(lines[0].textContent).toBe('> first');
 		});
 	});
 
@@ -1198,7 +1216,6 @@ describe('CodeGlossElement', () => {
 				buildDom: () => void;
 				renderLines: () => void;
 				handleCopy: () => void;
-				handleRun: (btn: HTMLButtonElement) => void;
 				renderConnectionPopover: () => void;
 				buildToolbar: () => HTMLDivElement;
 			};
@@ -1208,9 +1225,6 @@ describe('CodeGlossElement', () => {
 			expect(() => internals.buildDom()).not.toThrow();
 			expect(() => internals.renderLines()).not.toThrow();
 			expect(() => internals.handleCopy()).not.toThrow();
-			expect(() =>
-				internals.handleRun(document.createElement('button')),
-			).not.toThrow();
 			expect(() => internals.renderConnectionPopover()).not.toThrow();
 			expect(() => internals.buildToolbar()).toThrow('config required');
 		});

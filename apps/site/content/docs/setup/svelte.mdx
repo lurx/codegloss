@@ -5,13 +5,11 @@ sidebar_position: 5
 
 # Svelte / SvelteKit
 
-CodeGloss ships a Svelte wrapper at `codegloss/svelte`. It supports Svelte 4 and Svelte 5.
+CodeGloss ships a Svelte wrapper at `@codegloss/svelte`. It supports Svelte 4 and Svelte 5.
 
 ## Install
 
-````
-npm install codegloss
-````
+<InstallTabs packages="codegloss @codegloss/svelte" />
 
 ## Direct component usage
 
@@ -19,7 +17,7 @@ Import and use the wrapper in any `.svelte` file:
 
 ````svelte
 <script>
-  import CodeGloss from 'codegloss/svelte';
+  import CodeGloss from '@codegloss/svelte';
 </script>
 
 <CodeGloss
@@ -66,10 +64,10 @@ const config = {
 export default config;
 ````
 
-Now use the fenced sandbox syntax in any `.md` or `.svx` file:
+Now use the fenced codegloss syntax in any `.md` or `.svx` file:
 
 `````md
-```js sandbox fib.js
+```js codegloss fib.js
 function fib(n) {
   return n < 2 ? n : fib(n - 1) + fib(n - 2);
 }
@@ -91,7 +89,7 @@ You can also import and use the Svelte wrapper directly in mdsvex markdown:
 
 ````md
 <script>
-  import CodeGloss from 'codegloss/svelte';
+  import CodeGloss from '@codegloss/svelte';
 </script>
 
 <CodeGloss
@@ -105,4 +103,4 @@ This gives you full prop typing via `svelte-check`.
 
 ## Both approaches together
 
-You can mix both styles on the same page. Fenced sandbox blocks are ideal for documentation-heavy pages, while the direct wrapper is useful when you need dynamic props or programmatic control.
+You can mix both styles on the same page. Fenced codegloss blocks are ideal for documentation-heavy pages, while the direct wrapper is useful when you need dynamic props or programmatic control.

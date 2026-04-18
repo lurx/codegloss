@@ -26,7 +26,6 @@ describe('importConfig JSON', () => {
 				code: 'x',
 				lang: 'js',
 				filename: 'a.js',
-				runnable: true,
 				theme: 'dark',
 				arcs: { opacity: 0.5 },
 				callouts: { popover: true },
@@ -36,7 +35,6 @@ describe('importConfig JSON', () => {
 		);
 		if (!result.ok) throw new Error('expected success');
 		expect(result.config.filename).toBe('a.js');
-		expect(result.config.runnable).toBe(true);
 		expect(result.config.theme).toBe('dark');
 		expect(result.config.arcs).toEqual({ opacity: 0.5 });
 		expect(result.config.callouts).toEqual({ popover: true });
@@ -50,7 +48,6 @@ describe('importConfig JSON', () => {
 				code: 'x',
 				lang: 'js',
 				filename: 1,
-				runnable: 'yes',
 				theme: 2,
 				arcs: 'no',
 				callouts: null,
@@ -60,7 +57,6 @@ describe('importConfig JSON', () => {
 		);
 		if (!result.ok) throw new Error('expected success');
 		expect(result.config.filename).toBeUndefined();
-		expect(result.config.runnable).toBeUndefined();
 		expect(result.config.theme).toBeUndefined();
 		expect(result.config.arcs).toBeUndefined();
 		expect(result.config.callouts).toBeUndefined();
@@ -85,9 +81,9 @@ describe('importConfig JSON', () => {
 });
 
 describe('importConfig MDX', () => {
-	it('parses a sandbox fence with filename and annotations block', () => {
+	it('parses a codegloss fence with filename and annotations block', () => {
 		const input = [
-			'```js sandbox demo.js',
+			'```js codegloss demo.js',
 			'const x = 1;',
 			'```',
 			'',
@@ -114,15 +110,15 @@ describe('importConfig MDX', () => {
 		expect(result.config.arcs).toEqual({ opacity: 0.5 });
 	});
 
-	it('treats an unfiltered sandbox fence as an mdx import without filename', () => {
-		const input = '```js sandbox\nconst x = 1;\n```';
+	it('treats an unfiltered codegloss fence as an mdx import without filename', () => {
+		const input = '```js codegloss\nconst x = 1;\n```';
 		const result = importConfig(input);
 		if (!result.ok) throw new Error('expected success');
 		expect(result.format).toBe('mdx');
 		expect(result.config.filename).toBeUndefined();
 	});
 
-	it('errors when no sandbox fence is present', () => {
+	it('errors when no codegloss fence is present', () => {
 		const result = importConfig('some plain markdown');
 		expect(result.ok).toBe(false);
 		if (!result.ok) expect(result.error).toMatch(/MDX: Could not find/);
@@ -132,23 +128,15 @@ describe('importConfig MDX', () => {
 describe('importConfig JSX', () => {
 	it('parses string and expression attributes on a self-closing tag', () => {
 		const input =
-			'<CodeGloss code={"const x = 1;"} lang="js" filename="f.js" runnable theme="dark" arcs={{"opacity":0.5}} annotations={[{"id":"a1","token":"x","line":0,"occurrence":0}]} />';
+			'<CodeGloss code={"const x = 1;"} lang="js" filename="f.js" theme="dark" arcs={{"opacity":0.5}} annotations={[{"id":"a1","token":"x","line":0,"occurrence":0}]} />';
 		const result = importConfig(input);
 		if (!result.ok) throw new Error(`expected success: ${result.error}`);
 		expect(result.format).toBe('jsx');
 		expect(result.config.code).toBe('const x = 1;');
 		expect(result.config.filename).toBe('f.js');
-		expect(result.config.runnable).toBe(true);
 		expect(result.config.theme).toBe('dark');
 		expect(result.config.arcs).toEqual({ opacity: 0.5 });
 		expect(result.config.annotations).toHaveLength(1);
-	});
-
-	it('respects runnable={false} explicit disable', () => {
-		const input = '<CodeGloss code="x" lang="js" runnable={false} />';
-		const result = importConfig(input);
-		if (!result.ok) throw new Error('expected success');
-		expect(result.config.runnable).toBe(false);
 	});
 
 	it('handles non-self-closing tags and nested braces inside expressions', () => {

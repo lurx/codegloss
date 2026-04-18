@@ -1,4 +1,4 @@
-import type { Annotation, Connection } from 'codegloss/react';
+import type { Annotation, Connection } from '@codegloss/react';
 import type { EditorConfig } from '../hooks/use-editor-state';
 import type { ImportFormat, ImportResult } from './import-config.types';
 
@@ -6,7 +6,6 @@ type RawPayload = {
 	code?: unknown;
 	lang?: unknown;
 	filename?: unknown;
-	runnable?: unknown;
 	theme?: unknown;
 	arcs?: unknown;
 	callouts?: unknown;
@@ -14,8 +13,8 @@ type RawPayload = {
 	connections?: unknown;
 };
 
-const MDX_SANDBOX_PATTERN =
-	/```(\w+)\s+sandbox(?:\s+([^\n`]+))?\n([\s\S]*?)\n```/;
+const MDX_CODEGLOSS_PATTERN =
+	/```(\w+)\s+codegloss(?:\s+([^\n`]+))?\n([\s\S]*?)\n```/;
 const MDX_ANNOTATIONS_PATTERN =
 	/```json\s+annotations\n([\s\S]*?)\n```/;
 
@@ -36,8 +35,6 @@ function coerceConfig(raw: RawPayload): EditorConfig {
 		code: raw.code,
 		lang: raw.lang,
 		filename: typeof raw.filename === 'string' ? raw.filename : undefined,
-		runnable:
-			typeof raw.runnable === 'boolean' ? raw.runnable : undefined,
 		theme: typeof raw.theme === 'string' ? raw.theme : undefined,
 		arcs:
 			raw.arcs && typeof raw.arcs === 'object'
@@ -58,11 +55,11 @@ function parseJson(input: string): EditorConfig {
 }
 
 function parseMdx(input: string): EditorConfig {
-	const sandboxMatch = MDX_SANDBOX_PATTERN.exec(input);
-	if (!sandboxMatch) {
-		throw new Error('Could not find a ```<lang> sandbox block');
+	const fenceMatch = MDX_CODEGLOSS_PATTERN.exec(input);
+	if (!fenceMatch) {
+		throw new Error('Could not find a ```<lang> codegloss block');
 	}
-	const [, lang, filename, code] = sandboxMatch;
+	const [, lang, filename, code] = fenceMatch;
 	const annotationsMatch = MDX_ANNOTATIONS_PATTERN.exec(input);
 	const annotationsPayload = annotationsMatch
 		? (JSON.parse(annotationsMatch[1]) as RawPayload)
@@ -141,13 +138,6 @@ function extractExpressionAttr(
 	return extractBracedBody(source, openIndex);
 }
 
-function resolveRunnable(attrs: string): boolean | undefined {
-	if (/\srunnable=\{false\}/.test(attrs)) return false;
-	const bare = /\srunnable(?:=\{true\})?(?=[\s/>])/.test(attrs);
-	if (bare) return true;
-	return undefined;
-}
-
 function parseJsx(input: string): EditorConfig {
 	if (!/<CodeGloss[\s>]/.test(input)) {
 		throw new Error('Could not find a <CodeGloss> element');
@@ -175,7 +165,6 @@ function parseJsx(input: string): EditorConfig {
 		code: pickString('code'),
 		lang: pickString('lang'),
 		filename: pickString('filename'),
-		runnable: resolveRunnable(attrs),
 		theme: pickString('theme'),
 		arcs: pickJson('arcs'),
 		callouts: pickJson('callouts'),

@@ -18,7 +18,7 @@ const withMdx = createMdx({
 	{
 		label: 'MDX / Remark — Markdown',
 		lang: 'md',
-		code: `\`\`\`js sandbox greet.js
+		code: `\`\`\`js codegloss greet.js
 function greet(name) {
   return "Hello, " + name + "!";
 }
@@ -37,7 +37,7 @@ function greet(name) {
 	{
 		label: 'React',
 		lang: 'tsx',
-		code: `import { CodeGloss } from 'codegloss/react';
+		code: `import { CodeGloss } from '@codegloss/react';
 
 <CodeGloss
   code="function greet(name) { return 'Hello, ' + name; }"
@@ -53,7 +53,7 @@ function greet(name) {
 		label: 'Vue',
 		lang: 'vue',
 		code: `<script setup lang="ts">
-import { CodeGloss } from 'codegloss/vue';
+import { CodeGloss } from '@codegloss/vue';
 </script>
 
 <template>
@@ -68,7 +68,7 @@ import { CodeGloss } from 'codegloss/vue';
 		label: 'Svelte',
 		lang: 'svelte',
 		code: `<script>
-  import CodeGloss from 'codegloss/svelte';
+  import CodeGloss from '@codegloss/svelte';
 </script>
 
 <CodeGloss
@@ -76,6 +76,66 @@ import { CodeGloss } from 'codegloss/vue';
   lang="js"
   filename="greet.js"
 />`,
+	},
+	{
+		label: 'Highlighter — Shiki',
+		lang: 'ts',
+		code: `import { setDefaultHighlighter } from 'codegloss';
+import { createShikiHighlighter } from 'codegloss/highlighters/shiki';
+import { createHighlighter } from 'shiki';
+
+const shiki = await createHighlighter({
+  themes: ['github-dark'],
+  langs: ['js', 'ts', 'tsx', 'py', 'rust'],
+});
+
+setDefaultHighlighter(
+  createShikiHighlighter(shiki, { theme: 'github-dark' }),
+);`,
+	},
+	{
+		label: 'Highlighter — Prism',
+		lang: 'ts',
+		code: `import Prism from 'prismjs';
+import 'prismjs/components/prism-typescript';
+import 'prismjs/themes/prism-tomorrow.css';
+import { setDefaultHighlighter } from 'codegloss';
+import { createPrismHighlighter } from 'codegloss/highlighters/prism';
+
+// Name a built-in Prism theme for auto chrome, or pass
+// { background, color } directly for a custom stylesheet.
+setDefaultHighlighter(
+  createPrismHighlighter(Prism, { theme: 'tomorrow' }),
+);`,
+	},
+	{
+		label: 'Highlighter — hljs',
+		lang: 'ts',
+		code: `import hljs from 'highlight.js/lib/core';
+import javascript from 'highlight.js/lib/languages/javascript';
+import 'highlight.js/styles/atom-one-dark.css';
+import { setDefaultHighlighter } from 'codegloss';
+import { createHljsHighlighter } from 'codegloss/highlighters/hljs';
+
+hljs.registerLanguage('javascript', javascript);
+
+// Named hljs preset resolves the bg/fg so codegloss's chrome matches.
+setDefaultHighlighter(
+  createHljsHighlighter(hljs, { theme: 'atom-one-dark' }),
+);`,
+	},
+	{
+		label: 'Highlighter — Custom',
+		lang: 'ts',
+		code: `import { setDefaultHighlighter } from 'codegloss';
+
+setDefaultHighlighter((code, lang) => {
+  if (lang !== 'sql') return code;
+  return code.replace(
+    /\\b(SELECT|FROM|WHERE|JOIN|ON|AS)\\b/g,
+    '<span class="cg-keyword">$&</span>',
+  );
+});`,
 	},
 	{
 		label: 'Vanilla HTML',
@@ -141,7 +201,7 @@ const withMdx = createMdx({
 	{
 		label: 'mdx',
 		lang: 'md',
-		code: `\`\`\`js sandbox fibonacci.js
+		code: `\`\`\`js codegloss fibonacci.js
 function fibonacci(n) {
   const memo = {};
   // ...

@@ -45,14 +45,9 @@ test.describe('keyboard navigation', () => {
       if (focus?.className?.includes('copyButton')) break;
     }
 
-    let focus = await describeFocus(page);
+    const focus = await describeFocus(page);
     expect(focus?.className).toContain('copyButton');
     expect(focus?.ariaLabel).toBe('Copy code');
-
-    // Next Tab moves to the run button (it's the next focusable in the toolbar).
-    await page.keyboard.press('Tab');
-    focus = await describeFocus(page);
-    expect(focus?.className).toContain('runButton');
   });
 
   test('Enter on the focused copy button triggers the copy action', async ({

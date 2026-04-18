@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import * as runtime from 'react/jsx-runtime';
 
-import { CodeGloss } from 'codegloss/react';
+import { CodeGloss } from '@codegloss/react';
 
 const MDX_COMPONENTS = { CodeGloss };
 

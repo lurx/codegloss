@@ -1,0 +1,70 @@
+---
+title: Localization
+sidebar_position: 6
+---
+
+# Localization
+
+The `<code-gloss>` element renders five strings of its own — copy button labels, the annotation callout's close button, and a fallback error message. Everything else on the block is your content (filenames, languages, annotation titles + bodies). Override the five built-in strings via the project config and they apply to every block on the page.
+
+## Set them in `codegloss.config.ts`
+
+```ts
+// codegloss.config.ts
+import { defineConfig } from 'codegloss/config';
+
+export default defineConfig({
+  labels: {
+    copy: 'Copiar código',
+    copied: 'Copiado',
+    copiedTitle: '¡Copiado!',
+    closeAnnotation: 'Cerrar anotación',
+    invalidConfig: '[code-gloss] configuración faltante o inválida',
+  },
+});
+```
+
+The remark plugin doesn't read this — it's a runtime concern. Wire it in your client app's root with the same one-liner you use for the highlighter:
+
+```ts
+// app root (client)
+import { initCodegloss } from 'codegloss';
+import codeglossConfig from './codegloss.config';
+
+initCodegloss(codeglossConfig);
+```
+
+`initCodegloss(config)` reads `config.labels` (and `config.highlight`, if set) and applies them once. Pass any subset — unspecified keys keep their English defaults.
+
+## Or override directly
+
+If you'd rather not bundle the project config, call `setDefaultLabels(labels)` directly. Same shape, no config plumbing:
+
+```ts
+import { setDefaultLabels } from 'codegloss';
+
+setDefaultLabels({
+  copy: 'Copiar código',
+  copied: 'Copiado',
+  copiedTitle: '¡Copiado!',
+  closeAnnotation: 'Cerrar anotación',
+});
+```
+
+Pass `undefined` to reset back to the English defaults.
+
+## What each label controls
+
+| Key | Default | Where it lands |
+| --- | --- | --- |
+| `copy` | `Copy code` | Copy button `aria-label` and `title` (idle) |
+| `copied` | `Copied` | Copy button `aria-label` after a successful click |
+| `copiedTitle` | `Copied!` | Copy button `title` after a successful click |
+| `closeAnnotation` | `Close annotation` | Annotation callout close-button `aria-label` |
+| `invalidConfig` | `[code-gloss] missing or invalid config` | Visible text in the fallback DOM when the JSON config is missing or unparseable |
+
+The `CodeGlossLabels` type is exported from `codegloss` if you want to share label sets across files.
+
+## What's *not* in here
+
+Anything that comes from your content stays in your content — annotation `title` and `text`, the `filename`, the `lang` badge, connection popover titles, and so on. The remark plugin and the wrappers pass them through unchanged, so the same translation pipeline you use for the rest of your site already covers them.

@@ -8,6 +8,7 @@
     "test": "next build && node ./test.mjs"
   },
   "dependencies": {
+    "@codegloss/react": "workspace:*",
     "codegloss": "workspace:*",
     "next": "^15.3.0",
     "react": "^18.3.1",

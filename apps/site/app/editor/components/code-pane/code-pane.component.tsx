@@ -9,11 +9,9 @@ export function CodePane({
 	code,
 	lang,
 	filename,
-	runnable,
 	onCodeChangeAction,
 	onLangChangeAction,
 	onFilenameChangeAction,
-	onRunnableChangeAction,
 }: Readonly<CodePaneProps>) {
 	const handleCodeChange = useCallback(
 		(event: ChangeEvent<HTMLTextAreaElement>) =>
@@ -29,11 +27,6 @@ export function CodePane({
 		(event: ChangeEvent<HTMLInputElement>) =>
 			onFilenameChangeAction(event.target.value),
 		[onFilenameChangeAction],
-	);
-	const handleRunnableChange = useCallback(
-		(event: ChangeEvent<HTMLInputElement>) =>
-			onRunnableChangeAction(event.target.checked),
-		[onRunnableChangeAction],
 	);
 
 	return (
@@ -54,14 +47,6 @@ export function CodePane({
 						value={filename}
 						onChange={handleFilenameChange}
 					/>
-				</label>
-				<label className={styles.checkbox}>
-					<input
-						type="checkbox"
-						checked={runnable}
-						onChange={handleRunnableChange}
-					/>
-					Runnable
 				</label>
 			</div>
 			<textarea

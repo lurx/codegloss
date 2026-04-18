@@ -6,7 +6,7 @@
 [![codecov](https://codecov.io/gh/lurx/codegloss/branch/main/graph/badge.svg)](https://codecov.io/gh/lurx/codegloss)
 [![XO code style](https://shields.io/badge/code_style-5ed9c7?logo=xo&labelColor=gray&logoSize=auto)](https://github.com/xojs/xo)
 
-Interactive annotated code blocks for the web. Drop a `<code-gloss>` element on any page — vanilla HTML, React, Vue, Svelte, Next.js, Astro, VitePress, Docusaurus, or plain markdown — and get clickable token annotations, connection arcs, copy buttons, and an in-place JS runner.
+Interactive annotated code blocks for the web. Drop a `<code-gloss>` element on any page — vanilla HTML, React, Vue, Svelte, Next.js, Astro, VitePress, Docusaurus, or plain markdown — and get clickable token annotations, connection arcs, and a copy button.
 
 **Highlights**
 
@@ -16,17 +16,26 @@ Interactive annotated code blocks for the web. Drop a `<code-gloss>` element on 
 - **Framework-agnostic** — one Web Component, thin wrappers for React, Vue, and Svelte, and a remark plugin that covers MDX and plain markdown pipelines.
 - **Themeable** — 9 bundled light/dark themes plus full CSS variable overrides; auto-swaps via `prefers-color-scheme`.
 
-## Entry points
+## Packages
+
+**Core** — `npm install codegloss`
 
 | Import | What it is |
 |---|---|
 | `codegloss` | The `<code-gloss>` Web Component (auto-registers on import). |
-| `codegloss/react` | Thin React wrapper. |
-| `codegloss/vue` | Thin Vue 3 wrapper. |
-| `codegloss/svelte` | Thin Svelte wrapper. |
 | `codegloss/remark` | Remark plugin — turns annotated fenced code blocks into `<code-gloss>` elements. Supports MDX and plain-HTML output. |
 | `codegloss/themes` | Bundled themes (tree-shakeable). |
 | `codegloss/config` | `defineConfig` helper for `codegloss.config.ts`. |
+
+**Framework wrappers** — install the one you need alongside `codegloss`:
+
+| Package | Install |
+|---|---|
+| `@codegloss/react` | `npm install @codegloss/react` |
+| `@codegloss/vue` | `npm install @codegloss/vue` |
+| `@codegloss/svelte` | `npm install @codegloss/svelte` |
+
+Each wrapper declares `codegloss` as a peer dependency.
 
 ## Quick start
 
@@ -53,7 +62,7 @@ Interactive annotated code blocks for the web. Drop a `<code-gloss>` element on 
 ### React
 
 ```tsx
-import { CodeGloss } from 'codegloss/react';
+import { CodeGloss } from '@codegloss/react';
 
 export function Example() {
   return (
@@ -74,7 +83,7 @@ export function Example() {
 
 ```vue
 <script setup lang="ts">
-import { CodeGloss } from 'codegloss/vue';
+import { CodeGloss } from '@codegloss/vue';
 </script>
 
 <template>
@@ -90,7 +99,7 @@ import { CodeGloss } from 'codegloss/vue';
 
 ```svelte
 <script>
-  import CodeGloss from 'codegloss/svelte';
+  import CodeGloss from '@codegloss/svelte';
 </script>
 
 <CodeGloss
@@ -129,6 +138,37 @@ applyGlobalTheme('github-dark');
 
 Themes cover both syntax token colors and UI chrome (background, borders, annotations). CSS variable overrides still win over theme values.
 
+### Syntax highlighter
+
+CodeGloss ships a small regex tokenizer by default. For production docs, declare a real highlighter (Shiki, Prism, or highlight.js) once in your `codegloss.config.ts` — every render path picks it up: the remark plugin reads it at build time, hand-written wrapper instances pass `highlight={config.highlight}`, and `initCodegloss(config)` registers it for runtime/dynamic blocks.
+
+```ts
+// codegloss.config.ts
+import { defineConfig } from 'codegloss/config';
+import { createShikiHighlighter } from 'codegloss/highlighters/shiki';
+import { createHighlighter } from 'shiki';
+
+const shiki = await createHighlighter({
+  themes: ['github-dark'],
+  langs: ['js', 'ts', 'tsx'],
+});
+
+export default defineConfig({
+  theme: 'github-dark',
+  highlight: createShikiHighlighter(shiki, { theme: 'github-dark' }),
+});
+```
+
+```ts
+// app root (only needed if you have dynamic / interactive blocks)
+import { initCodegloss } from 'codegloss';
+import codeglossConfig from './codegloss.config';
+
+initCodegloss(codeglossConfig);
+```
+
+Adapters are ~100 B each; the underlying library is an optional peer dependency — you only install the one you use. The lower-level `setDefaultHighlighter(fn)` is still exported for cases where you'd rather not bundle the config. Full guide in the [Syntax Highlighters docs](https://lurx.github.io/codegloss/docs/highlighters/).
+
 ### Config file
 
 Set project-wide defaults in a `codegloss.config.ts` (or `.codeglossrc.json`, `codegloss.config.js`, etc.):
@@ -138,6 +178,7 @@ import { defineConfig } from 'codegloss/config';
 
 export default defineConfig({
   theme: 'github-dark',
+  // highlight: createShikiHighlighter(...),  // see above
   arcs: {
     strokeDasharray: 'none',  // solid arcs
     opacity: 0.7,
@@ -145,12 +186,12 @@ export default defineConfig({
 });
 ```
 
-The config file sets defaults for themes, connection arc styles, and more. See the [Component API docs](https://lurx.github.io/codegloss/docs/api/) for all options.
+The config file sets defaults for themes, the highlighter, connection arc styles, and more. See the [Component API docs](https://lurx.github.io/codegloss/docs/api/) for all options.
 
 ### Markdown / MDX
 
 ````md
-```js sandbox fib.js
+```js codegloss fib.js
 function fib(n) { return n < 2 ? n : fib(n-1) + fib(n-2); }
 ```
 

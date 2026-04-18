@@ -1,0 +1,72 @@
+import { defineComponent, h, type PropType } from 'vue';
+import type {
+	Annotation,
+	CodeGlossConfig,
+	Connection,
+	Highlighter,
+} from 'codegloss';
+import { stripUndefined } from './strip-undefined.util';
+
+/**
+ * Stateless Vue 3 wrapper around the `<code-gloss>` custom element. Renders
+ * the WC with a `<script type="application/json">` child containing the
+ * serialized config — exactly the same shape the React wrapper produces.
+ *
+ * Vue's runtime is happy to render arbitrary tag names via `h()`, so this
+ * works without any `app.config.compilerOptions.isCustomElement` configuration
+ * at the consumer site (that flag is only needed when authoring template
+ * syntax that mentions the custom element directly).
+ */
+export const CodeGloss = defineComponent({
+	name: 'CodeGloss',
+	props: {
+		code: { type: String, required: true },
+		lang: { type: String, required: true },
+		filename: { type: String, default: undefined },
+		theme: { type: String, default: undefined },
+		annotations: {
+			type: Array as PropType<Annotation[]>,
+			default: undefined,
+		},
+		connections: {
+			type: Array as PropType<Connection[]>,
+			default: undefined,
+		},
+		highlight: {
+			type: Function as PropType<Highlighter>,
+			default: undefined,
+		},
+	},
+	setup(props) {
+		return () => {
+			const result = props.highlight?.(props.code, props.lang);
+			const highlightedHtml =
+				typeof result === 'string' ? result : result?.html;
+			const highlightBackground =
+				typeof result === 'object' ? result?.background : undefined;
+			const highlightColor =
+				typeof result === 'object' ? result?.color : undefined;
+
+			const payload: CodeGlossConfig = {
+				code: props.code,
+				lang: props.lang,
+				filename: props.filename,
+				annotations: props.annotations,
+				connections: props.connections,
+				highlightedHtml,
+				highlightBackground,
+				highlightColor,
+			};
+			// Strip undefined keys so the serialized payload matches the React
+			// wrapper byte-for-byte for the common case.
+			const json = JSON.stringify(stripUndefined(payload));
+
+			return h('code-gloss', { theme: props.theme }, [
+				h('script', {
+					type: 'application/json',
+					innerHTML: json,
+				}),
+			]);
+		};
+	},
+});

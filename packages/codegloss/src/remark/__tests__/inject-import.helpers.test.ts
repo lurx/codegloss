@@ -15,7 +15,7 @@ describe('injectImportIfNeeded', () => {
 		expect(root.children).toHaveLength(1);
 		const node = root.children[0] as { type: string; value: string };
 		expect(node.type).toBe('mdxjsEsm');
-		expect(node.value).toBe("import { CodeGloss } from 'codegloss/react'");
+		expect(node.value).toBe("import { CodeGloss } from '@codegloss/react'");
 	});
 
 	it('inserts the import at the very top of the tree', () => {

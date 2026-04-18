@@ -1,4 +1,4 @@
-import type { Annotation, Connection } from 'codegloss/react';
+import type { Annotation, Connection } from '@codegloss/react';
 import type { EditorConfig } from '../hooks/use-editor-state';
 
 export type AnnotationIssue =
@@ -8,7 +8,7 @@ export type AnnotationIssue =
 
 export type ConnectionIssue = 'missing-from' | 'missing-to' | 'same-endpoints';
 
-export type ValidationResult = {
+type ValidationResult = {
 	annotationIssues: Record<number, AnnotationIssue[]>;
 	connectionIssues: Record<number, ConnectionIssue[]>;
 };

@@ -1,7 +1,7 @@
 # codegloss · VitePress
 
 VitePress (Vite + Vue) hosting the codegloss Web Component via the
-`codegloss/vue` wrapper. The wrapper is registered globally in
+`@codegloss/vue` wrapper. The wrapper is registered globally in
 `docs/.vitepress/theme/index.ts`, and `isCustomElement` is set in the Vite
 config so the underlying `<code-gloss>` HTML element doesn't trigger a Vue
 "unknown element" warning.

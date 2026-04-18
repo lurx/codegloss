@@ -5,13 +5,11 @@ sidebar_position: 4
 
 # Vue / Nuxt
 
-CodeGloss ships a thin Vue 3 wrapper at `codegloss/vue`. Under the hood it renders the same `<code-gloss>` Web Component with a JSON config child.
+CodeGloss ships a thin Vue 3 wrapper at `@codegloss/vue`. Under the hood it renders the same `<code-gloss>` Web Component with a JSON config child.
 
 ## Install
 
-````
-npm install codegloss
-````
+<InstallTabs packages="codegloss @codegloss/vue" />
 
 ## Direct component usage
 
@@ -19,7 +17,7 @@ Import and use `CodeGloss` like any Vue component:
 
 ````vue
 <script setup lang="ts">
-import { CodeGloss } from 'codegloss/vue';
+import { CodeGloss } from '@codegloss/vue';
 </script>
 
 <template>
@@ -44,7 +42,7 @@ VitePress uses Vue under the hood. Register the component globally in your theme
 ````ts
 // docs/.vitepress/theme/index.ts
 import DefaultTheme from 'vitepress/theme';
-import { CodeGloss } from 'codegloss/vue';
+import { CodeGloss } from '@codegloss/vue';
 import type { Theme } from 'vitepress';
 
 export default {
@@ -92,7 +90,7 @@ In a Nuxt 3 project, register the component as a plugin:
 
 ````ts
 // plugins/codegloss.client.ts
-import { CodeGloss } from 'codegloss/vue';
+import { CodeGloss } from '@codegloss/vue';
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.component('CodeGloss', CodeGloss);

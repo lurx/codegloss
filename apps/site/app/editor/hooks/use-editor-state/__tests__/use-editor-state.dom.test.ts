@@ -72,17 +72,15 @@ describe('useEditorState initial state', () => {
 });
 
 describe('useEditorState actions', () => {
-	it('setCode/setLang/setFilename/setRunnable update the config', () => {
+	it('setCode/setLang/setFilename update the config', () => {
 		const { result } = renderHook(() => useEditorState());
 		act(() => result.current.setCodeAction('A'));
 		act(() => result.current.setLangAction('ts'));
 		act(() => result.current.setFilenameAction('x.ts'));
-		act(() => result.current.setRunnableAction(false));
 		expect(result.current.config).toMatchObject({
 			code: 'A',
 			lang: 'ts',
 			filename: 'x.ts',
-			runnable: false,
 		});
 	});
 
