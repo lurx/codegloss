@@ -19,6 +19,7 @@
     "format:check": "prettier --check ."
   },
   "devDependencies": {
+    "@changesets/cli": "^2.31.0",
     "prettier": "^3.8.2",
     "typescript": "^5.9.3",
     "xo": "^2.0.2"

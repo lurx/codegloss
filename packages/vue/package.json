@@ -2,12 +2,32 @@
   "name": "@codegloss/vue",
   "version": "0.1.0",
   "description": "Vue 3 wrapper for the codegloss <code-gloss> web component",
+  "license": "MIT",
+  "homepage": "https://lurx.github.io/codegloss/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lurx/codegloss.git",
+    "directory": "packages/vue"
+  },
+  "bugs": "https://github.com/lurx/codegloss/issues",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "codegloss",
+    "code-annotation",
+    "annotated-code",
+    "syntax-highlighting",
+    "vue",
+    "vue3",
+    "vue-component"
+  ],
   "type": "module",
   "sideEffects": ["./dist/index.js"],
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "files": ["dist"],
   "exports": {

@@ -2,10 +2,29 @@
   "name": "@codegloss/svelte",
   "version": "0.1.0",
   "description": "Svelte wrapper for the codegloss <code-gloss> web component",
+  "license": "MIT",
+  "homepage": "https://lurx.github.io/codegloss/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lurx/codegloss.git",
+    "directory": "packages/svelte"
+  },
+  "bugs": "https://github.com/lurx/codegloss/issues",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "codegloss",
+    "code-annotation",
+    "annotated-code",
+    "syntax-highlighting",
+    "svelte",
+    "svelte-component"
+  ],
   "type": "module",
   "types": "./src/code-gloss.component.svelte",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "files": ["src"],
   "exports": {

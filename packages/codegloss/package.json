@@ -2,6 +2,25 @@
   "name": "codegloss",
   "version": "0.1.0",
   "description": "Annotated code sandbox web component",
+  "license": "MIT",
+  "homepage": "https://lurx.github.io/codegloss/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lurx/codegloss.git",
+    "directory": "packages/codegloss"
+  },
+  "bugs": "https://github.com/lurx/codegloss/issues",
+  "keywords": [
+    "codegloss",
+    "code-annotation",
+    "annotated-code",
+    "web-components",
+    "custom-element",
+    "syntax-highlighting",
+    "remark",
+    "mdx",
+    "code-blocks"
+  ],
   "type": "module",
   "sideEffects": [
     "./dist/index.js",
@@ -10,7 +29,7 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "files": [
     "dist"
