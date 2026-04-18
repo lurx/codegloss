@@ -3,6 +3,16 @@
   "version": "0.1.0",
   "description": "Vue 3 wrapper for the codegloss <code-gloss> web component",
   "license": "MIT",
+  "homepage": "https://lurx.github.io/codegloss/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lurx/codegloss.git",
+    "directory": "packages/vue"
+  },
+  "bugs": "https://github.com/lurx/codegloss/issues",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "sideEffects": ["./dist/index.js"],
   "module": "./dist/index.js",
