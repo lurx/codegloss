@@ -2,6 +2,7 @@
   "name": "@codegloss/vue",
   "version": "0.1.0",
   "description": "Vue 3 wrapper for the codegloss <code-gloss> web component",
+  "license": "MIT",
   "type": "module",
   "sideEffects": ["./dist/index.js"],
   "module": "./dist/index.js",
