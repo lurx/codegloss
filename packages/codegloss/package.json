@@ -54,9 +54,7 @@
       "import": "./dist/highlighters/hljs.js"
     }
   },
-  "dependencies": {
-    "unist-util-visit": "^5"
-  },
+  "dependencies": {},
   "peerDependencies": {
     "unified": ">=11",
     "shiki": ">=1.0.0",

@@ -3,5 +3,4 @@ export type {
 	ArcsStyle,
 	CalloutsStyle,
 	EditorConfig,
-	UseEditorStateResult,
 } from './use-editor-state.types';

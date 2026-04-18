@@ -13,4 +13,3 @@ export type Tab = {
 	blocks: CodeBlockEntry[];
 };
 
-export type { CopyableBlockProps } from './copyable-block.types';

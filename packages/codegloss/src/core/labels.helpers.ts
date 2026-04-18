@@ -8,7 +8,7 @@ const DEFAULT_LABELS = {
 	invalidConfig: '[code-gloss] missing or invalid config',
 } as const satisfies Required<CodeGlossLabels>;
 
-export type ResolvedLabels = Required<CodeGlossLabels>;
+type ResolvedLabels = Required<CodeGlossLabels>;
 
 let activeLabels: ResolvedLabels = DEFAULT_LABELS;
 

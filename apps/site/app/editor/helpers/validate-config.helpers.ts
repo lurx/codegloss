@@ -8,7 +8,7 @@ export type AnnotationIssue =
 
 export type ConnectionIssue = 'missing-from' | 'missing-to' | 'same-endpoints';
 
-export type ValidationResult = {
+type ValidationResult = {
 	annotationIssues: Record<number, AnnotationIssue[]>;
 	connectionIssues: Record<number, ConnectionIssue[]>;
 };
