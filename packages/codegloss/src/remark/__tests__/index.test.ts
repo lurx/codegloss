@@ -2,7 +2,7 @@ import remarkParse from 'remark-parse';
 import { unified } from 'unified';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Root } from 'mdast';
-import { remarkCodegloss } from '../index';
+import remarkCodegloss from '../index';
 
 const parse = (markdown: string): Root =>
 	unified().use(remarkParse).parse(markdown);
@@ -327,10 +327,4 @@ describe('remarkCodegloss (full pipeline)', () => {
 		});
 	});
 
-	describe('default export', () => {
-		it('matches the named export', async () => {
-			const { default: defaultExport } = await import('../index');
-			expect(defaultExport).toBe(remarkCodegloss);
-		});
-	});
 });

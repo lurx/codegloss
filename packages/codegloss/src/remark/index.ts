@@ -5,7 +5,7 @@ import { buildCodeGlossHtmlNode } from './transform-html.helpers';
 import { injectImportIfNeeded } from './inject-import.helpers';
 import type { RemarkCodeglossOptions } from './remark.types';
 
-export function remarkCodegloss(options: RemarkCodeglossOptions = {}) {
+function remarkCodegloss(options: RemarkCodeglossOptions = {}) {
 	const output = options.output ?? 'mdx';
 
 	return (tree: Root) => {
