@@ -50,8 +50,8 @@ Publish misbehaves without these.
 
 ## Nice-to-have
 
-- [ ] Per-package `CHANGELOG.md` — Changesets generates these automatically
-      from the first consumed changeset onward.
+- [x] Per-package `CHANGELOG.md` — seeded with a `0.1.0` entry for each of
+      the five packages. Changesets will prepend future entries on top.
 - [ ] npm badges on the root README once packages are live (download count,
       version).
 - [x] `engines.node` bumped from `>=18` to `>=20` on every package. Node 18
