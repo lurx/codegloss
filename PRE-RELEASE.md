@@ -33,9 +33,13 @@ Publish misbehaves without these.
       package, plus per-package labels (`react`, `vue`, `vue3`, `svelte`,
       `shiki`, `rehype`, `web-components`, `custom-element`, `remark`,
       `mdx`, `code-blocks`).
-- [ ] `NPM_TOKEN` repo secret configured — **user action required**
-      (GitHub repo Settings → Secrets and variables → Actions). Powers both
-      the PR snapshot dispatch and the Changesets Action.
+- [ ] **Trusted Publisher** registered on npmjs.com for each of the five
+      packages, pointing at this repo and both workflow files (`release.yml`
+      and `pr-snapshot.yml`) — **user action required**. Short-lived OIDC
+      credentials replace the long-lived `NPM_TOKEN` secret; nothing to
+      store in GitHub, nothing to rotate. Look for the "Package doesn't
+      exist yet" / pending-publisher option while registering so the first
+      publish can claim each name.
 - [x] `.github/workflows/pr-snapshot.yml` written (per-PR preview
       publishes — see below). Ready to dispatch once merged to `main`.
 - [x] `.github/workflows/release.yml` written using `changesets/action`
@@ -62,20 +66,28 @@ Publish misbehaves without these.
 
 ### First release
 
-Changesets bumps from the current `package.json` version on every release.
-With all five packages already at `0.1.0`, a Changesets-driven release
-would ship `0.1.1` (or higher), not `0.1.0`. Cut the first release
-manually, then hand subsequent releases to Changesets:
+Two things conspire to force the first release off-CI: Changesets bumps
+from the current `package.json` version (so a Changesets-driven release
+would ship `0.1.1` rather than `0.1.0`), and npm Trusted Publishing can
+only attach to a package name that already exists. Cut the first release
+from your laptop — the one-time 2FA prompt claims each name — then wire
+Trusted Publishers on npmjs.com and hand everything subsequent to the CI
+workflows.
 
 ```bash
+pnpm login                           # browser OAuth + 2FA
 pnpm -w run build:packages
-pnpm -r publish --access public
+pnpm -r publish --access public      # publishes codegloss + @codegloss/*
 git tag v0.1.0
 git push --tags
 ```
 
 `pnpm publish` rewrites each wrapper's `"codegloss": "workspace:*"` to the
 exact pinned version in the published tarball.
+
+Once every package name exists on npm, register the repo as a Trusted
+Publisher for each one before opening the next PR — the CI workflows
+assume OIDC auth and won't succeed otherwise.
 
 ### Per-PR snapshots (manual dispatch)
 
@@ -94,6 +106,10 @@ on:
         description: Branch or any ref to publish from
         required: true
         type: string
+
+permissions:
+  contents: read
+  id-token: write  # OIDC exchange with npm for trusted publishing
 
 jobs:
   publish:
@@ -117,8 +133,6 @@ jobs:
           echo "tag=$t" >> "$GITHUB_OUTPUT"
       - run: pnpm changeset version --snapshot ${{ steps.tag.outputs.tag }}
       - run: pnpm -r publish --no-git-tag-version --tag ${{ steps.tag.outputs.tag }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
 
 **Dispatch:** Actions tab → *Publish PR snapshot* → *Run workflow* → leave
@@ -155,8 +169,12 @@ a published version.
      "@codegloss/shiki"
    ]]
    ```
-3. Install the `changesets/action` GitHub Action on `main` with the
-   `NPM_TOKEN` repo secret.
+3. Install the `changesets/action` GitHub Action on `main`. No `NPM_TOKEN`
+   secret needed — both release and snapshot workflows authenticate via
+   npm Trusted Publishing (OIDC), which is why they set
+   `permissions: id-token: write`.
+4. Register this repo as a Trusted Publisher for each of the five packages
+   on npmjs.com (both `release.yml` and `pr-snapshot.yml`).
 
 **Per feature, starting on `main`:**
 

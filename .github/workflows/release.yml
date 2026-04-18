@@ -3,6 +3,7 @@ name: Release
 # Runs on every push to main. If there are unconsumed .changeset/*.md files,
 # the changesets/action opens/updates a standing "Version Packages" PR.
 # When that PR merges, this workflow re-runs and publishes to npm.
+# Auth via npm Trusted Publishing (OIDC); no NPM_TOKEN secret.
 # See PRE-RELEASE.md for the full workflow.
 
 on:
@@ -14,6 +15,7 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 permissions:
   contents: write
   pull-requests: write
+  id-token: write
 
 jobs:
   release:
@@ -47,4 +49,3 @@ jobs:
           title: "chore(release): version packages"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

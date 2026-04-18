@@ -2,7 +2,8 @@ name: Publish PR snapshot
 
 # Manual-dispatch-only. Publishes every workspace package under a
 # branch-derived npm dist-tag so reviewers can install a PR without it
-# touching main. See PRE-RELEASE.md for the full workflow.
+# touching main. Auth via npm Trusted Publishing (OIDC); no NPM_TOKEN
+# secret. See PRE-RELEASE.md for the full workflow.
 
 on:
   workflow_dispatch:
@@ -14,6 +15,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   publish:
@@ -51,5 +53,3 @@ jobs:
 
       - name: Publish to npm under the snapshot tag
         run: pnpm -r publish --no-git-tag-version --tag ${{ steps.tag.outputs.tag }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
