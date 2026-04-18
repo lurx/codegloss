@@ -6,7 +6,7 @@
     "dev": "pnpm --filter site dev",
     "build:codegloss": "pnpm --filter codegloss build",
     "build:site": "pnpm --filter site build",
-    "build:packages": "pnpm --filter codegloss build && pnpm --filter @codegloss/react --filter @codegloss/vue build",
+    "build:packages": "pnpm --filter codegloss build && pnpm --filter @codegloss/shiki --filter @codegloss/react --filter @codegloss/vue build",
     "build": "pnpm build:packages && pnpm build:site",
     "test:unit": "pnpm --filter './packages/**' --filter site test",
     "test:coverage": "pnpm --filter './packages/**' --filter site test:coverage",
