@@ -52,8 +52,8 @@ Publish misbehaves without these.
 
 - [x] Per-package `CHANGELOG.md` — seeded with a `0.1.0` entry for each of
       the five packages. Changesets will prepend future entries on top.
-- [ ] npm badges on the root README once packages are live (download count,
-      version).
+- [x] npm badges on the root README — version, monthly downloads, and
+      license (core package) sit above the existing CI/quality badges.
 - [x] `engines.node` bumped from `>=18` to `>=20` on every package. Node 18
       hit EOL in April 2025 and `shiki@3+` (peer dep of `@codegloss/shiki`)
       already requires Node 20+.
