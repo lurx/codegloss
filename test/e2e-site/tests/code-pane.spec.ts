@@ -1,3 +1,4 @@
+import type { Locator } from '@playwright/test';
 import {
 	test,
 	expect,
@@ -7,6 +8,15 @@ import {
 	filenameInput,
 } from './helpers';
 
+// webkit + React controlled inputs occasionally drop the input event from
+// locator.fill(); real keystrokes are reliable.
+async function typeInto(locator: Locator, value: string): Promise<void> {
+	await locator.focus();
+	await locator.selectText();
+	await locator.page().keyboard.press('Backspace');
+	await locator.pressSequentially(value);
+}
+
 test.describe('code pane', () => {
 	test('editing code updates preview', async ({ page }) => {
 		await gotoEditor(page);
@@ -15,33 +25,27 @@ test.describe('code pane', () => {
 		// wait for the initial preview render before replacing the code
 		await expect(preview).toContainText('greet', { timeout: 15_000 });
 
-		// webkit + React controlled <textarea> occasionally drops the input
-		// event from locator.fill(); real keystrokes are reliable.
-		const textarea = codeTextarea(page);
-		await textarea.focus();
-		await textarea.selectText();
-		await page.keyboard.press('Backspace');
-		await textarea.pressSequentially('const answer = 42;');
+		await typeInto(codeTextarea(page), 'const answer = 42;');
 
 		await expect(preview).toContainText('answer', { timeout: 15_000 });
 	});
 
 	test('language input changes value', async ({ page }) => {
 		await gotoEditor(page);
-		await langInput(page).fill('ts');
+		await typeInto(langInput(page), 'ts');
 		await expect(langInput(page)).toHaveValue('ts');
 	});
 
 	test('filename input changes value', async ({ page }) => {
 		await gotoEditor(page);
-		await filenameInput(page).fill('example.ts');
+		await typeInto(filenameInput(page), 'example.ts');
 		await expect(filenameInput(page)).toHaveValue('example.ts');
 	});
 
 	test('edits are written to localStorage', async ({ page }) => {
 		await gotoEditor(page);
-		await langInput(page).fill('ts');
-		await filenameInput(page).fill('stored.ts');
+		await typeInto(langInput(page), 'ts');
+		await typeInto(filenameInput(page), 'stored.ts');
 
 		await expect
 			.poll(async () =>
