@@ -155,4 +155,35 @@ describe('CodeGloss (React wrapper)', () => {
 		const src = CodeGloss.toString();
 		expect(src).not.toMatch(/\buse[A-Z]\w*\s*\(/);
 	});
+
+	it('renders styleOverrides as inline --cg-* CSS on the host element', () => {
+		const html = renderToStaticMarkup(
+			<CodeGloss
+				code="let x = 1"
+				lang="js"
+				styleOverrides={{
+					codeBlock: { background: 'var(--surface)', borderRadius: '4px' },
+					badge: { foreground: '#999' },
+				}}
+			/>,
+		);
+		expect(html).toContain('--cg-bg:var(--surface)');
+		expect(html).toContain('--cg-radius:4px');
+		expect(html).toContain('--cg-badge-text:#999');
+		// And styleOverrides itself must not leak into the JSON payload.
+		const payload = /<script[^>]*>(.*?)<\/script>/s.exec(html)?.[1] ?? '';
+		expect(JSON.parse(payload)).not.toHaveProperty('styleOverrides');
+	});
+
+	it('omits the style attribute when styleOverrides is empty or unset', () => {
+		const bareHtml = renderToStaticMarkup(
+			<CodeGloss code="let x = 1" lang="js" />,
+		);
+		expect(bareHtml).not.toContain('style=');
+
+		const emptyHtml = renderToStaticMarkup(
+			<CodeGloss code="let x = 1" lang="js" styleOverrides={{ codeBlock: {} }} />,
+		);
+		expect(emptyHtml).not.toContain('style=');
+	});
 });

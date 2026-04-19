@@ -7,6 +7,12 @@ import type { RemarkCodeglossOptions } from './remark.types';
 
 function remarkCodegloss(options: RemarkCodeglossOptions = {}) {
 	const output = options.output ?? 'mdx';
+	const hasStyleOverrides =
+		!!options.styleOverrides &&
+		Object.values(options.styleOverrides).some(
+			(group) =>
+				group !== undefined && Object.values(group).some((v) => v !== undefined),
+		);
 
 	return (tree: Root) => {
 		let hasTransformed = false;
@@ -48,6 +54,9 @@ function remarkCodegloss(options: RemarkCodeglossOptions = {}) {
 							: {}),
 						...(options.callouts && Object.keys(options.callouts).length > 0
 							? { callouts: options.callouts }
+							: {}),
+						...(hasStyleOverrides
+							? { styleOverrides: options.styleOverrides }
 							: {}),
 						...highlightFields,
 					};

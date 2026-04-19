@@ -327,4 +327,69 @@ describe('remarkCodegloss (full pipeline)', () => {
 		});
 	});
 
+	describe('options.styleOverrides', () => {
+		it('forwards styleOverrides as an expression attr on the mdx node', () => {
+			const tree = run(CODEGLOSS_MD, {
+				styleOverrides: {
+					codeBlock: { background: 'var(--surface)', borderRadius: '4px' },
+				},
+			});
+			const jsx = tree.children.find(
+				n => (n as { type: string }).type === 'mdxJsxFlowElement',
+			) as {
+				attributes: Array<{
+					name: string;
+					value: string | { value?: string } | null;
+				}>;
+			};
+			const attr = jsx.attributes.find(a => a.name === 'styleOverrides');
+			expect(
+				JSON.parse((attr!.value as { value: string }).value),
+			).toEqual({
+				codeBlock: { background: 'var(--surface)', borderRadius: '4px' },
+			});
+		});
+
+		it('emits a style attribute on the html node with the mapped --cg-* vars', () => {
+			const tree = run(CODEGLOSS_MD, {
+				output: 'html',
+				styleOverrides: {
+					codeBlock: { background: 'var(--surface)' },
+					lineNumbers: { foreground: '#aaa' },
+				},
+			});
+			const html = tree.children.find(n => n.type === 'html') as {
+				value: string;
+			};
+			expect(html.value).toContain(
+				'style="--cg-bg: var(--surface); --cg-line-num: #aaa"',
+			);
+		});
+
+		it('ignores styleOverrides with no populated fields', () => {
+			const tree = run(CODEGLOSS_MD, { styleOverrides: { codeBlock: {} } });
+			const jsx = tree.children.find(
+				n => (n as { type: string }).type === 'mdxJsxFlowElement',
+			) as { attributes: Array<{ name: string }> };
+			expect(
+				jsx.attributes.find(a => a.name === 'styleOverrides'),
+			).toBeUndefined();
+		});
+
+		it('escapes double quotes in style values on the html node', () => {
+			const tree = run(CODEGLOSS_MD, {
+				output: 'html',
+				styleOverrides: {
+					codeBlock: { background: 'url("/bg.png")' },
+				},
+			});
+			const html = tree.children.find(n => n.type === 'html') as {
+				value: string;
+			};
+			expect(html.value).toContain(
+				'style="--cg-bg: url(&quot;/bg.png&quot;)"',
+			);
+		});
+	});
+
 });

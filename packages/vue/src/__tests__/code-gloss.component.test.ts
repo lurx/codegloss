@@ -80,11 +80,45 @@ describe('CodeGloss (Vue wrapper)', () => {
 		expect(payload.highlightColor).toBe('#eee');
 	});
 
+	it('renders the theme attribute on the host element when provided', async () => {
+		const html = await render({ code: 'x', lang: 'js', theme: 'github-dark' });
+		expect(html).toContain('theme="github-dark"');
+	});
+
 	it('omits undefined props from the serialized payload', async () => {
 		const html = await render({ code: 'x', lang: 'js' });
 		const config = extractConfig(html) as Record<string, unknown>;
 		expect(config).not.toHaveProperty('filename');
 		expect(config).not.toHaveProperty('annotations');
 		expect(config).not.toHaveProperty('connections');
+	});
+
+	it('renders styleOverrides as inline --cg-* CSS on the host element', async () => {
+		const html = await render({
+			code: 'x',
+			lang: 'js',
+			styleOverrides: {
+				codeBlock: { background: 'var(--surface)', borderRadius: '4px' },
+				lineNumbers: { foreground: '#aaa' },
+			},
+		});
+		expect(html).toContain('--cg-bg:var(--surface)');
+		expect(html).toContain('--cg-radius:4px');
+		expect(html).toContain('--cg-line-num:#aaa');
+		// styleOverrides itself must not leak into the JSON payload.
+		const payload = /<script[^>]*>(.*?)<\/script>/s.exec(html)?.[1] ?? '';
+		expect(JSON.parse(payload)).not.toHaveProperty('styleOverrides');
+	});
+
+	it('omits the style attribute when styleOverrides is empty or unset', async () => {
+		const bareHtml = await render({ code: 'x', lang: 'js' });
+		expect(bareHtml).not.toContain('style=');
+
+		const emptyHtml = await render({
+			code: 'x',
+			lang: 'js',
+			styleOverrides: { codeBlock: {} },
+		});
+		expect(emptyHtml).not.toContain('style=');
 	});
 });

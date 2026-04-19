@@ -2,9 +2,11 @@ import { defineComponent, h, type PropType } from 'vue';
 import type {
 	Annotation,
 	CodeGlossConfig,
+	CodeGlossStyleOverrides,
 	Connection,
 	Highlighter,
 } from 'codegloss';
+import { styleOverridesToCssVars } from 'codegloss';
 import { stripUndefined } from './strip-undefined.util';
 
 /**
@@ -36,6 +38,10 @@ export const CodeGloss = defineComponent({
 			type: Function as PropType<Highlighter>,
 			default: undefined,
 		},
+		styleOverrides: {
+			type: Object as PropType<CodeGlossStyleOverrides>,
+			default: undefined,
+		},
 	},
 	setup(props) {
 		return () => {
@@ -61,7 +67,14 @@ export const CodeGloss = defineComponent({
 			// wrapper byte-for-byte for the common case.
 			const json = JSON.stringify(stripUndefined(payload));
 
-			return h('code-gloss', { theme: props.theme }, [
+			const styleVars = styleOverridesToCssVars(props.styleOverrides);
+			const hostAttrs: Record<string, unknown> = {};
+			if (props.theme) hostAttrs.theme = props.theme;
+			if (styleVars.length > 0) {
+				hostAttrs.style = Object.fromEntries(styleVars);
+			}
+
+			return h('code-gloss', hostAttrs, [
 				h('script', {
 					type: 'application/json',
 					innerHTML: json,

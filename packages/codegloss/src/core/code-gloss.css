@@ -20,6 +20,7 @@
 	--cg-ann-border-dark: #afa9ec;
 	--cg-ann-hover: rgba(83, 74, 183, 0.22);
 	--cg-ann-hover-dark: rgba(174, 169, 236, 0.22);
+	--cg-radius: 8px;
 
 	display: block;
 	font-family:
@@ -35,7 +36,7 @@
 /* Sandbox frame */
 .sandboxFrame {
 	border: 0.5px solid var(--cg-border);
-	border-radius: 8px;
+	border-radius: var(--cg-radius);
 	overflow: hidden;
 	background: var(--cg-bg);
 	color: var(--cg-text);

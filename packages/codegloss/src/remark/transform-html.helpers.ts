@@ -1,5 +1,10 @@
 import type { Html } from 'mdast';
+import { styleOverridesToInlineStyle } from '../core/style-overrides.helpers';
 import type { AnnotationsData, DetectedPair } from './remark.types';
+
+function escapeAttribute(value: string): string {
+	return value.replaceAll('&', '&amp;').replaceAll('"', '&quot;');
+}
 
 function parseAnnotationsData(json: string | undefined): AnnotationsData {
 	if (!json) return {};
@@ -43,6 +48,11 @@ export function buildCodeGlossHtmlNode(pair: DetectedPair): Html {
 
 	const themeAttr = pair.theme ? ` theme="${pair.theme}"` : '';
 
+	const inlineStyle = styleOverridesToInlineStyle(pair.styleOverrides);
+	const styleAttr = inlineStyle
+		? ` style="${escapeAttribute(inlineStyle)}"`
+		: '';
+
 	const parsed = parseAnnotationsData(pair.annotationsJson);
 
 	if (Array.isArray(parsed.annotations)) config.annotations = parsed.annotations;
@@ -78,6 +88,6 @@ export function buildCodeGlossHtmlNode(pair: DetectedPair): Html {
 
 	return {
 		type: 'html',
-		value: `<code-gloss${themeAttr}><script type="application/json">${json}</script></code-gloss>`,
+		value: `<code-gloss${themeAttr}${styleAttr}><script type="application/json">${json}</script></code-gloss>`,
 	};
 }
