@@ -1,3 +1,5 @@
+import type { CodeGlossStyleOverrides } from '../config/config.types';
+
 export type DetectedPair = {
 	lang: string;
 	filename: string | undefined;
@@ -19,6 +21,8 @@ export type DetectedPair = {
 	highlightBackground?: string;
 	/** Optional chrome foreground color extracted by the highlighter */
 	highlightColor?: string;
+	/** Chrome style overrides forwarded to the rendered element as inline CSS vars */
+	styleOverrides?: CodeGlossStyleOverrides;
 };
 
 export type AnnotationsData = {
@@ -76,6 +80,13 @@ export type RemarkCodeglossOptions = {
 	 * shallow-merged with the block's own `callouts` — per-block values win.
 	 */
 	callouts?: Record<string, unknown>;
+	/**
+	 * Chrome style overrides applied to every emitted code block. Rendered as
+	 * inline `--cg-*` custom properties on the root `<code-gloss>` element so
+	 * `var(--my-site-bg)` references resolve against the host page's variables
+	 * at render time.
+	 */
+	styleOverrides?: CodeGlossStyleOverrides;
 	/**
 	 * Optional build-time highlighter. When provided, the plugin pre-highlights
 	 * each block's code at build time and bakes the resulting HTML into the

@@ -111,6 +111,15 @@ export function buildCodeGlossMdxNode(pair: DetectedPair): MdxJsxFlowElement {
 		attributes.push(jsxAttribute('highlightColor', pair.highlightColor));
 	}
 
+	if (pair.styleOverrides) {
+		attributes.push(
+			jsxExpressionAttribute(
+				'styleOverrides',
+				JSON.stringify(pair.styleOverrides),
+			),
+		);
+	}
+
 	return {
 		type: 'mdxJsxFlowElement',
 		name: 'CodeGloss',
