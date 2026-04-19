@@ -1,4 +1,8 @@
-import type { CodeGlossConfig, Highlighter } from 'codegloss';
+import type {
+	CodeGlossConfig,
+	CodeGlossStyleOverrides,
+	Highlighter,
+} from 'codegloss';
 
 export type CodeGlossProps = CodeGlossConfig & {
 	/**
@@ -11,4 +15,11 @@ export type CodeGlossProps = CodeGlossConfig & {
 	 * `createShikiHighlighter(shiki)`.
 	 */
 	highlight?: Highlighter;
+	/**
+	 * Chrome-level style overrides applied as inline CSS custom properties
+	 * on the rendered `<code-gloss>` host. Mirrors the `styleOverrides`
+	 * field in `defineConfig` — set at the config level for a site-wide
+	 * default, pass it per block for a one-off deviation.
+	 */
+	styleOverrides?: CodeGlossStyleOverrides;
 };
