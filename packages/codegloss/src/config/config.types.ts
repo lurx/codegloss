@@ -29,6 +29,56 @@ export type CodeGlossCallouts = {
 	popover?: boolean;
 };
 
+/**
+ * CSS-string-valued fields — accept any CSS custom property value: literal
+ * colors (`#fff`, `oklch(...)`), variable references (`var(--my-var)`),
+ * `calc(...)`, gradients, etc. Passed through verbatim as inline styles on
+ * the `<code-gloss>` host element.
+ *
+ * Overrides win over both the theme default and the host page's own
+ * `--cg-*` custom properties because they land as inline styles. One value
+ * covers both light and dark mode; the default dark-mode remap can't beat
+ * an inline-level declaration.
+ */
+export type CodeGlossStyleOverrides = {
+	/** Outer block chrome: container background, border, text color, etc. */
+	codeBlock?: {
+		/** Maps to `--cg-bg`. */
+		background?: string;
+		/** Maps to `--cg-text`. */
+		foreground?: string;
+		/** Maps to `--cg-border`. */
+		border?: string;
+		/** Maps to `--cg-radius`. Defaults to `8px`. */
+		borderRadius?: string;
+		/** Maps to `--cg-toolbar-bg`. */
+		toolbarBackground?: string;
+		/** Maps to `--cg-muted` — filename, callout body, copy button. */
+		mutedForeground?: string;
+	};
+	/** Inline annotation marker (the highlighted token in the code area). */
+	annotations?: {
+		/** Maps to `--cg-ann-bg`. */
+		markerBackground?: string;
+		/** Maps to `--cg-ann-border`. */
+		markerBorder?: string;
+		/** Maps to `--cg-ann-hover`. */
+		markerHover?: string;
+	};
+	/** Language badge in the toolbar (top-right). */
+	badge?: {
+		/** Maps to `--cg-badge-bg`. */
+		background?: string;
+		/** Maps to `--cg-badge-text`. */
+		foreground?: string;
+	};
+	/** Gutter line numbers on the left edge of the code area. */
+	lineNumbers?: {
+		/** Maps to `--cg-line-num`. */
+		foreground?: string;
+	};
+};
+
 export type CodeGlossUserConfig = {
 	/** Named bundled theme, or an inline theme object. */
 	theme?: string | CodeGlossTheme;
@@ -52,4 +102,11 @@ export type CodeGlossUserConfig = {
 	 * rest fall back to English defaults. Applied via `initCodegloss`.
 	 */
 	labels?: CodeGlossLabels;
+	/**
+	 * Chrome colors and sizing that blend a block into the host site's
+	 * design system. Values are forwarded as inline CSS custom properties
+	 * on the `<code-gloss>` host, so `var(--my-site-bg)` references
+	 * resolve against the page's own variables at render time.
+	 */
+	styleOverrides?: CodeGlossStyleOverrides;
 };
