@@ -172,6 +172,39 @@ initCodegloss(codeglossConfig);
 
 Adapters are ~100 B each; the underlying library is an optional peer dependency — you only install the one you use. The lower-level `setDefaultHighlighter(fn)` is still exported for cases where you'd rather not bundle the config. Full guide in the [Syntax Highlighters docs](https://lurx.github.io/codegloss/docs/highlighters/).
 
+### Chrome styling
+
+Blend a block into the host site's design system by setting `styleOverrides` at the config level. Every field is a CSS value string — literal colors, `var(...)` references to your own design tokens, whatever — forwarded as an inline CSS custom property on each `<code-gloss>` element. One value applies to both light and dark mode:
+
+```ts
+import { defineConfig } from 'codegloss/config';
+
+export default defineConfig({
+  theme: 'github-dark',
+  styleOverrides: {
+    codeBlock: {
+      background: 'var(--surface-1)',
+      foreground: 'var(--text-primary)',
+      border: '1px solid var(--border-subtle)',
+      borderRadius: 'var(--radius-md)',
+    },
+    annotations: {
+      markerBackground: 'var(--accent-dim)',
+      markerBorder: 'var(--accent)',
+    },
+    badge: {
+      background: 'var(--surface-3)',
+      foreground: 'var(--text-muted)',
+    },
+    lineNumbers: {
+      foreground: 'var(--text-faint)',
+    },
+  },
+});
+```
+
+Groups: `codeBlock` (outer container), `annotations` (inline marker), `badge` (language badge in the toolbar), `lineNumbers` (gutter). Each field is strongly typed — unknown fields are a TS error, not a silent no-op. Per-block overrides are also accepted: pass the same `styleOverrides` prop to `<CodeGloss />` (React / Vue / Svelte) to deviate for a single block.
+
 ### Config file
 
 Set project-wide defaults in a `codegloss.config.ts` (or `.codeglossrc.json`, `codegloss.config.js`, etc.):
@@ -189,7 +222,7 @@ export default defineConfig({
 });
 ```
 
-The config file sets defaults for themes, the highlighter, connection arc styles, and more. See the [Component API docs](https://lurx.github.io/codegloss/docs/api/) for all options.
+The config file sets defaults for themes, the highlighter, connection arc styles, chrome `styleOverrides`, and more. See the [Component API docs](https://lurx.github.io/codegloss/docs/api/) for all options.
 
 ### Markdown / MDX
 
