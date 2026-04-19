@@ -184,6 +184,8 @@ type CodeGlossUserConfig = {
   arcs?: CodeGlossArcStyle;
   /** Block-level callout behavior for annotations. */
   callouts?: CodeGlossCallouts;
+  /** Chrome colors and sizing — forwarded as inline CSS vars. */
+  styleOverrides?: CodeGlossStyleOverrides;
   /**
    * Project-wide syntax highlighter. Read by the remark plugin at build
    * time and by `initCodegloss(config)` at runtime. See
@@ -272,6 +274,37 @@ Arc popovers and annotation popovers are independent surfaces: a user can have b
   </script>
 </code-gloss>
 ````
+
+### Style override options
+
+`styleOverrides` bridges the block's chrome (backgrounds, borders, accents, line-number color) to the host site's design tokens. Every field is a CSS value string — literal colors, `var(--my-token)` references, `calc()`, whatever — forwarded as an inline `--cg-*` custom property on the `<code-gloss>` host. One value applies in both light and dark mode (inline styles beat the theme's `:host` rules in either scheme).
+
+````ts
+type CodeGlossStyleOverrides = {
+  codeBlock?: {
+    background?: string;         // → --cg-bg
+    foreground?: string;         // → --cg-text
+    border?: string;             // → --cg-border
+    borderRadius?: string;       // → --cg-radius
+    toolbarBackground?: string;  // → --cg-toolbar-bg
+    mutedForeground?: string;    // → --cg-muted
+  };
+  annotations?: {
+    markerBackground?: string;   // → --cg-ann-bg
+    markerBorder?: string;       // → --cg-ann-border
+    markerHover?: string;        // → --cg-ann-hover
+  };
+  badge?: {
+    background?: string;         // → --cg-badge-bg
+    foreground?: string;         // → --cg-badge-text
+  };
+  lineNumbers?: {
+    foreground?: string;         // → --cg-line-num
+  };
+};
+````
+
+Set site-wide in `codegloss.config.ts`, override per block via the `styleOverrides` prop on any wrapper. For the full walkthrough, the raw `--cg-*` escape hatch, and how it composes with named themes, see [Styles & Theming → Chrome styling](/docs/theming#chrome-styling-via-styleoverrides).
 
 ### Pre-opening callouts
 
