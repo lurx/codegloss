@@ -1,5 +1,8 @@
 # codegloss
 
+[![npm version](https://img.shields.io/npm/v/codegloss.svg?color=blue)](https://www.npmjs.com/package/codegloss)
+[![npm downloads](https://img.shields.io/npm/dm/codegloss.svg)](https://www.npmjs.com/package/codegloss)
+[![license](https://img.shields.io/npm/l/codegloss.svg)](./LICENSE)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=lurx_codegloss&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=lurx_codegloss)
 [![Unit tests](https://github.com/lurx/codegloss/actions/workflows/unit.yml/badge.svg)](https://github.com/lurx/codegloss/actions/workflows/unit.yml)
 [![Integration tests](https://github.com/lurx/codegloss/actions/workflows/integration.yml/badge.svg)](https://github.com/lurx/codegloss/actions/workflows/integration.yml)
