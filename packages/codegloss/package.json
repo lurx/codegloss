@@ -1,6 +1,6 @@
 {
   "name": "codegloss",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Annotated code sandbox web component",
   "license": "MIT",
   "homepage": "https://lurx.github.io/codegloss/",
