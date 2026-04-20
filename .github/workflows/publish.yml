@@ -38,6 +38,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          # Persist the PAT into .git/config so the git push that
+          # changesets/action runs (to update changeset-release/main) is
+          # authenticated as a real user, not github-actions[bot]. That's
+          # what lets the resulting pull_request synchronize event cascade
+          # into the required CI workflows on the Version Packages PR.
+          token: ${{ secrets.RELEASE_TOKEN }}
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
