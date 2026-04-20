@@ -130,4 +130,8 @@ jobs:
         run: pnpm changeset version --snapshot ${{ steps.tag.outputs.tag }}
 
       - name: Publish to npm under the snapshot tag
-        run: pnpm -r publish --no-git-tag-version --tag ${{ steps.tag.outputs.tag }}
+        # --no-git-checks lets pnpm publish from a dirty tree (changeset
+        # version --snapshot has just modified the package.json versions).
+        # Not to be confused with npm's --no-git-tag-version, which is a
+        # different flag for a different command.
+        run: pnpm -r publish --no-git-checks --tag ${{ steps.tag.outputs.tag }}
