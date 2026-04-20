@@ -1,6 +1,6 @@
 {
   "name": "@codegloss/svelte",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Svelte wrapper for the codegloss <code-gloss> web component",
   "license": "MIT",
   "homepage": "https://lurx.github.io/codegloss/",
@@ -26,7 +26,9 @@
   "engines": {
     "node": ">=20"
   },
-  "files": ["src"],
+  "files": [
+    "src"
+  ],
   "exports": {
     ".": {
       "svelte": "./src/code-gloss.component.svelte",
