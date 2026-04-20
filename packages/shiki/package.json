@@ -43,13 +43,18 @@
 	},
 	"devDependencies": {
 		"@types/hast": "^3",
+		"@vitest/coverage-v8": "^4.1.4",
 		"codegloss": "workspace:*",
 		"shiki": "^3",
 		"tsup": "^8",
-		"typescript": "^5.9.3"
+		"typescript": "^5.9.3",
+		"vitest": "^4.1.4"
 	},
 	"scripts": {
 		"build": "tsup",
-		"dev": "tsup --watch"
+		"dev": "tsup --watch",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"test:coverage": "vitest run --coverage"
 	}
 }
