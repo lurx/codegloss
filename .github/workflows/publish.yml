@@ -4,19 +4,23 @@ name: Publish
 # config allows only one workflow per package. Each trigger runs exactly
 # one of the two jobs below.
 #
-# - push → main      → Changesets opens/updates a Version Packages PR;
-#                      merging that PR re-triggers this workflow and
-#                      publishes to npm under the default `latest` tag.
-# - workflow_dispatch → publishes every package under a branch-derived
-#                      dist-tag (snapshot), so reviewers can install a PR
-#                      straight from npm without it touching main.
+# - push → main           → Changesets opens/updates a Version Packages PR;
+#                           merging that PR re-triggers this workflow and
+#                           publishes to npm under the default `latest` tag.
+# - PR labeled `snapshot` → publishes every package under a branch-derived
+#                           dist-tag (snapshot), so reviewers can install a
+#                           PR straight from npm without it touching main.
+#                           Trackable on the PR via the label itself.
+# - workflow_dispatch     → manual escape hatch for snapshot publishes on
+#                           refs that aren't tied to an open PR.
 #
 # Auth via npm Trusted Publishing (OIDC); no NPM_TOKEN secret.
-# See PRE-RELEASE.md for the full workflow.
 
 on:
   push:
     branches: [main]
+  pull_request:
+    types: [labeled]
   workflow_dispatch:
     inputs:
       ref:
@@ -74,14 +78,29 @@ jobs:
 
   snapshot:
     name: PR snapshot
-    if: github.event_name == 'workflow_dispatch'
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' && github.event.label.name == 'snapshot')
     runs-on: ubuntu-latest
-    concurrency: snapshot-${{ inputs.ref }}
+    concurrency: snapshot-${{ github.event.pull_request.head.ref || inputs.ref }}
     steps:
+      - name: Resolve target ref
+        id: resolve
+        env:
+          DISPATCH_REF: ${{ inputs.ref }}
+          PR_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            ref="$DISPATCH_REF"
+          else
+            ref="$PR_REF"
+          fi
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          ref: ${{ inputs.ref }}
+          ref: ${{ steps.resolve.outputs.ref }}
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -101,8 +120,10 @@ jobs:
 
       - name: Derive snapshot tag from ref
         id: tag
+        env:
+          REF: ${{ steps.resolve.outputs.ref }}
         run: |
-          t=$(echo "${{ inputs.ref }}" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
+          t=$(echo "$REF" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
           echo "tag=$t" >> "$GITHUB_OUTPUT"
 
       - name: Version packages as snapshot
