@@ -1,7 +1,7 @@
 name: E2E site tests
 
 # Sentinel pattern — see unit.yml. Branch protection should require
-# `E2E site tests / required`.
+# `e2e-site-required`.
 
 on:
   push:
@@ -88,8 +88,8 @@ jobs:
           path: test/e2e-site/test-results/
           retention-days: 7
 
-  required:
-    name: required
+  e2e-site-required:
+    name: e2e-site-required
     needs: [changes, e2e-site]
     if: always()
     runs-on: ubuntu-latest

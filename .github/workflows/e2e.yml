@@ -1,8 +1,8 @@
 name: E2E tests
 
 # Sentinel pattern — see unit.yml for the rationale. Branch protection
-# should require `E2E tests / required` (not the individual matrix
-# browser names), so path-filtered skips don't deadlock PRs.
+# should require `e2e-required` (not the individual matrix browser
+# names), so path-filtered skips don't deadlock PRs.
 
 on:
   push:
@@ -88,8 +88,8 @@ jobs:
           path: test/e2e/test-results/
           retention-days: 7
 
-  required:
-    name: required
+  e2e-required:
+    name: e2e-required
     needs: [changes, e2e]
     if: always()
     runs-on: ubuntu-latest

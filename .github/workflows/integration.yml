@@ -1,7 +1,7 @@
 name: Integration tests
 
 # Sentinel pattern — see unit.yml. Branch protection should require
-# `Integration tests / required` instead of individual example names.
+# `integration-required` instead of individual example names.
 
 on:
   push:
@@ -72,8 +72,8 @@ jobs:
       - name: Run example build + assertions
         run: pnpm --filter @codegloss-examples/${{ matrix.example }} test
 
-  required:
-    name: required
+  integration-required:
+    name: integration-required
     needs: [changes, example]
     if: always()
     runs-on: ubuntu-latest

@@ -1,9 +1,9 @@
 name: Unit tests
 
 # Sentinel pattern: `changes` decides whether the heavy `test` job runs,
-# and `required` always reports a status so branch protection can require
-# it without deadlocking on PRs that don't touch the filtered paths.
-# Wire branch protection to `Unit tests / required`.
+# and `unit-required` always reports a status so branch protection can
+# require it without deadlocking on PRs that don't touch the filtered
+# paths. Wire branch protection to `unit-required`.
 
 on:
   push:
@@ -67,8 +67,11 @@ jobs:
           files: packages/codegloss/coverage/lcov.info,packages/shiki/coverage/lcov.info,apps/site/coverage/lcov.info
           fail_ci_if_error: false
 
-  required:
-    name: required
+  # Sentinel job names are unique across workflows because branch
+  # protection matches against the literal check_run name, not the
+  # workflow-prefixed display label the GitHub UI shows.
+  unit-required:
+    name: unit-required
     needs: [changes, test]
     if: always()
     runs-on: ubuntu-latest
