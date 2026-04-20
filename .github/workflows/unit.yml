@@ -1,29 +1,42 @@
 name: Unit tests
 
+# Sentinel pattern: `changes` decides whether the heavy `test` job runs,
+# and `required` always reports a status so branch protection can require
+# it without deadlocking on PRs that don't touch the filtered paths.
+# Wire branch protection to `Unit tests / required`.
+
 on:
   push:
     branches: [main]
-    paths:
-      - 'packages/codegloss/**'
-      - 'apps/site/**'
-      - 'pnpm-lock.yaml'
-      - 'pnpm-workspace.yaml'
-      - 'package.json'
-      - '.github/workflows/unit.yml'
   pull_request:
-    paths:
-      - 'packages/codegloss/**'
-      - 'apps/site/**'
-      - 'pnpm-lock.yaml'
-      - 'pnpm-workspace.yaml'
-      - 'package.json'
-      - '.github/workflows/unit.yml'
 
 permissions:
   contents: read
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.filter.outputs.run }}
+    steps:
+      - uses: actions/checkout@v6
+      - id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            run:
+              - 'packages/codegloss/**'
+              - 'packages/shiki/**'
+              - 'apps/site/**'
+              - 'pnpm-lock.yaml'
+              - 'pnpm-workspace.yaml'
+              - 'package.json'
+              - '.github/workflows/unit.yml'
+
   test:
+    name: test
+    needs: changes
+    if: needs.changes.outputs.run == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -51,5 +64,20 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: packages/codegloss/coverage/lcov.info,apps/site/coverage/lcov.info
+          files: packages/codegloss/coverage/lcov.info,packages/shiki/coverage/lcov.info,apps/site/coverage/lcov.info
           fail_ci_if_error: false
+
+  required:
+    name: required
+    needs: [changes, test]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assert heavy job passed or was correctly skipped
+        env:
+          RESULT: ${{ needs.test.result }}
+        run: |
+          if [ "$RESULT" = "failure" ] || [ "$RESULT" = "cancelled" ]; then
+            exit 1
+          fi
+          echo "ok: test result=$RESULT"

@@ -1,32 +1,40 @@
 name: E2E site tests
 
+# Sentinel pattern — see unit.yml. Branch protection should require
+# `E2E site tests / required`.
+
 on:
   push:
     branches: [main]
-    paths:
-      - 'packages/codegloss/**'
-      - 'apps/site/**'
-      - 'test/e2e-site/**'
-      - 'pnpm-lock.yaml'
-      - 'pnpm-workspace.yaml'
-      - 'package.json'
-      - '.github/workflows/e2e-site.yml'
   pull_request:
-    paths:
-      - 'packages/codegloss/**'
-      - 'apps/site/**'
-      - 'test/e2e-site/**'
-      - 'pnpm-lock.yaml'
-      - 'pnpm-workspace.yaml'
-      - 'package.json'
-      - '.github/workflows/e2e-site.yml'
 
 permissions:
   contents: read
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.filter.outputs.run }}
+    steps:
+      - uses: actions/checkout@v6
+      - id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            run:
+              - 'packages/codegloss/**'
+              - 'apps/site/**'
+              - 'test/e2e-site/**'
+              - 'pnpm-lock.yaml'
+              - 'pnpm-workspace.yaml'
+              - 'package.json'
+              - '.github/workflows/e2e-site.yml'
+
   playwright-version:
     name: Resolve Playwright version
+    needs: changes
+    if: needs.changes.outputs.run == 'true'
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.read.outputs.version }}
@@ -39,7 +47,8 @@ jobs:
 
   e2e-site:
     name: e2e-site / ${{ matrix.browser }}
-    needs: playwright-version
+    needs: [changes, playwright-version]
+    if: needs.changes.outputs.run == 'true'
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v${{ needs.playwright-version.outputs.version }}-noble
@@ -78,3 +87,18 @@ jobs:
           name: playwright-site-traces-${{ matrix.browser }}
           path: test/e2e-site/test-results/
           retention-days: 7
+
+  required:
+    name: required
+    needs: [changes, e2e-site]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assert heavy job passed or was correctly skipped
+        env:
+          RESULT: ${{ needs.e2e-site.result }}
+        run: |
+          if [ "$RESULT" = "failure" ] || [ "$RESULT" = "cancelled" ]; then
+            exit 1
+          fi
+          echo "ok: e2e-site result=$RESULT"

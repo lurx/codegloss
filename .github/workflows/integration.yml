@@ -1,30 +1,39 @@
 name: Integration tests
 
+# Sentinel pattern — see unit.yml. Branch protection should require
+# `Integration tests / required` instead of individual example names.
+
 on:
   push:
     branches: [main]
-    paths:
-      - 'packages/codegloss/**'
-      - 'examples/**'
-      - 'pnpm-lock.yaml'
-      - 'pnpm-workspace.yaml'
-      - 'package.json'
-      - '.github/workflows/integration.yml'
   pull_request:
-    paths:
-      - 'packages/codegloss/**'
-      - 'examples/**'
-      - 'pnpm-lock.yaml'
-      - 'pnpm-workspace.yaml'
-      - 'package.json'
-      - '.github/workflows/integration.yml'
 
 permissions:
   contents: read
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.filter.outputs.run }}
+    steps:
+      - uses: actions/checkout@v6
+      - id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            run:
+              - 'packages/codegloss/**'
+              - 'examples/**'
+              - 'pnpm-lock.yaml'
+              - 'pnpm-workspace.yaml'
+              - 'package.json'
+              - '.github/workflows/integration.yml'
+
   example:
     name: ${{ matrix.example }}
+    needs: changes
+    if: needs.changes.outputs.run == 'true'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -62,3 +71,18 @@ jobs:
 
       - name: Run example build + assertions
         run: pnpm --filter @codegloss-examples/${{ matrix.example }} test
+
+  required:
+    name: required
+    needs: [changes, example]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assert heavy job passed or was correctly skipped
+        env:
+          RESULT: ${{ needs.example.result }}
+        run: |
+          if [ "$RESULT" = "failure" ] || [ "$RESULT" = "cancelled" ]; then
+            exit 1
+          fi
+          echo "ok: example result=$RESULT"
