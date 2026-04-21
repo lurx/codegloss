@@ -64,10 +64,15 @@ export function rehypeCodeglossPre() {
 
 function visit(parent: Root | Element): void {
 	for (let i = 0; i < parent.children.length; i++) {
-		const child = parent.children[i];
-		if (child.type !== 'element') continue;
+		// `rehype-raw` emits sub-trees of `type: 'root'` around raw-HTML
+		// regions — hast's types don't model that shape, so widen the union
+		// here so we can recurse into them. See
+		// https://github.com/lurx/codegloss/issues/12.
+		const child = parent.children[i] as ElementContent | Root;
+		if (child.type !== 'element' && child.type !== 'root') continue;
 
 		if (
+			child.type === 'element' &&
 			child.tagName === 'pre' &&
 			child.children.length > 0 &&
 			child.children[0].type === 'element' &&
