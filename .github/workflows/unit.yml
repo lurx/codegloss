@@ -41,6 +41,29 @@ jobs:
               - '.github/workflows/unit.yml'
               - '.github/actions/setup/**'
 
+  # Advisory quality job — runs lint + prettier but is intentionally
+  # NOT included in `unit-required`'s needs because the repo currently
+  # has pre-existing lint/format debt (see `pnpm lint` / `pnpm format:check`).
+  # Once that debt is cleared, add `quality` to the sentinel's needs and
+  # bump branch protection accordingly.
+  quality:
+    name: lint + format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          build-packages: "false"
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Format check
+        run: pnpm format:check
+
   test:
     name: test
     needs: changes
