@@ -29,6 +29,7 @@ jobs:
               - 'pnpm-workspace.yaml'
               - 'package.json'
               - '.github/workflows/integration.yml'
+              - '.github/actions/setup/**'
 
   example:
     name: ${{ matrix.example }}
@@ -54,20 +55,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build local packages
-        run: pnpm -w run build:packages
+      - name: Setup
+        uses: ./.github/actions/setup
 
       - name: Run example build + assertions
         run: pnpm --filter @codegloss-examples/${{ matrix.example }} test

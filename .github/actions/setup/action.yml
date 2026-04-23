@@ -1,0 +1,38 @@
+name: Setup
+description: Install pnpm, Node, project dependencies, and (optionally) build local packages.
+
+inputs:
+  node-version:
+    description: Node.js version to install
+    required: false
+    default: "22"
+  build-packages:
+    description: Run `pnpm -w run build:packages` after install
+    required: false
+    default: "true"
+  registry-url:
+    description: npm registry URL for setup-node (needed for OIDC publishes)
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+
+    - name: Setup Node
+      uses: actions/setup-node@v6
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: pnpm
+        registry-url: ${{ inputs.registry-url }}
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile
+
+    - name: Build local packages
+      if: inputs.build-packages == 'true'
+      shell: bash
+      run: pnpm -w run build:packages

@@ -50,21 +50,10 @@ jobs:
           # into the required CI workflows on the Version Packages PR.
           token: ${{ secrets.RELEASE_TOKEN }}
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v6
+      - name: Setup
+        uses: ./.github/actions/setup
         with:
-          node-version: 22
-          cache: pnpm
           registry-url: https://registry.npmjs.org
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build local packages
-        run: pnpm -w run build:packages
 
       - name: Create release PR or publish
         uses: changesets/action@v1
@@ -102,21 +91,10 @@ jobs:
         with:
           ref: ${{ steps.resolve.outputs.ref }}
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v6
+      - name: Setup
+        uses: ./.github/actions/setup
         with:
-          node-version: 22
-          cache: pnpm
           registry-url: https://registry.npmjs.org
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build local packages
-        run: pnpm -w run build:packages
 
       - name: Derive snapshot tag from ref
         id: tag
