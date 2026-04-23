@@ -14,7 +14,9 @@ name: Publish
 # - workflow_dispatch     → manual escape hatch for snapshot publishes on
 #                           refs that aren't tied to an open PR.
 #
-# Auth via npm Trusted Publishing (OIDC); no NPM_TOKEN secret.
+# Auth via npm Trusted Publishing (OIDC); no NPM_TOKEN secret. Publishes
+# request provenance via `NPM_CONFIG_PROVENANCE=true` / `--provenance`
+# so the resulting tarballs carry signed attestations.
 
 on:
   push:
@@ -31,7 +33,7 @@ on:
 permissions:
   contents: write       # changesets/action opens/updates the Version Packages PR
   pull-requests: write  # same
-  id-token: write       # OIDC exchange with npm for trusted publishing
+  id-token: write       # OIDC exchange with npm for trusted publishing + provenance
 
 jobs:
   release:
@@ -39,6 +41,9 @@ jobs:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     concurrency: release-${{ github.ref }}
+    outputs:
+      published: ${{ steps.changesets.outputs.published }}
+      publishedPackages: ${{ steps.changesets.outputs.publishedPackages }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -56,6 +61,7 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       - name: Create release PR or publish
+        id: changesets
         uses: changesets/action@v1
         with:
           version: pnpm changeset version
@@ -64,6 +70,41 @@ jobs:
           title: "chore(release): version packages"
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          NPM_CONFIG_PROVENANCE: "true"
+
+  smoke-test:
+    name: Smoke-test published tarballs
+    needs: release
+    if: needs.release.outputs.published == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJson(needs.release.outputs.publishedPackages) }}
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Install and resolve from npm
+        env:
+          NAME: ${{ matrix.package.name }}
+          VERSION: ${{ matrix.package.version }}
+        run: |
+          set -euo pipefail
+          mkdir smoke && cd smoke
+          npm init -y >/dev/null
+          # Retry a few times — npm's registry can lag a minute behind publish.
+          for attempt in 1 2 3 4 5; do
+            if npm install --no-audit --no-fund "$NAME@$VERSION"; then
+              break
+            fi
+            echo "attempt $attempt failed, waiting 15s..."
+            sleep 15
+          done
+          node -e "const p = require('$NAME/package.json'); if (p.version !== '$VERSION') { console.error('version mismatch', p.version, 'vs', '$VERSION'); process.exit(1) }; console.log('ok:', p.name, p.version)"
 
   snapshot:
     name: PR snapshot
@@ -112,4 +153,6 @@ jobs:
         # version --snapshot has just modified the package.json versions).
         # Not to be confused with npm's --no-git-tag-version, which is a
         # different flag for a different command.
-        run: pnpm -r publish --no-git-checks --tag ${{ steps.tag.outputs.tag }}
+        # --provenance attaches a signed attestation via OIDC (id-token:
+        # write is set above).
+        run: pnpm -r publish --no-git-checks --provenance --tag ${{ steps.tag.outputs.tag }}
