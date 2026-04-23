@@ -4,6 +4,9 @@ name: Unit tests
 # and `unit-required` always reports a status so branch protection can
 # require it without deadlocking on PRs that don't touch the filtered
 # paths. Wire branch protection to `unit-required`.
+#
+# Sonar runs as a downstream job that consumes the coverage artifact
+# from `test`, so we don't rebuild + re-run tests in a second workflow.
 
 on:
   push:
@@ -59,6 +62,42 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: packages/codegloss/coverage/lcov.info,packages/shiki/coverage/lcov.info,apps/site/coverage/lcov.info
           fail_ci_if_error: false
+
+      - name: Upload coverage artifact for Sonar
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: |
+            packages/codegloss/coverage/lcov.info
+            packages/shiki/coverage/lcov.info
+            apps/site/coverage/lcov.info
+          if-no-files-found: error
+          retention-days: 1
+
+  sonar:
+    name: sonar
+    needs: test
+    if: needs.test.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          # Full history so Sonar can attribute changes to commits.
+          fetch-depth: 0
+
+      - name: Download coverage artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage
+          # Preserves the packages/*/coverage/lcov.info tree the artifact
+          # was uploaded with, which is what sonar-project.properties points at.
+          path: .
+
+      - name: SonarCloud scan
+        uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   # Sentinel job names are unique across workflows because branch
   # protection matches against the literal check_run name, not the
