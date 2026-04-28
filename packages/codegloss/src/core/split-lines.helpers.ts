@@ -22,9 +22,9 @@ export function splitHighlightedLines(html: string): string[] {
 	let i = 0;
 
 	while (i < html.length) {
-		const ch = html.charCodeAt(i);
+		const ch = html[i];
 
-		if (ch === 60 /* < */) {
+		if (ch === '<') {
 			const tagEnd = html.indexOf('>', i);
 			if (tagEnd === -1) {
 				buffer += html.slice(i);
@@ -45,7 +45,7 @@ export function splitHighlightedLines(html: string): string[] {
 			continue;
 		}
 
-		if (ch === 10 /* \n */) {
+		if (ch === '\n') {
 			for (let j = openStack.length - 1; j >= 0; j--) {
 				buffer += `</${openStack[j][1]}>`;
 			}
@@ -56,7 +56,7 @@ export function splitHighlightedLines(html: string): string[] {
 			continue;
 		}
 
-		if (ch === 38 /* & */) {
+		if (ch === '&') {
 			const semi = html.indexOf(';', i);
 			if (semi !== -1 && semi - i <= 8) {
 				buffer += html.slice(i, semi + 1);
@@ -65,7 +65,7 @@ export function splitHighlightedLines(html: string): string[] {
 			}
 		}
 
-		buffer += html[i];
+		buffer += ch;
 		i++;
 	}
 
