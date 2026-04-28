@@ -11,22 +11,22 @@ CodeGloss ships a small built-in regex tokenizer that handles the common JS/TS c
 
 A `Highlighter` is just a function:
 
-```ts
+````ts
 type Highlighter = (
-	code: string,
-	lang: string,
+  code: string,
+  lang: string,
 ) => string | { html: string; background?: string; color?: string };
-```
+````
 
 Return the tokenized HTML for the whole code block (no outer `<pre>` / `<code>` wrappers) — codegloss splits it into lines, preserves open spans across newlines, and weaves your annotation `<mark>`s into the tokenized output. Anything that emits span-wrapped tokens works: Shiki, Prism, highlight.js, Starry Night, or your own.
 
-**Codegloss stays syntax-agnostic.** Colors come from _your_ highlighter, not from codegloss. When the highlighter reports its chrome (via the `{ background, color }` return) codegloss applies those as `--cg-bg` and `--cg-text` on the host so the block matches the highlighter's theme. No named codegloss theme required.
+**Codegloss stays syntax-agnostic.** Colors come from *your* highlighter, not from codegloss. When the highlighter reports its chrome (via the `{ background, color }` return) codegloss applies those as `--cg-bg` and `--cg-text` on the host so the block matches the highlighter's theme. No named codegloss theme required.
 
 ## Declare it once in `codegloss.config.ts`
 
 The config carries a `highlight` field. Set it once and every render path picks it up — the remark plugin reads it at build time, server pages can call it directly for hand-written blocks, and a single `initCodegloss(config)` call wires it into the runtime web component for dynamic / interactive pages.
 
-```ts
+````ts
 // codegloss.config.ts
 import { defineConfig } from 'codegloss/config';
 import { createShikiHighlighter } from 'codegloss/highlighters/shiki';
@@ -38,19 +38,19 @@ const SHIKI_THEME = 'github-dark';
 // (rehype-shiki) and codegloss can share one tokenizer — same theme, same
 // langs, no drift between the two render paths.
 export const shiki = await createHighlighter({
-	themes: [SHIKI_THEME],
-	langs: ['js', 'ts', 'tsx', 'py', 'rust'],
+  themes: [SHIKI_THEME],
+  langs: ['js', 'ts', 'tsx', 'py', 'rust'],
 });
 
 export default defineConfig({
-	theme: SHIKI_THEME,
-	highlight: createShikiHighlighter(shiki, { theme: SHIKI_THEME }),
+  theme: SHIKI_THEME,
+  highlight: createShikiHighlighter(shiki, { theme: SHIKI_THEME }),
 });
-```
+````
 
 Prism and highlight.js are sync — no top-level await, no shared instance dance:
 
-```ts
+````ts
 // codegloss.config.ts
 import { defineConfig } from 'codegloss/config';
 import { createPrismHighlighter } from 'codegloss/highlighters/prism';
@@ -58,9 +58,9 @@ import Prism from 'prismjs';
 import 'prismjs/components/prism-typescript';
 
 export default defineConfig({
-	highlight: createPrismHighlighter(Prism, { theme: 'tomorrow' }),
+  highlight: createPrismHighlighter(Prism, { theme: 'tomorrow' }),
 });
-```
+````
 
 ## Three places it gets consumed
 
@@ -70,39 +70,35 @@ The same `Highlighter` function works in every consumer pattern. **Pick the one(
 
 For MDX/markdown, hand the highlighter to the remark plugin (typically by spreading the config). Each fenced codegloss block is pre-highlighted at build, baked into the emitted config, and rendered straight from HTML — no client-side highlighter download, no flicker.
 
-```ts
+````ts
 import remarkCodegloss from 'codegloss/remark';
 import codeglossConfig from './codegloss.config';
 
 remarkPlugins: [[remarkCodegloss, { highlight: codeglossConfig.highlight }]];
-```
+````
 
 ### Render time — the framework wrapper `highlight` prop
 
 `<CodeGloss>` accepts a `highlight` prop on every wrapper. The wrapper invokes it during render, drops the resulting HTML into the config, and the element renders pre-highlighted markup. Use this for handwritten React/Vue/Svelte blocks that don't go through remark — e.g. a server component pre-rendering the homepage hero.
 
-```tsx
+````tsx
 import { CodeGloss } from '@codegloss/react';
 import codeglossConfig from '@/codegloss.config';
 
-<CodeGloss
-	code="..."
-	lang="js"
-	highlight={codeglossConfig.highlight}
-/>;
-```
+<CodeGloss code="..." lang="js" highlight={codeglossConfig.highlight} />
+````
 
 ### Runtime — `initCodegloss(config)`
 
 For dynamic blocks where the code isn't known at build time (a code editor, a live preview), call `initCodegloss(config)` once near the root of your client app. It registers `config.highlight` as the default for every `<code-gloss>` instance — current and future — and refreshes mounted blocks so async highlighters (Shiki) take effect without a reload.
 
-```ts
+````ts
 // app root (client)
 import { initCodegloss } from 'codegloss';
 import codeglossConfig from './codegloss.config';
 
 initCodegloss(codeglossConfig);
-```
+````
 
 If you need finer control (e.g. you'd rather not bundle your highlighter with every client page that touches the config), you can still use the lower-level `setDefaultHighlighter(fn)` directly.
 

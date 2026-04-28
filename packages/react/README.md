@@ -15,23 +15,17 @@ npm install @codegloss/react codegloss
 import { CodeGloss } from '@codegloss/react';
 
 export function Example() {
-	return (
-		<CodeGloss
-			code="function fib(n) { return n < 2 ? n : fib(n-1) + fib(n-2); }"
-			lang="js"
-			filename="fib.js"
-			annotations={[
-				{
-					id: 'a1',
-					token: 'fib',
-					line: 0,
-					occurrence: 0,
-					title: 'Recursion',
-					text: 'Calls itself with smaller inputs.',
-				},
-			]}
-		/>
-	);
+  return (
+    <CodeGloss
+      code="function fib(n) { return n < 2 ? n : fib(n-1) + fib(n-2); }"
+      lang="js"
+      filename="fib.js"
+      annotations={[
+        { id: 'a1', token: 'fib', line: 0, occurrence: 0,
+          title: 'Recursion', text: 'Calls itself with smaller inputs.' },
+      ]}
+    />
+  );
 }
 ```
 

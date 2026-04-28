@@ -65,34 +65,34 @@ If no annotations block follows, the component renders the code without annotati
 
 ## Options
 
-```ts
+````ts
 type RemarkCodeglossOptions = {
-	/**
-	 * Output mode. Default: 'mdx'.
-	 * - 'mdx': emits CodeGloss MDX JSX (use with MDX pipelines)
-	 * - 'html': emits a raw <code-gloss> HTML node (use with plain markdown pipelines)
-	 */
-	output?: 'mdx' | 'html';
-	/**
-	 * (mdx mode only) Skip injecting `import { CodeGloss } from '@codegloss/react'`.
-	 * Set true when CodeGloss is provided via a custom MDX components map.
-	 */
-	skipImport?: boolean;
-	/**
-	 * Default theme applied to all code blocks unless the block specifies its own.
-	 * Accepts a bundled theme name (e.g. 'github-dark', 'dracula').
-	 */
-	theme?: string;
+  /**
+   * Output mode. Default: 'mdx'.
+   * - 'mdx': emits CodeGloss MDX JSX (use with MDX pipelines)
+   * - 'html': emits a raw <code-gloss> HTML node (use with plain markdown pipelines)
+   */
+  output?: 'mdx' | 'html';
+  /**
+   * (mdx mode only) Skip injecting `import { CodeGloss } from '@codegloss/react'`.
+   * Set true when CodeGloss is provided via a custom MDX components map.
+   */
+  skipImport?: boolean;
+  /**
+   * Default theme applied to all code blocks unless the block specifies its own.
+   * Accepts a bundled theme name (e.g. 'github-dark', 'dracula').
+   */
+  theme?: string;
 };
-```
+````
 
 ### Applying a global theme
 
 Pass a `theme` option to apply a default theme to all code blocks processed by the plugin:
 
-```js
-remarkCodegloss({ theme: 'github-dark' });
-```
+````js
+remarkCodegloss({ theme: 'github-dark' })
+````
 
 Individual code blocks can override the global default — the remark plugin only injects the theme when the block doesn't specify its own.
 
@@ -102,35 +102,32 @@ Individual code blocks can override the global default — the remark plugin onl
 
 #### Next.js with @next/mdx
 
-```js
+````js
 import createMdx from '@next/mdx';
 import remarkCodegloss from 'codegloss/remark';
 
 const withMdx = createMdx({
-	options: {
-		remarkPlugins: [remarkCodegloss],
-	},
+  options: {
+    remarkPlugins: [remarkCodegloss],
+  },
 });
-```
+````
 
 #### Docusaurus
 
-```js
+````js
 import remarkCodegloss from 'codegloss/remark';
 
 export default {
-	presets: [
-		[
-			'classic',
-			{
-				docs: {
-					remarkPlugins: [[remarkCodegloss, { skipImport: true }]],
-				},
-			},
-		],
-	],
+  presets: [
+    ['classic', {
+      docs: {
+        remarkPlugins: [[remarkCodegloss, { skipImport: true }]],
+      },
+    }],
+  ],
 };
-```
+````
 
 `skipImport: true` is recommended in Docusaurus because the component is provided via the swizzled MDX components map (see the [Docusaurus setup guide](/docs/setup/docusaurus)).
 
@@ -138,38 +135,38 @@ export default {
 
 The auto-injected import targets `@codegloss/react`, which matches the dominant `@mdx-js/react` consumers (Next.js, Docusaurus, Velite, Astro's MDX integration). If you're using `@mdx-js/vue` or `@mdx-js/preact`, set `skipImport: true` and provide `CodeGloss` via your MDX components mapping — point it at `@codegloss/vue` or your own wrapper:
 
-```js
+````js
 // mdx config
 remarkPlugins: [[remarkCodegloss, { skipImport: true }]],
-```
+````
 
-```js
+````js
 // MDX components mapping
 import { CodeGloss } from '@codegloss/vue';
 export const components = { CodeGloss };
-```
+````
 
 For SvelteKit (mdsvex) and VitePress, prefer `output: 'html'` instead — it emits a raw `<code-gloss>` element with no import at all.
 
 #### Generic MDX pipeline
 
-```js
+````js
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkMdx from 'remark-mdx';
 import remarkCodegloss from 'codegloss/remark';
 
 const processor = unified()
-	.use(remarkParse)
-	.use(remarkMdx)
-	.use(remarkCodegloss);
-```
+  .use(remarkParse)
+  .use(remarkMdx)
+  .use(remarkCodegloss);
+````
 
 ### HTML mode (plain markdown)
 
 For pipelines that produce plain HTML (no JSX, no React):
 
-```js
+````js
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
@@ -177,31 +174,24 @@ import rehypeStringify from 'rehype-stringify';
 import remarkCodegloss from 'codegloss/remark';
 
 const html = await unified()
-	.use(remarkParse)
-	.use(remarkCodegloss, { output: 'html' })
-	.use(remarkRehype, { allowDangerousHtml: true })
-	.use(rehypeStringify, { allowDangerousHtml: true })
-	.process(markdownSource);
-```
+  .use(remarkParse)
+  .use(remarkCodegloss, { output: 'html' })
+  .use(remarkRehype, { allowDangerousHtml: true })
+  .use(rehypeStringify, { allowDangerousHtml: true })
+  .process(markdownSource);
+````
 
 The output is a raw `<code-gloss>` element with the config in a `<script type="application/json">` child:
 
-```html
-<code-gloss
-	><script type="application/json">
-		{"code":"...","lang":"js",...}
-	</script></code-gloss
->
-```
+````html
+<code-gloss><script type="application/json">{"code":"...","lang":"js",...}</script></code-gloss>
+````
 
 You're responsible for loading the `codegloss` runtime in your HTML page so the custom element gets registered:
 
-```html
-<script
-	type="module"
-	src="https://unpkg.com/codegloss/dist/index.js"
-></script>
-```
+````html
+<script type="module" src="https://unpkg.com/codegloss/dist/index.js"></script>
+````
 
 This pattern works with `marked`, `markdown-it`, and any static site generator that goes through remark.
 

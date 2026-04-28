@@ -23,19 +23,19 @@ Interactive annotated code blocks for the web. Drop a `<code-gloss>` element on 
 
 **Core** — `npm install codegloss`
 
-| Import             | What it is                                                                                                           |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| `codegloss`        | The `<code-gloss>` Web Component (auto-registers on import).                                                         |
+| Import | What it is |
+|---|---|
+| `codegloss` | The `<code-gloss>` Web Component (auto-registers on import). |
 | `codegloss/remark` | Remark plugin — turns annotated fenced code blocks into `<code-gloss>` elements. Supports MDX and plain-HTML output. |
-| `codegloss/themes` | Bundled themes (tree-shakeable).                                                                                     |
-| `codegloss/config` | `defineConfig` helper for `codegloss.config.ts`.                                                                     |
+| `codegloss/themes` | Bundled themes (tree-shakeable). |
+| `codegloss/config` | `defineConfig` helper for `codegloss.config.ts`. |
 
 **Framework wrappers** — install the one you need alongside `codegloss`:
 
-| Package             | Install                         |
-| ------------------- | ------------------------------- |
-| `@codegloss/react`  | `npm install @codegloss/react`  |
-| `@codegloss/vue`    | `npm install @codegloss/vue`    |
+| Package | Install |
+|---|---|
+| `@codegloss/react` | `npm install @codegloss/react` |
+| `@codegloss/vue` | `npm install @codegloss/vue` |
 | `@codegloss/svelte` | `npm install @codegloss/svelte` |
 
 Each wrapper declares `codegloss` as a peer dependency.
@@ -45,29 +45,20 @@ Each wrapper declares `codegloss` as a peer dependency.
 ### Vanilla HTML
 
 ```html
-<script
-	type="module"
-	src="https://unpkg.com/codegloss/dist/index.js"
-></script>
+<script type="module" src="https://unpkg.com/codegloss/dist/index.js"></script>
 
 <code-gloss>
-	<script type="application/json">
-		{
-			"code": "function fib(n) { return n < 2 ? n : fib(n-1) + fib(n-2); }",
-			"lang": "js",
-			"filename": "fib.js",
-			"annotations": [
-				{
-					"id": "a1",
-					"token": "fib",
-					"line": 0,
-					"occurrence": 0,
-					"title": "Recursion",
-					"text": "Calls itself with smaller inputs."
-				}
-			]
-		}
-	</script>
+  <script type="application/json">
+    {
+      "code": "function fib(n) { return n < 2 ? n : fib(n-1) + fib(n-2); }",
+      "lang": "js",
+      "filename": "fib.js",
+      "annotations": [
+        { "id": "a1", "token": "fib", "line": 0, "occurrence": 0,
+          "title": "Recursion", "text": "Calls itself with smaller inputs." }
+      ]
+    }
+  </script>
 </code-gloss>
 ```
 
@@ -77,23 +68,17 @@ Each wrapper declares `codegloss` as a peer dependency.
 import { CodeGloss } from '@codegloss/react';
 
 export function Example() {
-	return (
-		<CodeGloss
-			code="function fib(n) { return n < 2 ? n : fib(n-1) + fib(n-2); }"
-			lang="js"
-			filename="fib.js"
-			annotations={[
-				{
-					id: 'a1',
-					token: 'fib',
-					line: 0,
-					occurrence: 0,
-					title: 'Recursion',
-					text: 'Calls itself with smaller inputs.',
-				},
-			]}
-		/>
-	);
+  return (
+    <CodeGloss
+      code="function fib(n) { return n < 2 ? n : fib(n-1) + fib(n-2); }"
+      lang="js"
+      filename="fib.js"
+      annotations={[
+        { id: 'a1', token: 'fib', line: 0, occurrence: 0,
+          title: 'Recursion', text: 'Calls itself with smaller inputs.' },
+      ]}
+    />
+  );
 }
 ```
 
@@ -105,11 +90,11 @@ import { CodeGloss } from '@codegloss/vue';
 </script>
 
 <template>
-	<CodeGloss
-		code="function fib(n) { return n < 2 ? n : fib(n-1) + fib(n-2); }"
-		lang="js"
-		filename="fib.js"
-	/>
+  <CodeGloss
+    code="function fib(n) { return n < 2 ? n : fib(n-1) + fib(n-2); }"
+    lang="js"
+    filename="fib.js"
+  />
 </template>
 ```
 
@@ -132,15 +117,11 @@ import { CodeGloss } from '@codegloss/vue';
 Apply a named theme to any code block:
 
 ```html
-<code-gloss theme="github-dark"></code-gloss>
+<code-gloss theme="github-dark">
 ```
 
 ```tsx
-<CodeGloss
-	code="..."
-	lang="js"
-	theme="dracula"
-/>
+<CodeGloss code="..." lang="js" theme="dracula" />
 ```
 
 **Bundled themes:** `github-light`, `github-dark`, `one-light`, `one-dark`, `dracula`, `nord-light`, `nord-dark`, `vitesse-light`, `vitesse-dark`.
@@ -148,7 +129,7 @@ Apply a named theme to any code block:
 Set a default theme for all blocks via the remark plugin:
 
 ```js
-remarkCodegloss({ theme: 'github-dark' });
+remarkCodegloss({ theme: 'github-dark' })
 ```
 
 Or apply globally in vanilla JS:
@@ -171,13 +152,13 @@ import { createShikiHighlighter } from 'codegloss/highlighters/shiki';
 import { createHighlighter } from 'shiki';
 
 const shiki = await createHighlighter({
-	themes: ['github-dark'],
-	langs: ['js', 'ts', 'tsx'],
+  themes: ['github-dark'],
+  langs: ['js', 'ts', 'tsx'],
 });
 
 export default defineConfig({
-	theme: 'github-dark',
-	highlight: createShikiHighlighter(shiki, { theme: 'github-dark' }),
+  theme: 'github-dark',
+  highlight: createShikiHighlighter(shiki, { theme: 'github-dark' }),
 });
 ```
 
@@ -199,26 +180,26 @@ Blend a block into the host site's design system by setting `styleOverrides` at 
 import { defineConfig } from 'codegloss/config';
 
 export default defineConfig({
-	theme: 'github-dark',
-	styleOverrides: {
-		codeBlock: {
-			background: 'var(--surface-1)',
-			foreground: 'var(--text-primary)',
-			border: '1px solid var(--border-subtle)',
-			borderRadius: 'var(--radius-md)',
-		},
-		annotations: {
-			markerBackground: 'var(--accent-dim)',
-			markerBorder: 'var(--accent)',
-		},
-		badge: {
-			background: 'var(--surface-3)',
-			foreground: 'var(--text-muted)',
-		},
-		lineNumbers: {
-			foreground: 'var(--text-faint)',
-		},
-	},
+  theme: 'github-dark',
+  styleOverrides: {
+    codeBlock: {
+      background: 'var(--surface-1)',
+      foreground: 'var(--text-primary)',
+      border: '1px solid var(--border-subtle)',
+      borderRadius: 'var(--radius-md)',
+    },
+    annotations: {
+      markerBackground: 'var(--accent-dim)',
+      markerBorder: 'var(--accent)',
+    },
+    badge: {
+      background: 'var(--surface-3)',
+      foreground: 'var(--text-muted)',
+    },
+    lineNumbers: {
+      foreground: 'var(--text-faint)',
+    },
+  },
 });
 ```
 
@@ -232,12 +213,12 @@ Set project-wide defaults in a `codegloss.config.ts` (or `.codeglossrc.json`, `c
 import { defineConfig } from 'codegloss/config';
 
 export default defineConfig({
-	theme: 'github-dark',
-	// highlight: createShikiHighlighter(...),  // see above
-	arcs: {
-		strokeDasharray: 'none', // solid arcs
-		opacity: 0.7,
-	},
+  theme: 'github-dark',
+  // highlight: createShikiHighlighter(...),  // see above
+  arcs: {
+    strokeDasharray: 'none',  // solid arcs
+    opacity: 0.7,
+  },
 });
 ```
 
@@ -247,28 +228,20 @@ The config file sets defaults for themes, the highlighter, connection arc styles
 
 ````md
 ```js codegloss fib.js
-function fib(n) {
-	return n < 2 ? n : fib(n - 1) + fib(n - 2);
-}
+function fib(n) { return n < 2 ? n : fib(n-1) + fib(n-2); }
 ```
 
 ```json annotations
 {
-	"annotations": [
-		{
-			"id": "a1",
-			"token": "fib",
-			"line": 0,
-			"occurrence": 0,
-			"title": "Recursion",
-			"text": "Calls itself with smaller inputs."
-		}
-	],
-	"connections": [
-		{ "from": "a1", "to": "a1", "color": "#534AB7", "side": "right" }
-	],
-	"arcs": { "arrowhead": true },
-	"callouts": { "popover": true }
+  "annotations": [
+    { "id": "a1", "token": "fib", "line": 0, "occurrence": 0,
+      "title": "Recursion", "text": "Calls itself with smaller inputs." }
+  ],
+  "connections": [
+    { "from": "a1", "to": "a1", "color": "#534AB7", "side": "right" }
+  ],
+  "arcs":    { "arrowhead": true },
+  "callouts": { "popover": true }
 }
 ```
 ````

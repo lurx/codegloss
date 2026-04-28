@@ -11,33 +11,29 @@ You don't need to import a stylesheet. The Web Component uses **Shadow DOM** wit
 
 Apply a bundled theme via the `theme` attribute (HTML) or prop (React/Vue/Svelte):
 
-```html
-<code-gloss theme="github-dark"></code-gloss>
-```
+````html
+<code-gloss theme="github-dark">
+````
 
-```jsx
-<CodeGloss
-	code="..."
-	lang="js"
-	theme="dracula"
-/>
-```
+````jsx
+<CodeGloss code="..." lang="js" theme="dracula" />
+````
 
 ### Bundled themes
 
 <ThemeShowcase />
 
-| Theme           | Variant | Based on           |
-| --------------- | ------- | ------------------ |
-| `github-light`  | light   | GitHub code blocks |
-| `github-dark`   | dark    | GitHub code blocks |
-| `one-light`     | light   | Atom One Light     |
-| `one-dark`      | dark    | Atom One Dark      |
-| `dracula`       | dark    | Dracula            |
-| `nord-light`    | light   | Nord Snow Storm    |
-| `nord-dark`     | dark    | Nord Polar Night   |
-| `vitesse-light` | light   | Vitesse by antfu   |
-| `vitesse-dark`  | dark    | Vitesse by antfu   |
+| Theme | Variant | Based on |
+| --- | --- | --- |
+| `github-light` | light | GitHub code blocks |
+| `github-dark` | dark | GitHub code blocks |
+| `one-light` | light | Atom One Light |
+| `one-dark` | dark | Atom One Dark |
+| `dracula` | dark | Dracula |
+| `nord-light` | light | Nord Snow Storm |
+| `nord-dark` | dark | Nord Polar Night |
+| `vitesse-light` | light | Vitesse by antfu |
+| `vitesse-dark` | dark | Vitesse by antfu |
 
 Each theme sets both **syntax token colors** (keywords, strings, numbers, comments) and **chrome colors** (background, borders, toolbar, annotations). Dark-only themes (like Dracula) apply unconditionally.
 
@@ -45,121 +41,121 @@ Each theme sets both **syntax token colors** (keywords, strings, numbers, commen
 
 Set a default theme for all code blocks:
 
-```js
+````js
 import remarkCodegloss from 'codegloss/remark';
 
-remarkCodegloss({ theme: 'github-dark' });
-```
+remarkCodegloss({ theme: 'github-dark' })
+````
 
 Individual blocks can override the global default by specifying their own `theme`.
 
 ## Global theme in vanilla JS
 
-```js
+````js
 import { applyGlobalTheme } from 'codegloss';
 
 // Applies 'github-dark' to all <code-gloss> elements on the page
 // that don't already have a theme attribute.
 applyGlobalTheme('github-dark');
-```
+````
 
 ## Programmatic theme access
 
-```ts
+````ts
 import { resolveTheme } from 'codegloss';
 import type { CodeGlossTheme, CodeGlossThemeVariant } from 'codegloss';
 
 const theme = resolveTheme('dracula');
 // theme.name === 'dracula'
 // theme.dark contains all color values
-```
+````
 
 Themes are also available as individual tree-shakeable imports:
 
-```ts
+````ts
 import { dracula, githubLight, oneDark } from 'codegloss/themes';
-```
+````
 
 ## Chrome styling via `styleOverrides`
 
 When a named theme's chrome clashes with your site's design system, declare the fix once in `codegloss.config.ts` via `styleOverrides` — no per-page CSS. Every field takes a CSS value string: literal colors, `var(--my-site-token)` references, or anything else the browser accepts. Values are forwarded as inline CSS custom properties on each `<code-gloss>` host, so a single value covers both light and dark mode (inline styles beat the theme's `:host` selectors in both schemes).
 
-```ts
+````ts
 // codegloss.config.ts
 import { defineConfig } from 'codegloss/config';
 
 export default defineConfig({
-	theme: 'github-dark',
-	styleOverrides: {
-		codeBlock: {
-			background: 'var(--surface-1)',
-			foreground: 'var(--text-primary)',
-			border: '1px solid var(--border-subtle)',
-			borderRadius: 'var(--radius-md)',
-		},
-		annotations: {
-			markerBackground: 'var(--accent-dim)',
-			markerBorder: 'var(--accent)',
-		},
-		badge: {
-			background: 'var(--surface-3)',
-			foreground: 'var(--text-muted)',
-		},
-		lineNumbers: {
-			foreground: 'var(--text-faint)',
-		},
-	},
+  theme: 'github-dark',
+  styleOverrides: {
+    codeBlock: {
+      background: 'var(--surface-1)',
+      foreground: 'var(--text-primary)',
+      border: '1px solid var(--border-subtle)',
+      borderRadius: 'var(--radius-md)',
+    },
+    annotations: {
+      markerBackground: 'var(--accent-dim)',
+      markerBorder: 'var(--accent)',
+    },
+    badge: {
+      background: 'var(--surface-3)',
+      foreground: 'var(--text-muted)',
+    },
+    lineNumbers: {
+      foreground: 'var(--text-faint)',
+    },
+  },
 });
-```
+````
 
 Groups mirror the visual subcomponents:
 
-| Group         | Fields                                                                                       |
-| ------------- | -------------------------------------------------------------------------------------------- |
-| `codeBlock`   | `background`, `foreground`, `border`, `borderRadius`, `toolbarBackground`, `mutedForeground` |
-| `annotations` | `markerBackground`, `markerBorder`, `markerHover`                                            |
-| `badge`       | `background`, `foreground`                                                                   |
-| `lineNumbers` | `foreground`                                                                                 |
+| Group | Fields |
+| --- | --- |
+| `codeBlock` | `background`, `foreground`, `border`, `borderRadius`, `toolbarBackground`, `mutedForeground` |
+| `annotations` | `markerBackground`, `markerBorder`, `markerHover` |
+| `badge` | `background`, `foreground` |
+| `lineNumbers` | `foreground` |
 
 Every field is strongly typed — unknown fields are a TypeScript error, not a silent no-op. See [`CodeGlossStyleOverrides`](/docs/api#style-override-options) for the full type.
 
 **Per-block deviation.** All four wrappers (React, Vue, Svelte) accept the same `styleOverrides` prop, so a single block can diverge from the config-wide default:
 
-```jsx
+````jsx
 <CodeGloss
-	code="..."
-	lang="js"
-	styleOverrides={{ codeBlock: { background: 'var(--callout-bg)' } }}
+  code="..."
+  lang="js"
+  styleOverrides={{ codeBlock: { background: 'var(--callout-bg)' } }}
 />
-```
+````
 
 ## CSS variable overrides (escape hatch)
 
 The typed `styleOverrides` above is the recommended path. When you need to override a variable `styleOverrides` doesn't yet expose, drop down to raw CSS on the host element. Both paths write to the same `--cg-*` custom properties, and inline styles (from `styleOverrides`) still win over any stylesheet rules.
 
-```css
+````css
 code-gloss {
-	--cg-bg: #1a1a1a;
-	--cg-border: #333;
-	--cg-text: #e0e0e0;
-	--cg-ann-border: #ff6b9d;
+  --cg-bg: #1a1a1a;
+  --cg-border: #333;
+  --cg-text: #e0e0e0;
+  --cg-ann-border: #ff6b9d;
 }
-```
+````
 
-| Property          | Light default          | Dark default             | Description            |
-| ----------------- | ---------------------- | ------------------------ | ---------------------- |
-| `--cg-bg`         | `#f8f8f6`              | `#1e1e1e`                | Code area background   |
-| `--cg-border`     | `#e8e8e6`              | `#3a3a3a`                | Border color           |
-| `--cg-radius`     | `8px`                  | `8px`                    | Outer border radius    |
-| `--cg-text`       | `#1a1a1a`              | `#e0e0e0`                | Code text color        |
-| `--cg-muted`      | `#666`                 | `#999`                   | Secondary text         |
-| `--cg-line-num`   | `#bbb`                 | `#555`                   | Line number color      |
-| `--cg-toolbar-bg` | `#f8f8f6`              | `#2a2a2a`                | Toolbar background     |
-| `--cg-badge-bg`   | `#efefed`              | `#3a3a3a`                | Lang badge background  |
-| `--cg-badge-text` | `#999`                 | `#999`                   | Lang badge text        |
-| `--cg-ann-bg`     | `rgba(83,74,183,0.12)` | `rgba(174,169,236,0.12)` | Annotation highlight   |
-| `--cg-ann-border` | `#534ab7`              | `#afa9ec`                | Annotation underline   |
-| `--cg-ann-hover`  | `rgba(83,74,183,0.22)` | `rgba(174,169,236,0.22)` | Annotation hover state |
+| Property | Light default | Dark default | Description |
+| --- | --- | --- | --- |
+| `--cg-bg` | `#f8f8f6` | `#1e1e1e` | Code area background |
+| `--cg-border` | `#e8e8e6` | `#3a3a3a` | Border color |
+| `--cg-radius` | `8px` | `8px` | Outer border radius |
+| `--cg-text` | `#1a1a1a` | `#e0e0e0` | Code text color |
+| `--cg-muted` | `#666` | `#999` | Secondary text |
+| `--cg-line-num` | `#bbb` | `#555` | Line number color |
+| `--cg-toolbar-bg` | `#f8f8f6` | `#2a2a2a` | Toolbar background |
+| `--cg-badge-bg` | `#efefed` | `#3a3a3a` | Lang badge background |
+| `--cg-badge-text` | `#999` | `#999` | Lang badge text |
+| `--cg-ann-bg` | `rgba(83,74,183,0.12)` | `rgba(174,169,236,0.12)` | Annotation highlight |
+| `--cg-ann-border` | `#534ab7` | `#afa9ec` | Annotation underline |
+| `--cg-ann-hover` | `rgba(83,74,183,0.22)` | `rgba(174,169,236,0.22)` | Annotation hover state |
 
 Dark mode activates automatically via `prefers-color-scheme: dark`. To force a theme regardless of OS preference, use a named theme or override the variables on the host element directly.
 
@@ -170,21 +166,21 @@ Two behavior/visual categories live outside the CSS variable system because they
 - **`arcs`** — dot radius, stroke width, dash pattern, opacity, and the optional arrowhead at each connection's `to` endpoint.
 - **`callouts`** — whether annotation clicks open as inline expanding rows (default) or floating popovers.
 
-```ts
+````ts
 // codegloss.config.ts
 import { defineConfig } from 'codegloss/config';
 
 export default defineConfig({
-	theme: 'github-dark',
-	arcs: {
-		arrowhead: true,
-		strokeDasharray: 'none',
-	},
-	callouts: {
-		popover: true,
-	},
+  theme: 'github-dark',
+  arcs: {
+    arrowhead: true,
+    strokeDasharray: 'none',
+  },
+  callouts: {
+    popover: true,
+  },
 });
-```
+````
 
 Per-block overrides use the same shape on the JSON annotations block (remark pipelines) or the `arcs` / `callouts` props (React / Vue / Svelte wrappers). See [Arc style options](/docs/api#arc-style-options) and [Callout options](/docs/api#callout-options) for the full field lists.
 

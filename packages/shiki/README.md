@@ -28,13 +28,13 @@ import { createShikiHighlighter } from '@codegloss/shiki';
 import { createHighlighter } from 'shiki';
 
 const shiki = await createHighlighter({
-	themes: ['github-dark'],
-	langs: ['js', 'ts', 'tsx'],
+  themes: ['github-dark'],
+  langs: ['js', 'ts', 'tsx'],
 });
 
 export default defineConfig({
-	theme: 'github-dark',
-	highlight: createShikiHighlighter(shiki, { theme: 'github-dark' }),
+  theme: 'github-dark',
+  highlight: createShikiHighlighter(shiki, { theme: 'github-dark' }),
 });
 ```
 
@@ -46,7 +46,9 @@ that emits `<pre><code>`) if you want unannotated fences to render as
 import rehypeShiki from '@shikijs/rehype';
 import { rehypeCodeglossPre } from '@codegloss/shiki';
 
-unified().use(rehypeShiki, { theme: 'github-dark' }).use(rehypeCodeglossPre);
+unified()
+  .use(rehypeShiki, { theme: 'github-dark' })
+  .use(rehypeCodeglossPre);
 ```
 
 ## Documentation

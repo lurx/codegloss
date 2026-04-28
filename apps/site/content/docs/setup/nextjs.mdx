@@ -26,31 +26,31 @@ For MDX authoring (also installs the remark plugin):
 
 Just import and use it. The `'use client'` directive is needed because the component is interactive:
 
-```tsx
+````tsx
 'use client';
 
 import { CodeGloss } from '@codegloss/react';
 
 export function Example() {
-	return (
-		<CodeGloss
-			code="function greet(name) {\n  return 'Hello, ' + name;\n}"
-			lang="js"
-			filename="greet.js"
-			annotations={[
-				{
-					id: 'a1',
-					token: 'name',
-					line: 0,
-					occurrence: 0,
-					title: 'Parameter',
-					text: 'The name to greet.',
-				},
-			]}
-		/>
-	);
+  return (
+    <CodeGloss
+      code="function greet(name) {\n  return 'Hello, ' + name;\n}"
+      lang="js"
+      filename="greet.js"
+      annotations={[
+        {
+          id: 'a1',
+          token: 'name',
+          line: 0,
+          occurrence: 0,
+          title: 'Parameter',
+          text: 'The name to greet.',
+        },
+      ]}
+    />
+  );
 }
-```
+````
 
 No CSS import needed. The Web Component bundles its own styles via Shadow DOM.
 
@@ -58,29 +58,29 @@ No CSS import needed. The Web Component bundles its own styles via Shadow DOM.
 
 Configure the remark plugin in `next.config.ts`. If you've declared a `highlight` in `codegloss.config.ts` (see [Syntax Highlighters](/docs/highlighters)), thread it through so blocks are pre-highlighted at build:
 
-```js
+````js
 import createMdx from '@next/mdx';
 import remarkCodegloss from 'codegloss/remark';
 import codeglossConfig from './codegloss.config';
 
 const nextConfig = {
-	pageExtensions: ['ts', 'tsx', 'mdx'],
+  pageExtensions: ['ts', 'tsx', 'mdx'],
 };
 
 const withMdx = createMdx({
-	options: {
-		remarkPlugins: [
-			[remarkCodegloss, { highlight: codeglossConfig.highlight }],
-		],
-	},
+  options: {
+    remarkPlugins: [
+      [remarkCodegloss, { highlight: codeglossConfig.highlight }],
+    ],
+  },
 });
 
 export default withMdx(nextConfig);
-```
+````
 
 Now any `.mdx` file under `app/` can use the codegloss syntax:
 
-````
+`````
 ```js codegloss example.js
 const x = 42;
 console.log(x);
@@ -98,7 +98,7 @@ console.log(x);
   }]
 }
 ```
-````
+`````
 
 The plugin auto-injects `import { CodeGloss } from '@codegloss/react'` into the MDX file at build time. You don't need to import anything yourself.
 
@@ -106,52 +106,44 @@ The plugin auto-injects `import { CodeGloss } from '@codegloss/react'` into the 
 
 If you load MDX from a CMS or filesystem:
 
-```js
+````js
 import { serialize } from 'next-mdx-remote/serialize';
 import remarkCodegloss from 'codegloss/remark';
 
 const source = await serialize(mdxContent, {
-	mdxOptions: {
-		remarkPlugins: [remarkCodegloss],
-	},
+  mdxOptions: {
+    remarkPlugins: [remarkCodegloss],
+  },
 });
-```
+````
 
 In your render component, pass `CodeGloss` via the components map:
 
-```tsx
+````tsx
 'use client';
 
 import { MDXRemote } from 'next-mdx-remote';
 import { CodeGloss } from '@codegloss/react';
 
 export function Post({ source }) {
-	return (
-		<MDXRemote
-			{...source}
-			components={{ CodeGloss }}
-		/>
-	);
+  return <MDXRemote {...source} components={{ CodeGloss }} />;
 }
-```
+````
 
 When loading the component this way, set `skipImport: true` on the remark plugin so it doesn't auto-inject an import (you're providing it via the components map):
 
-```js
+````js
 import remarkCodegloss from 'codegloss/remark';
 import codeglossConfig from './codegloss.config';
 
 const source = await serialize(mdxContent, {
-	mdxOptions: {
-		remarkPlugins: [
-			[
-				remarkCodegloss,
-				{ skipImport: true, highlight: codeglossConfig.highlight },
-			],
-		],
-	},
+  mdxOptions: {
+    remarkPlugins: [
+      [remarkCodegloss, { skipImport: true, highlight: codeglossConfig.highlight }],
+    ],
+  },
 });
-```
+````
 
 ## Static export
 

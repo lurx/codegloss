@@ -15,29 +15,23 @@ CodeGloss ships a thin Vue 3 wrapper at `@codegloss/vue`. Under the hood it rend
 
 Import and use `CodeGloss` like any Vue component:
 
-```vue
+````vue
 <script setup lang="ts">
 import { CodeGloss } from '@codegloss/vue';
 </script>
 
 <template>
-	<CodeGloss
-		code="function greet(name) { return 'Hello, ' + name; }"
-		lang="js"
-		filename="greet.js"
-		:annotations="[
-			{
-				id: 'a1',
-				token: 'name',
-				line: 0,
-				occurrence: 0,
-				title: 'Parameter',
-				text: 'The name to greet.',
-			},
-		]"
-	/>
+  <CodeGloss
+    code="function greet(name) { return 'Hello, ' + name; }"
+    lang="js"
+    filename="greet.js"
+    :annotations="[
+      { id: 'a1', token: 'name', line: 0, occurrence: 0,
+        title: 'Parameter', text: 'The name to greet.' }
+    ]"
+  />
 </template>
-```
+````
 
 No CSS import needed. The Web Component bundles its styles via Shadow DOM.
 
@@ -45,40 +39,40 @@ No CSS import needed. The Web Component bundles its styles via Shadow DOM.
 
 VitePress uses Vue under the hood. Register the component globally in your theme:
 
-```ts
+````ts
 // docs/.vitepress/theme/index.ts
 import DefaultTheme from 'vitepress/theme';
 import { CodeGloss } from '@codegloss/vue';
 import type { Theme } from 'vitepress';
 
 export default {
-	extends: DefaultTheme,
-	enhanceApp({ app }) {
-		app.component('CodeGloss', CodeGloss);
-	},
+  extends: DefaultTheme,
+  enhanceApp({ app }) {
+    app.component('CodeGloss', CodeGloss);
+  },
 } satisfies Theme;
-```
+````
 
 Then tell Vue's compiler to treat `<code-gloss>` as a custom element (prevents unknown-element warnings):
 
-```ts
+````ts
 // docs/.vitepress/config.ts
 import { defineConfig } from 'vitepress';
 
 export default defineConfig({
-	vue: {
-		template: {
-			compilerOptions: {
-				isCustomElement: tag => tag === 'code-gloss',
-			},
-		},
-	},
+  vue: {
+    template: {
+      compilerOptions: {
+        isCustomElement: (tag) => tag === 'code-gloss',
+      },
+    },
+  },
 });
-```
+````
 
 Now you can use `<CodeGloss />` directly in any `.md` page:
 
-```md
+````md
 <CodeGloss
   code="const x = 42;"
   lang="js"
@@ -86,7 +80,7 @@ Now you can use `<CodeGloss />` directly in any `.md` page:
   :annotations="[{ id: 'a1', token: '42', line: 0, occurrence: 0,
     title: 'The answer', text: 'A constant value.' }]"
 />
-```
+````
 
 See the [VitePress setup guide](/docs/setup/vitepress) for the full remark plugin integration.
 
@@ -94,25 +88,25 @@ See the [VitePress setup guide](/docs/setup/vitepress) for the full remark plugi
 
 In a Nuxt 3 project, register the component as a plugin:
 
-```ts
+````ts
 // plugins/codegloss.client.ts
 import { CodeGloss } from '@codegloss/vue';
 
-export default defineNuxtPlugin(nuxtApp => {
-	nuxtApp.vueApp.component('CodeGloss', CodeGloss);
+export default defineNuxtPlugin((nuxtApp) => {
+  nuxtApp.vueApp.component('CodeGloss', CodeGloss);
 });
-```
+````
 
 Add `code-gloss` to the Vue compiler's custom elements list in `nuxt.config.ts`:
 
-```ts
+````ts
 export default defineNuxtConfig({
-	vue: {
-		compilerOptions: {
-			isCustomElement: tag => tag === 'code-gloss',
-		},
-	},
+  vue: {
+    compilerOptions: {
+      isCustomElement: (tag) => tag === 'code-gloss',
+    },
+  },
 });
-```
+````
 
 Then use `<CodeGloss />` in any page or component.

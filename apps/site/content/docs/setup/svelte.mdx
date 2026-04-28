@@ -15,7 +15,7 @@ CodeGloss ships a Svelte wrapper at `@codegloss/svelte`. It supports Svelte 4 an
 
 Import and use the wrapper in any `.svelte` file:
 
-```svelte
+````svelte
 <script>
   import CodeGloss from '@codegloss/svelte';
 </script>
@@ -31,7 +31,7 @@ Import and use the wrapper in any `.svelte` file:
       title: 'Parameter', text: 'The name to greet.' },
   ]}
 />
-```
+````
 
 No CSS import needed. The Web Component bundles its styles via Shadow DOM.
 
@@ -43,67 +43,61 @@ No CSS import needed. The Web Component bundles its styles via Shadow DOM.
 
 Configure `remark-codegloss` in `svelte.config.js` with `output: 'html'` (mdsvex doesn't support MDX JSX nodes):
 
-```js
+````js
 import adapter from '@sveltejs/adapter-static';
 import { mdsvex } from 'mdsvex';
 import remarkCodegloss from 'codegloss/remark';
 
 const config = {
-	extensions: ['.svelte', '.svx', '.md'],
-	preprocess: [
-		mdsvex({
-			extensions: ['.svx', '.md'],
-			remarkPlugins: [[remarkCodegloss, { output: 'html' }]],
-		}),
-	],
-	kit: {
-		adapter: adapter(),
-	},
+  extensions: ['.svelte', '.svx', '.md'],
+  preprocess: [
+    mdsvex({
+      extensions: ['.svx', '.md'],
+      remarkPlugins: [[remarkCodegloss, { output: 'html' }]],
+    }),
+  ],
+  kit: {
+    adapter: adapter(),
+  },
 };
 
 export default config;
-```
+````
 
 Now use the fenced codegloss syntax in any `.md` or `.svx` file:
 
-````md
+`````md
 ```js codegloss fib.js
 function fib(n) {
-	return n < 2 ? n : fib(n - 1) + fib(n - 2);
+  return n < 2 ? n : fib(n - 1) + fib(n - 2);
 }
 ```
 
 ```json annotations
 {
-	"annotations": [
-		{
-			"id": "a1",
-			"token": "fib",
-			"line": 0,
-			"occurrence": 0,
-			"title": "Recursion",
-			"text": "Calls itself with smaller inputs."
-		}
-	]
+  "annotations": [
+    { "id": "a1", "token": "fib", "line": 0, "occurrence": 0,
+      "title": "Recursion", "text": "Calls itself with smaller inputs." }
+  ]
 }
 ```
-````
+`````
 
 ### Option 2: Direct `<CodeGloss />` in markdown
 
 You can also import and use the Svelte wrapper directly in mdsvex markdown:
 
-```md
+````md
 <script>
   import CodeGloss from '@codegloss/svelte';
 </script>
 
 <CodeGloss
-code={`const x = 42;`}
-lang="js"
-filename="example.js"
+  code={`const x = 42;`}
+  lang="js"
+  filename="example.js"
 />
-```
+````
 
 This gives you full prop typing via `svelte-check`.
 

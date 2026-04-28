@@ -15,42 +15,39 @@ Set up CodeGloss with [Docusaurus](https://docusaurus.io/) v3.
 
 Add `remark-codegloss` to your `docusaurus.config.js`. Use `skipImport: true` because we'll provide the component via Docusaurus's MDX components map (next step). If you've declared a `highlight` in `codegloss.config.ts` (see [Syntax Highlighters](/docs/highlighters)), thread it through so blocks are pre-highlighted at build:
 
-```js
+````js
 import remarkCodegloss from 'codegloss/remark';
 import codeglossConfig from './codegloss.config';
 
 const codeglossPlugin = [
-	remarkCodegloss,
-	{ skipImport: true, highlight: codeglossConfig.highlight },
+  remarkCodegloss,
+  { skipImport: true, highlight: codeglossConfig.highlight },
 ];
 
 export default {
-	presets: [
-		[
-			'classic',
-			{
-				docs: { remarkPlugins: [codeglossPlugin] },
-				blog: { remarkPlugins: [codeglossPlugin] },
-			},
-		],
-	],
+  presets: [
+    ['classic', {
+      docs: { remarkPlugins: [codeglossPlugin] },
+      blog: { remarkPlugins: [codeglossPlugin] },
+    }],
+  ],
 };
-```
+````
 
 ## Register the component
 
 Swizzle MDX components to make CodeGloss available everywhere:
 
-```js
+````js
 // src/theme/MDXComponents.js
 import MDXComponents from '@theme-original/MDXComponents';
 import { CodeGloss } from '@codegloss/react';
 
 export default {
-	...MDXComponents,
-	CodeGloss,
+  ...MDXComponents,
+  CodeGloss,
 };
-```
+````
 
 That's it. Every `js codegloss` block in your docs and blog now renders as an interactive CodeGloss instance.
 
@@ -62,21 +59,21 @@ CodeGloss bundles its styles via Shadow DOM — there's nothing to import in you
 
 CodeGloss respects `prefers-color-scheme: dark` automatically. To follow the Docusaurus theme toggle (which sets `data-theme="dark"` on the `<html>` element), override the CSS variables on the `code-gloss` element:
 
-```css
+````css
 /* src/css/custom.css */
 [data-theme='dark'] code-gloss {
-	--cg-bg: #1e1e1e;
-	--cg-border: #3a3a3a;
-	--cg-text: #e0e0e0;
-	--cg-muted: #999;
-	--cg-line-num: #555;
-	--cg-toolbar-bg: #2a2a2a;
-	--cg-badge-bg: #3a3a3a;
-	--cg-ann-bg: rgba(174, 169, 236, 0.12);
-	--cg-ann-border: #afa9ec;
-	--cg-ann-hover: rgba(174, 169, 236, 0.22);
+  --cg-bg: #1e1e1e;
+  --cg-border: #3a3a3a;
+  --cg-text: #e0e0e0;
+  --cg-muted: #999;
+  --cg-line-num: #555;
+  --cg-toolbar-bg: #2a2a2a;
+  --cg-badge-bg: #3a3a3a;
+  --cg-ann-bg: rgba(174, 169, 236, 0.12);
+  --cg-ann-border: #afa9ec;
+  --cg-ann-hover: rgba(174, 169, 236, 0.22);
 }
-```
+````
 
 These variables propagate into the Shadow DOM through `:host` inheritance.
 
