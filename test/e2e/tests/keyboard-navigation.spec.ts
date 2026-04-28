@@ -1,5 +1,10 @@
 import { expect, test } from '@playwright/test';
 
+declare global {
+	// eslint-disable-next-line no-var
+	var __copied: string | undefined;
+}
+
 // Helper: read the active element's identifying attributes from inside the
 // component's shadow DOM. We can't use page.locator(':focus') reliably across
 // shadow boundaries, so we evaluate document.activeElement and its shadowRoot
@@ -67,9 +72,9 @@ test.describe('keyboard navigation', () => {
 
 		// Stub clipboard.writeText so the test works on all 3 browsers.
 		await page.addInitScript(() => {
-			(window as unknown as { __copied?: string }).__copied = undefined;
+			globalThis.__copied = undefined;
 			const fake = async (text: string) => {
-				(window as unknown as { __copied?: string }).__copied = text;
+				globalThis.__copied = text;
 			};
 			try {
 				navigator.clipboard.writeText = fake;
@@ -93,9 +98,7 @@ test.describe('keyboard navigation', () => {
 		});
 
 		await page.keyboard.press('Enter');
-		const copied = await page.evaluate(
-			() => (window as unknown as { __copied?: string }).__copied,
-		);
+		const copied = await page.evaluate(() => globalThis.__copied);
 		expect(copied).toContain('function fib');
 	});
 
