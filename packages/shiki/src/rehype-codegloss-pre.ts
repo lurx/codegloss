@@ -17,9 +17,10 @@ function isElement(node: ElementContent): node is Element {
 function extractText(nodes: ElementContent[]): string {
 	let out = '';
 	for (const node of nodes) {
-		if (node.type === 'text') out += (node as Text).value;
+		if (node.type === 'text') out += node.value;
 		else if (isElement(node)) out += extractText(node.children);
 	}
+
 	return out;
 }
 
@@ -27,7 +28,7 @@ function serializeToHtml(nodes: ElementContent[]): string {
 	let out = '';
 	for (const node of nodes) {
 		if (node.type === 'text') {
-			out += (node as Text).value
+			out += node.value
 				.replaceAll('&', '&amp;')
 				.replaceAll('<', '&lt;')
 				.replaceAll('>', '&gt;');
@@ -38,12 +39,14 @@ function serializeToHtml(nodes: ElementContent[]): string {
 				const attr =
 					key === 'className'
 						? 'class'
-						: key.replace(/([A-Z])/g, '-$1').toLowerCase();
+						: key.replaceAll(/([A-Z])/g, '-$1').toLowerCase();
 				out += ` ${attr}="${String(value).replaceAll('"', '&quot;')}"`;
 			}
+
 			out += `>${serializeToHtml(node.children)}</${node.tagName}>`;
 		}
 	}
+
 	return out;
 }
 
@@ -54,6 +57,7 @@ function parseLang(className: string | string[] | undefined): string {
 		const match = /^language-(.+)$/.exec(String(cls));
 		if (match) return match[1];
 	}
+
 	return '';
 }
 
@@ -74,12 +78,12 @@ function visit(parent: Root | Element): void {
 			child.children[0].type === 'element' &&
 			child.children[0].tagName === 'code'
 		) {
-			const codeEl = child.children[0] as Element;
+			const codeElement = child.children[0];
 			const lang = parseLang(
-				codeEl.properties?.className as string | string[] | undefined,
+				codeElement.properties?.className as string | string[] | undefined,
 			);
-			const rawCode = extractText(codeEl.children).replace(/\n$/, '');
-			const highlightedHtml = serializeToHtml(codeEl.children).replace(
+			const rawCode = extractText(codeElement.children).replace(/\n$/, '');
+			const highlightedHtml = serializeToHtml(codeElement.children).replace(
 				/\n$/,
 				'',
 			);
@@ -87,7 +91,7 @@ function visit(parent: Root | Element): void {
 			const config: Record<string, unknown> = { code: rawCode, lang };
 			if (highlightedHtml) config.highlightedHtml = highlightedHtml;
 
-			const jsonStr = JSON.stringify(config).replaceAll(
+			const jsonString = JSON.stringify(config).replaceAll(
 				'</script',
 				String.raw`<\/script`,
 			);
@@ -101,7 +105,7 @@ function visit(parent: Root | Element): void {
 						type: 'element',
 						tagName: 'script',
 						properties: { type: 'application/json' },
-						children: [{ type: 'text', value: jsonStr }],
+						children: [{ type: 'text', value: jsonString }],
 					},
 				],
 			};

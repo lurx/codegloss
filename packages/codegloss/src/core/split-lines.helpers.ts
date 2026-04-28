@@ -30,13 +30,14 @@ export function splitHighlightedLines(html: string): string[] {
 				buffer += html.slice(i);
 				break;
 			}
+
 			const tag = html.slice(i, tagEnd + 1);
 			const nameMatch = OPEN_TAG_NAME_PATTERN.exec(tag);
 
 			if (tag.startsWith('</')) {
 				openStack.pop();
 			} else if (nameMatch && !tag.endsWith('/>')) {
-				openStack.push([tag, nameMatch[1]!]);
+				openStack.push([tag, nameMatch[1]]);
 			}
 
 			buffer += tag;
@@ -46,8 +47,9 @@ export function splitHighlightedLines(html: string): string[] {
 
 		if (ch === 10 /* \n */) {
 			for (let j = openStack.length - 1; j >= 0; j--) {
-				buffer += `</${openStack[j]![1]}>`;
+				buffer += `</${openStack[j][1]}>`;
 			}
+
 			lines.push(buffer);
 			buffer = openStack.map(([raw]) => raw).join('');
 			i++;
@@ -63,7 +65,7 @@ export function splitHighlightedLines(html: string): string[] {
 			}
 		}
 
-		buffer += html[i]!;
+		buffer += html[i];
 		i++;
 	}
 

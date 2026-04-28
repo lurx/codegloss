@@ -78,6 +78,7 @@ export class CodeGlossElement extends SafeHTMLElement {
 	private annotationPopoverState:
 		| { annId: string; top: number; left: number }
 		| undefined;
+
 	private readonly lineRefs = new Map<number, HTMLDivElement>();
 
 	private resizeTimer: ReturnType<typeof setTimeout> | undefined;
@@ -151,6 +152,7 @@ export class CodeGlossElement extends SafeHTMLElement {
 				this.root.style.setProperty('--cg-bg', chromeBackground);
 			if (chromeColor) this.root.style.setProperty('--cg-text', chromeColor);
 		}
+
 		this.attachListeners();
 		this.applyFloatingDefaultOpens();
 	}
@@ -567,6 +569,7 @@ export class CodeGlossElement extends SafeHTMLElement {
 		for (let i = anns.length - 1; i >= 0; i--) {
 			if (anns[i].defaultOpen) return anns[i];
 		}
+
 		return undefined;
 	}
 
@@ -576,6 +579,7 @@ export class CodeGlossElement extends SafeHTMLElement {
 		for (let i = conns.length - 1; i >= 0; i--) {
 			if (conns[i].defaultOpen) return conns[i];
 		}
+
 		return undefined;
 	}
 

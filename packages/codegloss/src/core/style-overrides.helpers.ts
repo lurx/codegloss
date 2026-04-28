@@ -43,6 +43,7 @@ export function styleOverridesToCssVars(
 			pairs.push([cssVar, value]);
 		}
 	}
+
 	return pairs;
 }
 

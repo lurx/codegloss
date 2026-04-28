@@ -327,7 +327,7 @@ function attachArrowheadMarker(
 	const marker = document.createElementNS(SVG_NS, 'marker');
 	marker.setAttribute('id', markerId);
 	marker.setAttribute('viewBox', '0 0 8 8');
-	// refX=0 registers the marker's base at the path end so the shaft
+	// RefX=0 registers the marker's base at the path end so the shaft
 	// visually terminates at the arrow base; the tip then extends forward
 	// along the tangent to land at the original anchor (see the arrowLength
 	// compensation in drawLeftArc / drawRightArc).

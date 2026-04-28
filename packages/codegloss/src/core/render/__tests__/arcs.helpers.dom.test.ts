@@ -42,7 +42,7 @@ beforeEach(() => {
 	rightSvg = document.createElementNS(SVG_NS, 'svg');
 });
 
-const defaultParams = (
+const defaultParameters = (
 	overrides: Partial<DrawArcsParameters> = {},
 ): DrawArcsParameters => ({
 	leftSvg,
@@ -60,7 +60,7 @@ const defaultParams = (
 
 describe('drawArcs', () => {
 	it('sets height and viewBox on both SVGs', () => {
-		drawArcs(defaultParams({ height: 200, rightSvgWidth: 500 }));
+		drawArcs(defaultParameters({ height: 200, rightSvgWidth: 500 }));
 
 		expect(leftSvg.getAttribute('height')).toBe('200');
 		expect(leftSvg.getAttribute('viewBox')).toBe(`0 0 ${GUTTER_WIDTH} 200`);
@@ -72,7 +72,7 @@ describe('drawArcs', () => {
 		leftSvg.append(document.createElementNS(SVG_NS, 'circle'));
 		rightSvg.append(document.createElementNS(SVG_NS, 'rect'));
 
-		drawArcs(defaultParams());
+		drawArcs(defaultParameters());
 
 		expect(leftSvg.childNodes.length).toBe(0);
 		expect(rightSvg.childNodes.length).toBe(0);
@@ -81,7 +81,7 @@ describe('drawArcs', () => {
 	describe('left-side (default)', () => {
 		it('skips a connection whose endpoints are missing', () => {
 			drawArcs(
-				defaultParams({
+				defaultParameters({
 					annotations: [ann('a'), ann('b')],
 					connections: [conn({ from: 'a', to: 'missing' })],
 					annotationPositions: new Map([['a', pos(10)]]),
@@ -93,7 +93,7 @@ describe('drawArcs', () => {
 
 		it('renders two dots and one decorative arc for a non-interactive connection', () => {
 			drawArcs(
-				defaultParams({
+				defaultParameters({
 					annotations: [ann('a'), ann('b')],
 					connections: [conn({ from: 'a', to: 'b', color: '#0af' })],
 					annotationPositions: new Map([
@@ -126,7 +126,7 @@ describe('drawArcs', () => {
 			const interactive = conn({ from: 'a', to: 'b', text: 'tooltip body' });
 
 			drawArcs(
-				defaultParams({
+				defaultParameters({
 					annotations: [ann('a'), ann('b')],
 					connections: [interactive],
 					annotationPositions: new Map([
@@ -162,7 +162,7 @@ describe('drawArcs', () => {
 
 		it('omits stroke-dasharray when arcStyle.strokeDasharray is "none"', () => {
 			drawArcs(
-				defaultParams({
+				defaultParameters({
 					annotations: [ann('a'), ann('b')],
 					connections: [conn({ from: 'a', to: 'b' })],
 					annotationPositions: new Map([
@@ -180,7 +180,7 @@ describe('drawArcs', () => {
 
 		it('offsets each subsequent arc horizontally by ARC_X_STEP', () => {
 			drawArcs(
-				defaultParams({
+				defaultParameters({
 					annotations: [ann('a'), ann('b'), ann('c'), ann('d')],
 					connections: [
 						conn({ from: 'a', to: 'b' }),
@@ -206,7 +206,7 @@ describe('drawArcs', () => {
 	describe('right-side', () => {
 		it('draws right-side connections into the right SVG, not the left', () => {
 			drawArcs(
-				defaultParams({
+				defaultParameters({
 					annotations: [ann('a'), ann('b')],
 					connections: [
 						conn({ from: 'a', to: 'b', color: '#0af', side: 'right' }),
@@ -224,7 +224,7 @@ describe('drawArcs', () => {
 
 		it('anchors each endpoint at its own line-end + RIGHT_DOT_OFFSET', () => {
 			drawArcs(
-				defaultParams({
+				defaultParameters({
 					annotations: [ann('a'), ann('b')],
 					connections: [conn({ from: 'a', to: 'b', side: 'right' })],
 					annotationPositions: new Map([
@@ -247,7 +247,7 @@ describe('drawArcs', () => {
 
 		it('bends the arc to the right of the farthest endpoint', () => {
 			drawArcs(
-				defaultParams({
+				defaultParameters({
 					annotations: [ann('a'), ann('b')],
 					connections: [conn({ from: 'a', to: 'b', side: 'right' })],
 					annotationPositions: new Map([
@@ -268,7 +268,7 @@ describe('drawArcs', () => {
 
 		it('stacks multiple right-side arcs outward by ARC_X_STEP', () => {
 			drawArcs(
-				defaultParams({
+				defaultParameters({
 					annotations: [ann('a'), ann('b'), ann('c'), ann('d')],
 					connections: [
 						conn({ from: 'a', to: 'b', side: 'right' }),
@@ -298,7 +298,7 @@ describe('drawArcs', () => {
 
 		it('skips a right-side connection whose endpoints are missing', () => {
 			drawArcs(
-				defaultParams({
+				defaultParameters({
 					annotations: [ann('a'), ann('b')],
 					connections: [conn({ from: 'a', to: 'missing', side: 'right' })],
 					annotationPositions: new Map([['a', pos(10, 120)]]),
@@ -310,7 +310,7 @@ describe('drawArcs', () => {
 
 		it('partitions left and right connections independently', () => {
 			drawArcs(
-				defaultParams({
+				defaultParameters({
 					annotations: [ann('a'), ann('b'), ann('c'), ann('d')],
 					connections: [
 						conn({ from: 'a', to: 'b' }),
@@ -333,7 +333,7 @@ describe('drawArcs', () => {
 	describe('arrowhead', () => {
 		it('renders a dot for "from" and a marker-end arrowhead for "to"', () => {
 			drawArcs(
-				defaultParams({
+				defaultParameters({
 					annotations: [ann('a'), ann('b')],
 					connections: [conn({ from: 'a', to: 'b' })],
 					annotationPositions: new Map([
@@ -351,7 +351,7 @@ describe('drawArcs', () => {
 			expect(marker).toBeTruthy();
 			expect(marker?.getAttribute('orient')).toBe('auto-start-reverse');
 
-			// querySelector('path') would also match the marker's inner tip path;
+			// QuerySelector('path') would also match the marker's inner tip path;
 			// scope to paths that are direct SVG children instead.
 			const arcPath = leftSvg.querySelector<SVGPathElement>(':scope > path');
 			expect(arcPath?.getAttribute('marker-end')).toMatch(
@@ -361,7 +361,7 @@ describe('drawArcs', () => {
 
 		it('paints the marker tip with the connection color', () => {
 			drawArcs(
-				defaultParams({
+				defaultParameters({
 					annotations: [ann('a'), ann('b')],
 					connections: [conn({ from: 'a', to: 'b', color: '#0af' })],
 					annotationPositions: new Map([
@@ -378,7 +378,7 @@ describe('drawArcs', () => {
 
 		it('reuses a single <defs> when multiple arrowheaded arcs share an SVG', () => {
 			drawArcs(
-				defaultParams({
+				defaultParameters({
 					annotations: [ann('a'), ann('b'), ann('c'), ann('d')],
 					connections: [
 						conn({ from: 'a', to: 'b' }),
@@ -402,7 +402,7 @@ describe('drawArcs', () => {
 			const onClick = vi.fn();
 
 			drawArcs(
-				defaultParams({
+				defaultParameters({
 					annotations: [ann('a'), ann('b')],
 					connections: [conn({ from: 'a', to: 'b', text: 'info' })],
 					annotationPositions: new Map([
@@ -428,7 +428,7 @@ describe('drawArcs', () => {
 
 		it('registers the arrowhead marker at its base so the tip overshoots the path end', () => {
 			drawArcs(
-				defaultParams({
+				defaultParameters({
 					annotations: [ann('a'), ann('b')],
 					connections: [conn({ from: 'a', to: 'b' })],
 					annotationPositions: new Map([
@@ -445,7 +445,7 @@ describe('drawArcs', () => {
 
 		it('shortens the path end by the arrow length so the shaft meets the base', () => {
 			drawArcs(
-				defaultParams({
+				defaultParameters({
 					annotations: [ann('a'), ann('b')],
 					connections: [conn({ from: 'a', to: 'b' })],
 					annotationPositions: new Map([
@@ -465,7 +465,7 @@ describe('drawArcs', () => {
 
 		it('applies the arrowhead to right-side arcs as well', () => {
 			drawArcs(
-				defaultParams({
+				defaultParameters({
 					annotations: [ann('a'), ann('b')],
 					connections: [conn({ from: 'a', to: 'b', side: 'right' })],
 					annotationPositions: new Map([

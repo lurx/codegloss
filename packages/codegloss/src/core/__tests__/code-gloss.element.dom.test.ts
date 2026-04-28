@@ -177,7 +177,7 @@ describe('CodeGlossElement', () => {
 			});
 			const element = mount({ lang: 'js', code: 'x' }, { highlight });
 
-			const root = shadow(element).querySelector('.codegloss') as HTMLElement;
+			const root = shadow(element).querySelector('.codegloss')!;
 			expect(root.style.getPropertyValue('--cg-bg')).toBe('#123456');
 			expect(root.style.getPropertyValue('--cg-text')).toBe('#abcdef');
 		});
@@ -186,7 +186,7 @@ describe('CodeGlossElement', () => {
 			const highlight = () => ({ html: '<span>x</span>' });
 			const element = mount({ lang: 'js', code: 'x' }, { highlight });
 
-			const root = shadow(element).querySelector('.codegloss') as HTMLElement;
+			const root = shadow(element).querySelector('.codegloss')!;
 			expect(root.style.getPropertyValue('--cg-bg')).toBe('');
 			expect(root.style.getPropertyValue('--cg-text')).toBe('');
 		});
@@ -200,7 +200,7 @@ describe('CodeGlossElement', () => {
 				highlightColor: '#eeeeee',
 			});
 
-			const root = shadow(element).querySelector('.codegloss') as HTMLElement;
+			const root = shadow(element).querySelector('.codegloss')!;
 			expect(root.style.getPropertyValue('--cg-bg')).toBe('#111111');
 			expect(root.style.getPropertyValue('--cg-text')).toBe('#eeeeee');
 		});

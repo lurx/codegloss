@@ -105,7 +105,7 @@ describe('CodeGloss (Vue wrapper)', () => {
 		expect(html).toContain('--cg-bg:var(--surface)');
 		expect(html).toContain('--cg-radius:4px');
 		expect(html).toContain('--cg-line-num:#aaa');
-		// styleOverrides itself must not leak into the JSON payload.
+		// StyleOverrides itself must not leak into the JSON payload.
 		const payload = /<script[^>]*>(.*?)<\/script>/s.exec(html)?.[1] ?? '';
 		expect(JSON.parse(payload)).not.toHaveProperty('styleOverrides');
 	});

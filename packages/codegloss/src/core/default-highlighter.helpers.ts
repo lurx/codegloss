@@ -19,9 +19,9 @@ export function setDefaultHighlighter(
 
 	/* v8 ignore next -- SSR guard, unreachable in a browser test env */
 	if (typeof document === 'undefined') return;
-	for (const el of document.querySelectorAll(CUSTOM_ELEMENT_NAME)) {
+	for (const element of document.querySelectorAll(CUSTOM_ELEMENT_NAME)) {
 		/* v8 ignore next -- querySelectorAll(<code-gloss>) only returns CodeGlossElement */
-		if (!(el instanceof CodeGlossElement)) continue;
-		el.refresh();
+		if (!(element instanceof CodeGlossElement)) continue;
+		element.refresh();
 	}
 }

@@ -222,7 +222,7 @@ describe('remarkCodegloss (full pipeline)', () => {
 			) as {
 				attributes: Array<{
 					name: string;
-					value: string | { value?: string } | null;
+					value: string | { value?: string } | undefined;
 				}>;
 			};
 			const arcs = jsx.attributes.find(a => a.name === 'arcs');
@@ -342,7 +342,7 @@ describe('remarkCodegloss (full pipeline)', () => {
 			) as {
 				attributes: Array<{
 					name: string;
-					value: string | { value?: string } | null;
+					value: string | { value?: string } | undefined;
 				}>;
 			};
 			const attr = jsx.attributes.find(a => a.name === 'styleOverrides');

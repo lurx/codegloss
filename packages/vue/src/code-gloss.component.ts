@@ -1,12 +1,12 @@
 import { defineComponent, h, type PropType } from 'vue';
-import type {
-	Annotation,
-	CodeGlossConfig,
-	CodeGlossStyleOverrides,
-	Connection,
-	Highlighter,
+import {
+	type Annotation,
+	type CodeGlossConfig,
+	type CodeGlossStyleOverrides,
+	type Connection,
+	type Highlighter,
+	styleOverridesToCssVars,
 } from 'codegloss';
-import { styleOverridesToCssVars } from 'codegloss';
 import { stripUndefined } from './strip-undefined.util';
 
 /**
