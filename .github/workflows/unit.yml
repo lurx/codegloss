@@ -56,7 +56,7 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
         with:
-          build-packages: "false"
+          build-packages: 'false'
 
       - name: Lint
         run: pnpm lint

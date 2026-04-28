@@ -61,8 +61,11 @@ export function ConnectionRow({
 	);
 
 	const renderAnnotationOptions = () =>
-		annotations.map((a) => (
-			<option key={a.id} value={a.id}>
+		annotations.map(a => (
+			<option
+				key={a.id}
+				value={a.id}
+			>
 				{a.id} — {a.token || '(no token)'}
 			</option>
 		));
@@ -92,7 +95,10 @@ export function ConnectionRow({
 					onClick={handleRemove}
 					aria-label="Remove connection"
 				>
-					<Trash2 size={14} aria-hidden="true" />
+					<Trash2
+						size={14}
+						aria-hidden="true"
+					/>
 				</button>
 			</div>
 			<div className={styles.rowHeader}>

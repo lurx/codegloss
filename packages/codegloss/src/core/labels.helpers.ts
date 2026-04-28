@@ -22,9 +22,7 @@ let activeLabels: ResolvedLabels = DEFAULT_LABELS;
  * for callers that don't want to plumb a full project config through.
  */
 export function setDefaultLabels(labels: CodeGlossLabels | undefined): void {
-	activeLabels = labels
-		? { ...DEFAULT_LABELS, ...labels }
-		: DEFAULT_LABELS;
+	activeLabels = labels ? { ...DEFAULT_LABELS, ...labels } : DEFAULT_LABELS;
 }
 
 /** Read the currently-active labels. Mainly for the element's own use. */

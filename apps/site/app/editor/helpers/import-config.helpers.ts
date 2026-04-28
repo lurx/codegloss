@@ -15,8 +15,7 @@ type RawPayload = {
 
 const MDX_CODEGLOSS_PATTERN =
 	/```(\w+)\s+codegloss(?:\s+([^\n`]+))?\n([\s\S]*?)\n```/;
-const MDX_ANNOTATIONS_PATTERN =
-	/```json\s+annotations\n([\s\S]*?)\n```/;
+const MDX_ANNOTATIONS_PATTERN = /```json\s+annotations\n([\s\S]*?)\n```/;
 
 function coerceConfig(raw: RawPayload): EditorConfig {
 	if (typeof raw.code !== 'string') {

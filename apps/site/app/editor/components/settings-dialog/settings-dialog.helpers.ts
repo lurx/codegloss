@@ -5,7 +5,7 @@ export function patchArcs(
 	partial: Partial<ArcsStyle>,
 ): ArcsStyle | undefined {
 	const next: ArcsStyle = { ...current, ...partial };
-	Object.keys(next).forEach((key) => {
+	Object.keys(next).forEach(key => {
 		const typedKey = key as keyof ArcsStyle;
 		if (next[typedKey] === undefined || next[typedKey] === '') {
 			delete next[typedKey];

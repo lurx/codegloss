@@ -25,7 +25,9 @@ export { expect };
 
 export async function gotoEditor(page: Page): Promise<void> {
 	await page.goto('/editor');
-	await expect(page.getByRole('heading', { name: 'Editor', level: 1 })).toBeVisible();
+	await expect(
+		page.getByRole('heading', { name: 'Editor', level: 1 }),
+	).toBeVisible();
 }
 
 export function codeTextarea(page: Page) {

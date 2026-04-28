@@ -56,7 +56,7 @@ describe('CodeGloss (Vue wrapper)', () => {
 		const html = await render({
 			code: 'x',
 			lang: 'js',
-			highlight: (code) => `<span>${code}</span>`,
+			highlight: code => `<span>${code}</span>`,
 		});
 		const payload = extractConfig(html) as Record<string, unknown>;
 		expect(payload.highlightedHtml).toBe('<span>x</span>');

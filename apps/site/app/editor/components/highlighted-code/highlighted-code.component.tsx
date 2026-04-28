@@ -21,7 +21,7 @@ export function HighlightedCode({
 			lang: lang as BundledLanguage,
 			theme: theme as BundledTheme,
 		})
-			.then((result) => {
+			.then(result => {
 				if (!cancelled) setHtml(result);
 			})
 			.catch(() => {

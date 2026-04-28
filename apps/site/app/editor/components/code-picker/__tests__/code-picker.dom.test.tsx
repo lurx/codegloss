@@ -1,5 +1,11 @@
 // @vitest-environment happy-dom
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+} from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { ThemedToken } from 'shiki';
 
@@ -95,9 +101,11 @@ describe('CodePicker', () => {
 	});
 
 	it('ignores clicks before the first tokenization resolves', async () => {
-		let resolveTokens: (value: Awaited<ReturnType<typeof codeToTokens>>) => void = () => {};
+		let resolveTokens: (
+			value: Awaited<ReturnType<typeof codeToTokens>>,
+		) => void = () => {};
 		mockedCodeToTokens.mockReturnValue(
-			new Promise((resolve) => {
+			new Promise(resolve => {
 				resolveTokens = resolve;
 			}) as ReturnType<typeof codeToTokens>,
 		);
@@ -140,9 +148,11 @@ describe('CodePicker', () => {
 	});
 
 	it('cancels a pending tokenization on unmount so state updates do not fire', async () => {
-		let resolveTokens: (value: Awaited<ReturnType<typeof codeToTokens>>) => void = () => {};
+		let resolveTokens: (
+			value: Awaited<ReturnType<typeof codeToTokens>>,
+		) => void = () => {};
 		mockedCodeToTokens.mockReturnValue(
-			new Promise((resolve) => {
+			new Promise(resolve => {
 				resolveTokens = resolve;
 			}) as ReturnType<typeof codeToTokens>,
 		);
@@ -157,8 +167,10 @@ describe('CodePicker', () => {
 		);
 		unmount();
 		// Resolve after unmount — the cancelled flag prevents a setState-after-unmount warning.
-		resolveTokens({ tokens: makeTokens() } as Awaited<ReturnType<typeof codeToTokens>>);
-		await new Promise((r) => setTimeout(r, 0));
+		resolveTokens({ tokens: makeTokens() } as Awaited<
+			ReturnType<typeof codeToTokens>
+		>);
+		await new Promise(r => setTimeout(r, 0));
 	});
 
 	it('swallows rejections after unmount without setting error state', async () => {
@@ -179,7 +191,7 @@ describe('CodePicker', () => {
 		);
 		unmount();
 		reject('late failure');
-		await new Promise((r) => setTimeout(r, 0));
+		await new Promise(r => setTimeout(r, 0));
 	});
 
 	it('stringifies non-Error rejections from the highlighter', async () => {

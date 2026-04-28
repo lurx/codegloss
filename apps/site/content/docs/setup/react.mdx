@@ -17,50 +17,50 @@ CodeGloss ships a thin React wrapper at `@codegloss/react`. It works with React 
 
 Import and use it as a regular component. The `'use client'` directive is needed in Next.js App Router because the component is interactive:
 
-````tsx
+```tsx
 'use client';
 
 import { CodeGloss } from '@codegloss/react';
 
 export function Example() {
-  return (
-    <CodeGloss
-      code={`function greet(name) {
+	return (
+		<CodeGloss
+			code={`function greet(name) {
   return 'Hello, ' + name;
 }`}
-      lang="js"
-      filename="greet.js"
-      annotations={[
-        {
-          id: 'a1',
-          token: 'name',
-          line: 0,
-          occurrence: 0,
-          title: 'Parameter',
-          text: 'The name to greet.',
-        },
-      ]}
-      connections={[]}
-    />
-  );
+			lang="js"
+			filename="greet.js"
+			annotations={[
+				{
+					id: 'a1',
+					token: 'name',
+					line: 0,
+					occurrence: 0,
+					title: 'Parameter',
+					text: 'The name to greet.',
+				},
+			]}
+			connections={[]}
+		/>
+	);
 }
-````
+```
 
 ## Props
 
 The React wrapper accepts the same props as the Web Component's JSON config:
 
-| Prop | Type | Description |
-| --- | --- | --- |
-| `code` | `string` | Raw source code to display |
-| `lang` | `string` | Language identifier (`js`, `ts`, `py`, etc.) |
-| `filename` | `string?` | Filename shown in the toolbar |
-| `annotations` | `Annotation[]?` | Token-level annotations. Each accepts optional `popover: true` (float instead of inline) and `defaultOpen: true` (pre-open on first render). |
-| `connections` | `Connection[]?` | Visual arcs between annotations. Each connection accepts optional `side: 'left' \| 'right'` (default `'left'`) and `defaultOpen: true` (pre-open the popover on first render). |
-| `theme` | `string?` | Named theme (`github-dark`, `dracula`, etc.) |
-| `arcs` | `object?` | Arc style overrides, including `arrowhead: true` for marker-end arrows at each `to` endpoint. |
-| `callouts` | `object?` | Block-level callout behavior, e.g. `popover: true` to flip every annotation to popover presentation. |
-| `highlight` | `Highlighter?` | Optional syntax highlighter — usually passed as `highlight={codeglossConfig.highlight}` from your `codegloss.config.ts`. When provided, the wrapper invokes it during render and bakes the result into the config so the element renders pre-highlighted markup. See [Syntax Highlighters](/docs/highlighters) for the config-driven pattern. |
+| Prop          | Type            | Description                                                                                                                                                                                                                                                                                                                                   |
+| ------------- | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `code`        | `string`        | Raw source code to display                                                                                                                                                                                                                                                                                                                    |
+| `lang`        | `string`        | Language identifier (`js`, `ts`, `py`, etc.)                                                                                                                                                                                                                                                                                                  |
+| `filename`    | `string?`       | Filename shown in the toolbar                                                                                                                                                                                                                                                                                                                 |
+| `annotations` | `Annotation[]?` | Token-level annotations. Each accepts optional `popover: true` (float instead of inline) and `defaultOpen: true` (pre-open on first render).                                                                                                                                                                                                  |
+| `connections` | `Connection[]?` | Visual arcs between annotations. Each connection accepts optional `side: 'left' \| 'right'` (default `'left'`) and `defaultOpen: true` (pre-open the popover on first render).                                                                                                                                                                |
+| `theme`       | `string?`       | Named theme (`github-dark`, `dracula`, etc.)                                                                                                                                                                                                                                                                                                  |
+| `arcs`        | `object?`       | Arc style overrides, including `arrowhead: true` for marker-end arrows at each `to` endpoint.                                                                                                                                                                                                                                                 |
+| `callouts`    | `object?`       | Block-level callout behavior, e.g. `popover: true` to flip every annotation to popover presentation.                                                                                                                                                                                                                                          |
+| `highlight`   | `Highlighter?`  | Optional syntax highlighter — usually passed as `highlight={codeglossConfig.highlight}` from your `codegloss.config.ts`. When provided, the wrapper invokes it during render and bakes the result into the config so the element renders pre-highlighted markup. See [Syntax Highlighters](/docs/highlighters) for the config-driven pattern. |
 
 See [Component API](/docs/api) for full type definitions, [Arc style options](/docs/api#arc-style-options) for every `arcs` field, and [Callout options](/docs/api#callout-options) for `callouts`.
 

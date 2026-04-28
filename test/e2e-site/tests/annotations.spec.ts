@@ -1,9 +1,4 @@
-import {
-	test,
-	expect,
-	gotoEditor,
-	addAnnotationButton,
-} from './helpers';
+import { test, expect, gotoEditor, addAnnotationButton } from './helpers';
 
 test.describe('annotations panel', () => {
 	test('Add creates a blank annotation row', async ({ page }) => {
@@ -38,7 +33,10 @@ test.describe('annotations panel', () => {
 		await addAnnotationButton(page).click();
 		await expect(page.getByLabel('Annotation id')).toHaveCount(1);
 
-		await page.getByRole('button', { name: 'Remove annotation' }).first().click();
+		await page
+			.getByRole('button', { name: 'Remove annotation' })
+			.first()
+			.click();
 		await expect(page.getByText('No annotations yet.')).toBeVisible();
 	});
 
@@ -46,10 +44,19 @@ test.describe('annotations panel', () => {
 		await gotoEditor(page);
 		await addAnnotationButton(page).click();
 
-		const row = page.locator('[aria-label="Annotation id"]').first().locator('..').locator('..');
-		const popover = row.getByLabel('popover', { exact: false }).or(
-			row.locator('label', { hasText: 'popover' }).locator('input[type="checkbox"]'),
-		).first();
+		const row = page
+			.locator('[aria-label="Annotation id"]')
+			.first()
+			.locator('..')
+			.locator('..');
+		const popover = row
+			.getByLabel('popover', { exact: false })
+			.or(
+				row
+					.locator('label', { hasText: 'popover' })
+					.locator('input[type="checkbox"]'),
+			)
+			.first();
 		const defaultOpen = row
 			.locator('label', { hasText: 'defaultOpen' })
 			.locator('input[type="checkbox"]')

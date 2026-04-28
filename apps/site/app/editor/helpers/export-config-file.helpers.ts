@@ -18,9 +18,7 @@ export function exportConfigFile(config: EditorConfig): string {
 	}
 
 	const body =
-		entries.length === 0
-			? '\t// use codegloss defaults'
-			: entries.join('\n');
+		entries.length === 0 ? '\t// use codegloss defaults' : entries.join('\n');
 
 	return [
 		`import { defineConfig } from 'codegloss/config';`,

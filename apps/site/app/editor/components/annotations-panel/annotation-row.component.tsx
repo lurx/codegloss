@@ -106,7 +106,10 @@ export function AnnotationRow({
 					aria-label={handleLabel}
 					{...handleAttrs}
 				>
-					<HandleIcon size={14} aria-hidden="true" />
+					<HandleIcon
+						size={14}
+						aria-hidden="true"
+					/>
 				</span>
 				<input
 					className={`${styles.input} ${styles.idInput}`}
@@ -128,7 +131,10 @@ export function AnnotationRow({
 					onClick={handleRemove}
 					aria-label="Remove annotation"
 				>
-					<Trash2 size={14} aria-hidden="true" />
+					<Trash2
+						size={14}
+						aria-hidden="true"
+					/>
 				</button>
 			</div>
 			<div className={styles.grid2}>

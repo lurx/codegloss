@@ -95,8 +95,8 @@ without the PR ever merging. Snapshots are opt-in per PR via the Actions UI.
 The snapshot job lives inside `.github/workflows/publish.yml` alongside the
 release job; the `workflow_dispatch` trigger selects the snapshot branch.
 
-**Dispatch:** Actions tab → *Publish* → *Run workflow* → leave *Use workflow
-from* on `main` and paste the PR branch name into the `ref` input. The
+**Dispatch:** Actions tab → _Publish_ → _Run workflow_ → leave _Use workflow
+from_ on `main` and paste the PR branch name into the `ref` input. The
 workflow definition is always read from `main`, so every open PR is
 dispatchable regardless of when it branched off.
 
@@ -143,7 +143,7 @@ a published version.
    bump per package (patch / minor / major), write a one-line summary.
    Creates `.changeset/<three-word-slug>.md`.
 4. Commit code + changeset file together. Push, open PR.
-5. *(Optional)* dispatch the snapshot workflow above so reviewers can test
+5. _(Optional)_ dispatch the snapshot workflow above so reviewers can test
    the PR's npm output directly.
 6. Merge PR.
 

@@ -24,12 +24,12 @@ This path imports the wrapper from `@codegloss/svelte` and invokes it directly.
 It gives you full prop typing in `svelte-check`.
 
 <CodeGloss
-  code={`function fib(n) {
+code={`function fib(n) {
   return n < 2 ? n : fib(n - 1) + fib(n - 2);
 }`}
-  lang="js"
-  filename="fib.js"
-  annotations={fibAnnotations}
+lang="js"
+filename="fib.js"
+annotations={fibAnnotations}
 />
 
 ## 2 — Fenced codegloss block (via `remark-codegloss` in HTML mode)
@@ -39,6 +39,6 @@ so the fenced block below is rewritten into a raw `<code-gloss>` HTML node that
 mdsvex passes through verbatim.
 
 ```js codegloss greet.js
-const greet = (name) => `hello, ${name}`;
+const greet = name => `hello, ${name}`;
 greet('world');
 ```

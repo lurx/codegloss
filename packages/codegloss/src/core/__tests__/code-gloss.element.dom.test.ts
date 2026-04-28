@@ -347,8 +347,12 @@ describe('CodeGlossElement', () => {
 		};
 
 		beforeEach(() => {
-			(HTMLElement.prototype.showPopover as ReturnType<typeof vi.fn>).mockClear();
-			(HTMLElement.prototype.hidePopover as ReturnType<typeof vi.fn>).mockClear();
+			(
+				HTMLElement.prototype.showPopover as ReturnType<typeof vi.fn>
+			).mockClear();
+			(
+				HTMLElement.prototype.hidePopover as ReturnType<typeof vi.fn>
+			).mockClear();
 		});
 
 		it('opens the floating popover with title + body when popover: true', () => {
@@ -359,9 +363,8 @@ describe('CodeGlossElement', () => {
 			});
 			clickMark(element, 'a1');
 
-			const popover = shadow(element).querySelector<HTMLElement>(
-				'.annotationPopover',
-			)!;
+			const popover =
+				shadow(element).querySelector<HTMLElement>('.annotationPopover')!;
 			expect(popover.style.top).toBe('240px');
 			expect(popover.style.left).toBe('120px');
 			expect(popover.innerHTML).toContain('Foo');
@@ -390,9 +393,8 @@ describe('CodeGlossElement', () => {
 			clickMark(element, 'a1');
 			clickMark(element, 'a2');
 
-			const popover = shadow(element).querySelector<HTMLElement>(
-				'.annotationPopover',
-			)!;
+			const popover =
+				shadow(element).querySelector<HTMLElement>('.annotationPopover')!;
 			expect(popover.innerHTML).toContain('Bar');
 			expect(popover.innerHTML).not.toContain('Foo');
 			// Never hides — just re-renders and re-shows
@@ -429,9 +431,9 @@ describe('CodeGlossElement', () => {
 			});
 			clickMark(element, 'a1');
 
-			expect(shadow(element).querySelector('.annotationPopover')?.innerHTML).toContain(
-				'Foo',
-			);
+			expect(
+				shadow(element).querySelector('.annotationPopover')?.innerHTML,
+			).toContain('Foo');
 		});
 
 		it('lets an individual annotation override the block-level default', () => {
@@ -520,9 +522,8 @@ describe('CodeGlossElement', () => {
 			});
 			clickMark(element, 'a1');
 
-			const popover = shadow(element).querySelector<HTMLElement>(
-				'.annotationPopover',
-			)!;
+			const popover =
+				shadow(element).querySelector<HTMLElement>('.annotationPopover')!;
 			const toggle = new Event('toggle');
 			Object.assign(toggle, { newState: 'open' });
 			popover.dispatchEvent(toggle);
@@ -540,9 +541,8 @@ describe('CodeGlossElement', () => {
 			});
 			clickMark(element, 'a1');
 
-			const popover = shadow(element).querySelector<HTMLElement>(
-				'.annotationPopover',
-			)!;
+			const popover =
+				shadow(element).querySelector<HTMLElement>('.annotationPopover')!;
 			const toggle = new Event('toggle');
 			Object.assign(toggle, { newState: 'closed' });
 			popover.dispatchEvent(toggle);
@@ -626,7 +626,10 @@ describe('CodeGlossElement', () => {
 			const element = mount({ ...config, connections: [titleOnly] });
 			await nextFrame();
 
-			lastDrawArgs().onConnectionClickAction(titleOnly, new MouseEvent('click'));
+			lastDrawArgs().onConnectionClickAction(
+				titleOnly,
+				new MouseEvent('click'),
+			);
 			const popover = shadow(element).querySelector('.connectionTooltip')!;
 			expect(popover.innerHTML).toContain('Just a title');
 			expect(popover.querySelector('.connectionTooltipBody')).toBeNull();
@@ -652,7 +655,10 @@ describe('CodeGlossElement', () => {
 			const element = mount(config);
 			await nextFrame();
 
-			lastDrawArgs().onConnectionClickAction(connection, new MouseEvent('click'));
+			lastDrawArgs().onConnectionClickAction(
+				connection,
+				new MouseEvent('click'),
+			);
 			const popover = shadow(element).querySelector('.connectionTooltip')!;
 
 			const toggle = new Event('toggle');
@@ -660,14 +666,20 @@ describe('CodeGlossElement', () => {
 			popover.dispatchEvent(toggle);
 
 			// Re-trigger render to make sure no stale state crashes the path
-			lastDrawArgs().onConnectionClickAction(connection, new MouseEvent('click'));
+			lastDrawArgs().onConnectionClickAction(
+				connection,
+				new MouseEvent('click'),
+			);
 			expect(HTMLElement.prototype.showPopover).toHaveBeenCalledTimes(2);
 		});
 
 		it('ignores popover toggle events whose newState is not "closed"', async () => {
 			const element = mount(config);
 			await nextFrame();
-			lastDrawArgs().onConnectionClickAction(connection, new MouseEvent('click'));
+			lastDrawArgs().onConnectionClickAction(
+				connection,
+				new MouseEvent('click'),
+			);
 
 			const popover = shadow(element).querySelector('.connectionTooltip')!;
 			const toggle = new Event('toggle');
@@ -704,7 +716,11 @@ describe('CodeGlossElement', () => {
 
 		it('honors localized labels from setDefaultLabels on both the idle and copied states', async () => {
 			const { setDefaultLabels } = await import('../labels.helpers');
-			setDefaultLabels({ copy: 'Kopieren', copied: 'Kopiert', copiedTitle: 'Kopiert!' });
+			setDefaultLabels({
+				copy: 'Kopieren',
+				copied: 'Kopiert',
+				copiedTitle: 'Kopiert!',
+			});
 			try {
 				vi.useFakeTimers();
 				const element = mount({ lang: 'js', code: 'x' });
@@ -769,7 +785,9 @@ describe('CodeGlossElement', () => {
 
 	describe('defaultOpen pre-opens', () => {
 		beforeEach(() => {
-			(HTMLElement.prototype.showPopover as ReturnType<typeof vi.fn>).mockClear();
+			(
+				HTMLElement.prototype.showPopover as ReturnType<typeof vi.fn>
+			).mockClear();
 		});
 
 		it('pre-opens the inline callout for an annotation with defaultOpen: true', () => {
@@ -968,9 +986,8 @@ describe('CodeGlossElement', () => {
 			});
 			await nextFrame();
 
-			const popover = shadow(element).querySelector<HTMLElement>(
-				'.connectionTooltip',
-			)!;
+			const popover =
+				shadow(element).querySelector<HTMLElement>('.connectionTooltip')!;
 			expect(popover.style.left).toBeTruthy();
 		});
 
@@ -992,9 +1009,8 @@ describe('CodeGlossElement', () => {
 			});
 			await nextFrame();
 
-			const popover = shadow(element).querySelector<HTMLElement>(
-				'.connectionTooltip',
-			)!;
+			const popover =
+				shadow(element).querySelector<HTMLElement>('.connectionTooltip')!;
 			expect(popover.innerHTML).toContain('Orphan');
 			expect(popover.style.top).toBeTruthy();
 		});

@@ -104,7 +104,5 @@ export type RemarkCodeglossOptions = {
 	highlight?: (
 		code: string,
 		lang: string,
-	) =>
-		| string
-		| { html: string; background?: string; color?: string };
+	) => string | { html: string; background?: string; color?: string };
 };

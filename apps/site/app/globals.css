@@ -70,7 +70,12 @@ html {
 
 body {
 	background:
-		radial-gradient(circle at 1px 1px, var(--site-border) 0.5px, transparent 0.5px) 0 0 / 24px 24px,
+		radial-gradient(
+				circle at 1px 1px,
+				var(--site-border) 0.5px,
+				transparent 0.5px
+			)
+			0 0 / 24px 24px,
 		var(--site-bg);
 	color: var(--site-fg);
 	font-family: var(--font-sans);
@@ -188,7 +193,12 @@ a:hover {
 	transform: translateX(-50%);
 	width: 80%;
 	height: 500px;
-	background: radial-gradient(ellipse at 50% 20%, rgba(108, 92, 231, 0.12) 0%, rgba(0, 184, 148, 0.04) 40%, transparent 70%);
+	background: radial-gradient(
+		ellipse at 50% 20%,
+		rgba(108, 92, 231, 0.12) 0%,
+		rgba(0, 184, 148, 0.04) 40%,
+		transparent 70%
+	);
 	pointer-events: none;
 	z-index: -1;
 }
@@ -270,7 +280,11 @@ a:hover {
 	position: absolute;
 	inset: -1px;
 	border-radius: 10px;
-	background: linear-gradient(135deg, rgba(108, 92, 231, 0.25), rgba(0, 184, 148, 0.15));
+	background: linear-gradient(
+		135deg,
+		rgba(108, 92, 231, 0.25),
+		rgba(0, 184, 148, 0.15)
+	);
 	z-index: -1;
 	opacity: 0;
 	transition: opacity 400ms ease;
@@ -417,7 +431,14 @@ a:hover {
 /* ─── Section divider ─── */
 .section-divider {
 	height: 1px;
-	background: linear-gradient(90deg, transparent, var(--site-border-strong) 20%, var(--accent-subtle) 50%, var(--site-border-strong) 80%, transparent);
+	background: linear-gradient(
+		90deg,
+		transparent,
+		var(--site-border-strong) 20%,
+		var(--accent-subtle) 50%,
+		var(--site-border-strong) 80%,
+		transparent
+	);
 	margin: 1rem 0;
 }
 
@@ -503,7 +524,11 @@ a:hover {
 	top: 1.75rem;
 	bottom: -0.5rem;
 	width: 1px;
-	background: linear-gradient(to bottom, var(--site-border-strong), transparent);
+	background: linear-gradient(
+		to bottom,
+		var(--site-border-strong),
+		transparent
+	);
 }
 
 .step-num {
@@ -563,7 +588,11 @@ a:hover {
 	transform: translateX(-50%);
 	width: 60%;
 	height: 200px;
-	background: radial-gradient(ellipse at 50% 100%, rgba(108, 92, 231, 0.08) 0%, transparent 70%);
+	background: radial-gradient(
+		ellipse at 50% 100%,
+		rgba(108, 92, 231, 0.08) 0%,
+		transparent 70%
+	);
 	pointer-events: none;
 }
 
@@ -746,7 +775,9 @@ a:hover {
 	text-decoration: none;
 	vertical-align: middle;
 	opacity: 0;
-	transition: opacity 120ms ease, color 120ms ease;
+	transition:
+		opacity 120ms ease,
+		color 120ms ease;
 }
 
 .prose :is(h1, h2, h3, h4, h5, h6):hover .heading-anchor,
@@ -1677,7 +1708,8 @@ a:hover {
 	border: 1px solid transparent;
 }
 
-.codegloss-tour .driver-popover-prev-btn:hover:not(.driver-popover-btn-disabled),
+.codegloss-tour
+	.driver-popover-prev-btn:hover:not(.driver-popover-btn-disabled),
 .codegloss-tour .driver-popover-prev-btn:focus-visible {
 	color: var(--site-heading);
 	border-color: var(--site-border-strong);

@@ -10,8 +10,8 @@ function remarkCodegloss(options: RemarkCodeglossOptions = {}) {
 	const hasStyleOverrides =
 		!!options.styleOverrides &&
 		Object.values(options.styleOverrides).some(
-			(group) =>
-				group !== undefined && Object.values(group).some((v) => v !== undefined),
+			group =>
+				group !== undefined && Object.values(group).some(v => v !== undefined),
 		);
 
 	return (tree: Root) => {

@@ -28,11 +28,13 @@ describe('setDefaultHighlighter', () => {
 
 	it('refreshes already-mounted elements so the new highlighter takes effect', () => {
 		const el = mount();
-		expect(el.shadowRoot?.querySelector('.lineContent')?.innerHTML).not.toContain(
-			'swapped',
-		);
+		expect(
+			el.shadowRoot?.querySelector('.lineContent')?.innerHTML,
+		).not.toContain('swapped');
 
-		setDefaultHighlighter((code: string) => `<span class="hl">swapped:${code}</span>`);
+		setDefaultHighlighter(
+			(code: string) => `<span class="hl">swapped:${code}</span>`,
+		);
 
 		expect(el.shadowRoot?.querySelector('.lineContent')?.innerHTML).toContain(
 			'swapped',

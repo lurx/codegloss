@@ -6,6 +6,6 @@ import MDXComponents from '@theme-original/MDXComponents';
 import { CodeGloss } from '@codegloss/react';
 
 export default {
-  ...MDXComponents,
-  CodeGloss,
+	...MDXComponents,
+	CodeGloss,
 };

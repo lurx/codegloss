@@ -33,7 +33,11 @@ describe('detectCodeglossPair', () => {
 	});
 
 	it('detects a codegloss fence with no filename and no annotations', () => {
-		const node = code({ lang: 'js', meta: 'codegloss', value: 'console.log(1)' });
+		const node = code({
+			lang: 'js',
+			meta: 'codegloss',
+			value: 'console.log(1)',
+		});
 		expect(detectCodeglossPair([node], 0)).toEqual({
 			lang: 'js',
 			filename: undefined,

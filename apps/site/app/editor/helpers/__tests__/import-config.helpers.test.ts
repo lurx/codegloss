@@ -10,9 +10,7 @@ describe('importConfig empty & detection', () => {
 
 describe('importConfig JSON', () => {
 	it('parses a minimal JSON payload', () => {
-		const result = importConfig(
-			JSON.stringify({ code: 'x', lang: 'js' }),
-		);
+		const result = importConfig(JSON.stringify({ code: 'x', lang: 'js' }));
 		if (!result.ok) throw new Error('expected success');
 		expect(result.format).toBe('json');
 		expect(result.config.code).toBe('x');
@@ -89,9 +87,7 @@ describe('importConfig MDX', () => {
 			'',
 			'```json annotations',
 			JSON.stringify({
-				annotations: [
-					{ id: 'a1', token: 'x', line: 0, occurrence: 0 },
-				],
+				annotations: [{ id: 'a1', token: 'x', line: 0, occurrence: 0 }],
 				connections: [{ from: 'a1', to: 'a2', color: '#000' }],
 				arcs: { opacity: 0.5 },
 				callouts: { popover: true },

@@ -31,9 +31,9 @@ on:
         type: string
 
 permissions:
-  contents: write       # changesets/action opens/updates the Version Packages PR
-  pull-requests: write  # same
-  id-token: write       # OIDC exchange with npm for trusted publishing + provenance
+  contents: write # changesets/action opens/updates the Version Packages PR
+  pull-requests: write # same
+  id-token: write # OIDC exchange with npm for trusted publishing + provenance
 
 jobs:
   release:
@@ -66,11 +66,11 @@ jobs:
         with:
           version: pnpm changeset version
           publish: pnpm changeset publish
-          commit: "chore(release): version packages"
-          title: "chore(release): version packages"
+          commit: 'chore(release): version packages'
+          title: 'chore(release): version packages'
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-          NPM_CONFIG_PROVENANCE: "true"
+          NPM_CONFIG_PROVENANCE: 'true'
 
   smoke-test:
     name: Smoke-test published tarballs

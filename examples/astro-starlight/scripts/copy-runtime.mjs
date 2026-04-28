@@ -15,9 +15,9 @@ await copyFile(runtimeEntry, resolve(publicDir, 'codegloss.js'));
 // codegloss splits a CSS chunk that the runtime imports relative to itself.
 const distSrc = dirname(runtimeEntry);
 for (const entry of await readdir(distSrc)) {
-  if (entry.startsWith('chunk-') && entry.endsWith('.js')) {
-    await copyFile(resolve(distSrc, entry), resolve(publicDir, entry));
-  }
+	if (entry.startsWith('chunk-') && entry.endsWith('.js')) {
+		await copyFile(resolve(distSrc, entry), resolve(publicDir, entry));
+	}
 }
 
 console.log(`copied codegloss runtime → ${publicDir}`);

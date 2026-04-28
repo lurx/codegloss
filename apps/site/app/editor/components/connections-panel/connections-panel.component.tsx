@@ -54,7 +54,11 @@ export function ConnectionsPanel({
 					onClick={handleAdd}
 					disabled={!canAdd}
 				>
-					<Plus size={14} aria-hidden="true" /> Add
+					<Plus
+						size={14}
+						aria-hidden="true"
+					/>{' '}
+					Add
 				</button>
 			</div>
 			<div className={styles.list}>{renderList()}</div>

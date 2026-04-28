@@ -8,10 +8,7 @@ import {
 	RIGHT_DOT_OFFSET,
 } from '../../code-gloss.constants';
 import { drawArcs } from '../arcs.helpers';
-import type {
-	AnnotationPosition,
-	DrawArcsParameters,
-} from '../arcs.types';
+import type { AnnotationPosition, DrawArcsParameters } from '../arcs.types';
 import type { Annotation, Connection } from '../../code-gloss.types';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -176,7 +173,9 @@ describe('drawArcs', () => {
 				}),
 			);
 
-			expect(leftSvg.querySelector('path')?.hasAttribute('stroke-dasharray')).toBe(false);
+			expect(
+				leftSvg.querySelector('path')?.hasAttribute('stroke-dasharray'),
+			).toBe(false);
 		});
 
 		it('offsets each subsequent arc horizontally by ARC_X_STEP', () => {
@@ -236,9 +235,13 @@ describe('drawArcs', () => {
 			);
 
 			const circles = rightSvg.querySelectorAll('circle');
-			expect(circles[0].getAttribute('cx')).toBe(String(120 + RIGHT_DOT_OFFSET));
+			expect(circles[0].getAttribute('cx')).toBe(
+				String(120 + RIGHT_DOT_OFFSET),
+			);
 			expect(circles[0].getAttribute('cy')).toBe('10');
-			expect(circles[1].getAttribute('cx')).toBe(String(180 + RIGHT_DOT_OFFSET));
+			expect(circles[1].getAttribute('cx')).toBe(
+				String(180 + RIGHT_DOT_OFFSET),
+			);
 			expect(circles[1].getAttribute('cy')).toBe('50');
 		});
 

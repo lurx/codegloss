@@ -112,8 +112,11 @@ export function SettingsDialog({
 	);
 
 	const renderThemeOptions = () =>
-		THEME_OPTIONS.map((option) => (
-			<option key={option.value} value={option.value}>
+		THEME_OPTIONS.map(option => (
+			<option
+				key={option.value}
+				value={option.value}
+			>
 				{option.label}
 			</option>
 		));
@@ -236,16 +239,27 @@ export function SettingsDialog({
 					>
 						{copied ? (
 							<>
-								<Check size={14} aria-hidden="true" /> Copied
+								<Check
+									size={14}
+									aria-hidden="true"
+								/>{' '}
+								Copied
 							</>
 						) : (
 							<>
-								<Copy size={14} aria-hidden="true" /> Copy
+								<Copy
+									size={14}
+									aria-hidden="true"
+								/>{' '}
+								Copy
 							</>
 						)}
 					</button>
 				</div>
-				<HighlightedCode code={configFile} lang="ts" />
+				<HighlightedCode
+					code={configFile}
+					lang="ts"
+				/>
 			</div>
 
 			<div className={styles.footer}>

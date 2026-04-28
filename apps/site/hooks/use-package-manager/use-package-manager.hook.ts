@@ -1,7 +1,10 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import type { PackageManager, UsePackageManagerResult } from './use-package-manager.types';
+import type {
+	PackageManager,
+	UsePackageManagerResult,
+} from './use-package-manager.types';
 import {
 	DEFAULT_MANAGER,
 	STORAGE_EVENT,

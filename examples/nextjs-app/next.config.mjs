@@ -3,13 +3,13 @@ import remarkCodegloss from 'codegloss/remark';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  pageExtensions: ['ts', 'tsx', 'mdx'],
+	pageExtensions: ['ts', 'tsx', 'mdx'],
 };
 
 const withMDX = createMDX({
-  options: {
-    remarkPlugins: [remarkCodegloss],
-  },
+	options: {
+		remarkPlugins: [remarkCodegloss],
+	},
 });
 
 export default withMDX(nextConfig);

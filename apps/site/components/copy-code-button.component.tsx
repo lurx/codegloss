@@ -20,7 +20,12 @@ export function CopyCodeButton({ getTextAction }: CopyCodeButtonProps) {
 
 	const renderIcon = () => {
 		if (copied) {
-			return <Check size={COPY_ICON_SIZE} strokeWidth={COPY_ICON_STROKE_WIDTH} />;
+			return (
+				<Check
+					size={COPY_ICON_SIZE}
+					strokeWidth={COPY_ICON_STROKE_WIDTH}
+				/>
+			);
 		}
 		return <Copy size={COPY_ICON_SIZE} />;
 	};

@@ -14,13 +14,13 @@ The `<code-gloss>` element renders five strings of its own — copy button label
 import { defineConfig } from 'codegloss/config';
 
 export default defineConfig({
-  labels: {
-    copy: 'Copiar código',
-    copied: 'Copiado',
-    copiedTitle: '¡Copiado!',
-    closeAnnotation: 'Cerrar anotación',
-    invalidConfig: '[code-gloss] configuración faltante o inválida',
-  },
+	labels: {
+		copy: 'Copiar código',
+		copied: 'Copiado',
+		copiedTitle: '¡Copiado!',
+		closeAnnotation: 'Cerrar anotación',
+		invalidConfig: '[code-gloss] configuración faltante o inválida',
+	},
 });
 ```
 
@@ -44,10 +44,10 @@ If you'd rather not bundle the project config, call `setDefaultLabels(labels)` d
 import { setDefaultLabels } from 'codegloss';
 
 setDefaultLabels({
-  copy: 'Copiar código',
-  copied: 'Copiado',
-  copiedTitle: '¡Copiado!',
-  closeAnnotation: 'Cerrar anotación',
+	copy: 'Copiar código',
+	copied: 'Copiado',
+	copiedTitle: '¡Copiado!',
+	closeAnnotation: 'Cerrar anotación',
 });
 ```
 
@@ -55,16 +55,16 @@ Pass `undefined` to reset back to the English defaults.
 
 ## What each label controls
 
-| Key | Default | Where it lands |
-| --- | --- | --- |
-| `copy` | `Copy code` | Copy button `aria-label` and `title` (idle) |
-| `copied` | `Copied` | Copy button `aria-label` after a successful click |
-| `copiedTitle` | `Copied!` | Copy button `title` after a successful click |
-| `closeAnnotation` | `Close annotation` | Annotation callout close-button `aria-label` |
-| `invalidConfig` | `[code-gloss] missing or invalid config` | Visible text in the fallback DOM when the JSON config is missing or unparseable |
+| Key               | Default                                  | Where it lands                                                                  |
+| ----------------- | ---------------------------------------- | ------------------------------------------------------------------------------- |
+| `copy`            | `Copy code`                              | Copy button `aria-label` and `title` (idle)                                     |
+| `copied`          | `Copied`                                 | Copy button `aria-label` after a successful click                               |
+| `copiedTitle`     | `Copied!`                                | Copy button `title` after a successful click                                    |
+| `closeAnnotation` | `Close annotation`                       | Annotation callout close-button `aria-label`                                    |
+| `invalidConfig`   | `[code-gloss] missing or invalid config` | Visible text in the fallback DOM when the JSON config is missing or unparseable |
 
 The `CodeGlossLabels` type is exported from `codegloss` if you want to share label sets across files.
 
-## What's *not* in here
+## What's _not_ in here
 
 Anything that comes from your content stays in your content — annotation `title` and `text`, the `filename`, the `lang` badge, connection popover titles, and so on. The remark plugin and the wrappers pass them through unchanged, so the same translation pipeline you use for the rest of your site already covers them.

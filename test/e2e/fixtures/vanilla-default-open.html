@@ -1,31 +1,67 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>codegloss e2e · defaultOpen pre-opens</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script type="module" src="/codegloss/index.js"></script>
-  </head>
-  <body>
-    <main>
-      <h1>defaultOpen pre-opens</h1>
-      <code-gloss>
-        <script type="application/json">
-{
-  "code": "function debounce(fn, ms) {\n  let timer;\n  return function (...args) {\n    clearTimeout(timer);\n    timer = setTimeout(() => fn.apply(this, args), ms);\n  };\n}",
-  "lang": "js",
-  "filename": "debounce.js",
-  "annotations": [
-    { "id": "a1", "token": "timer", "line": 1, "occurrence": 0, "title": "Shared closure", "text": "Captured once, shared across every call.", "defaultOpen": true },
-    { "id": "a2", "token": "clearTimeout(timer)", "line": 3, "occurrence": 0, "title": "Cancel pending", "text": "Wins the defaultOpen cascade — last array entry flagged.", "defaultOpen": true }
-  ],
-  "connections": [
-    { "from": "a1", "to": "a2", "color": "#534AB7", "title": "First flagged", "text": "Loses the cascade because a later one also flags itself.", "defaultOpen": true },
-    { "from": "a2", "to": "a1", "color": "#f5a524", "title": "Cascade winner", "text": "Last connection with defaultOpen wins.", "defaultOpen": true }
-  ]
-}
-        </script>
-      </code-gloss>
-    </main>
-  </body>
+	<head>
+		<meta charset="utf-8" />
+		<title>codegloss e2e · defaultOpen pre-opens</title>
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1"
+		/>
+		<script
+			type="module"
+			src="/codegloss/index.js"
+		></script>
+	</head>
+	<body>
+		<main>
+			<h1>defaultOpen pre-opens</h1>
+			<code-gloss>
+				<script type="application/json">
+					{
+						"code": "function debounce(fn, ms) {\n  let timer;\n  return function (...args) {\n    clearTimeout(timer);\n    timer = setTimeout(() => fn.apply(this, args), ms);\n  };\n}",
+						"lang": "js",
+						"filename": "debounce.js",
+						"annotations": [
+							{
+								"id": "a1",
+								"token": "timer",
+								"line": 1,
+								"occurrence": 0,
+								"title": "Shared closure",
+								"text": "Captured once, shared across every call.",
+								"defaultOpen": true
+							},
+							{
+								"id": "a2",
+								"token": "clearTimeout(timer)",
+								"line": 3,
+								"occurrence": 0,
+								"title": "Cancel pending",
+								"text": "Wins the defaultOpen cascade — last array entry flagged.",
+								"defaultOpen": true
+							}
+						],
+						"connections": [
+							{
+								"from": "a1",
+								"to": "a2",
+								"color": "#534AB7",
+								"title": "First flagged",
+								"text": "Loses the cascade because a later one also flags itself.",
+								"defaultOpen": true
+							},
+							{
+								"from": "a2",
+								"to": "a1",
+								"color": "#f5a524",
+								"title": "Cascade winner",
+								"text": "Last connection with defaultOpen wins.",
+								"defaultOpen": true
+							}
+						]
+					}
+				</script>
+			</code-gloss>
+		</main>
+	</body>
 </html>

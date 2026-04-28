@@ -6,5 +6,5 @@
 import 'codegloss';
 
 export function CodeglossLoader() {
-  return null;
+	return null;
 }

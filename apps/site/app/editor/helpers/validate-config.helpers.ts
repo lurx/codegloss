@@ -1,10 +1,7 @@
 import type { Annotation, Connection } from '@codegloss/react';
 import type { EditorConfig } from '../hooks/use-editor-state';
 
-export type AnnotationIssue =
-	| 'duplicate-id'
-	| 'empty-id'
-	| 'token-mismatch';
+export type AnnotationIssue = 'duplicate-id' | 'empty-id' | 'token-mismatch';
 
 export type ConnectionIssue = 'missing-from' | 'missing-to' | 'same-endpoints';
 
@@ -33,7 +30,7 @@ function validateAnnotations(
 	code: string,
 ): Record<number, AnnotationIssue[]> {
 	const idCounts = new Map<string, number>();
-	annotations.forEach((a) => {
+	annotations.forEach(a => {
 		idCounts.set(a.id, (idCounts.get(a.id) ?? 0) + 1);
 	});
 
@@ -71,7 +68,7 @@ function validateConnections(
 	connections: Connection[],
 	annotations: Annotation[],
 ): Record<number, ConnectionIssue[]> {
-	const ids = new Set(annotations.map((a) => a.id));
+	const ids = new Set(annotations.map(a => a.id));
 	const result: Record<number, ConnectionIssue[]> = {};
 	connections.forEach((c, i) => {
 		const issues: ConnectionIssue[] = [];

@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import type { ConnectArcOverlayProps, Point } from './connect-arc-overlay.types';
+import type {
+	ConnectArcOverlayProps,
+	Point,
+} from './connect-arc-overlay.types';
 import styles from './connect-arc-overlay.module.scss';
 
 const DATA_CONNECT_ID = 'data-connect-id';
@@ -70,8 +73,14 @@ export function ConnectArcOverlay({
 	const pathClass = snap ? styles.pathSnapped : styles.path;
 
 	return createPortal(
-		<svg className={styles.overlay} aria-hidden="true">
-			<path d={path} className={pathClass} />
+		<svg
+			className={styles.overlay}
+			aria-hidden="true"
+		>
+			<path
+				d={path}
+				className={pathClass}
+			/>
 			<circle
 				cx={end.x}
 				cy={end.y}

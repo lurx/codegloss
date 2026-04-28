@@ -49,57 +49,57 @@ const LINK_ICON_HAST = {
 } as const;
 
 export default defineConfig({
-  mdx: {
-    remarkPlugins: [
-      [
-        remarkCodegloss,
-        {
-          skipImport: true,
-          arcs,
-          callouts,
-          // No `theme` here on purpose: codegloss is syntax-agnostic, and
-          // forwarding a name (Shiki's theme) that isn't in codegloss's
-          // theme registry stamps a `theme="…"` attr that blocks the
-          // built-in `prefers-color-scheme: dark` rules — leaving the
-          // toolbar / border / line-number gutter on light defaults while
-          // the inner code area is dark from the highlighter's `--cg-bg`.
-          highlight: codeglossHighlight,
-        },
-      ],
-    ],
-    rehypePlugins: [
-      rehypeSlug,
-      [
-        rehypeAutolinkHeadings,
-        {
-          behavior: 'append',
-          properties: {
-            className: 'heading-anchor',
-            'aria-label': 'Copy link to this section',
-          },
-          content: LINK_ICON_HAST,
-        },
-      ],
-      [rehypeShikiFromHighlighter, shiki, { theme: SHIKI_THEME }],
-      rehypeCodeglossPre,
-    ],
-  },
-  collections: {
-    docs: {
-      name: 'Doc',
-      pattern: 'docs/**/*.mdx',
-      schema: s
-        .object({
-          title: s.string(),
-          slug: s.path(),
-          description: s.string().optional(),
-          sidebar_position: s.number(),
-          body: s.mdx(),
-        })
-        .transform((data) => ({
-          ...data,
-          slug: data.slug.replace(/^docs\//, ''),
-        })),
-    },
-  },
+	mdx: {
+		remarkPlugins: [
+			[
+				remarkCodegloss,
+				{
+					skipImport: true,
+					arcs,
+					callouts,
+					// No `theme` here on purpose: codegloss is syntax-agnostic, and
+					// forwarding a name (Shiki's theme) that isn't in codegloss's
+					// theme registry stamps a `theme="…"` attr that blocks the
+					// built-in `prefers-color-scheme: dark` rules — leaving the
+					// toolbar / border / line-number gutter on light defaults while
+					// the inner code area is dark from the highlighter's `--cg-bg`.
+					highlight: codeglossHighlight,
+				},
+			],
+		],
+		rehypePlugins: [
+			rehypeSlug,
+			[
+				rehypeAutolinkHeadings,
+				{
+					behavior: 'append',
+					properties: {
+						className: 'heading-anchor',
+						'aria-label': 'Copy link to this section',
+					},
+					content: LINK_ICON_HAST,
+				},
+			],
+			[rehypeShikiFromHighlighter, shiki, { theme: SHIKI_THEME }],
+			rehypeCodeglossPre,
+		],
+	},
+	collections: {
+		docs: {
+			name: 'Doc',
+			pattern: 'docs/**/*.mdx',
+			schema: s
+				.object({
+					title: s.string(),
+					slug: s.path(),
+					description: s.string().optional(),
+					sidebar_position: s.number(),
+					body: s.mdx(),
+				})
+				.transform(data => ({
+					...data,
+					slug: data.slug.replace(/^docs\//, ''),
+				})),
+		},
+	},
 });

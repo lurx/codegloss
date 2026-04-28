@@ -31,9 +31,13 @@ export function useEditorTour(): EditorTourController {
 			allowClose: true,
 			popoverClass: 'codegloss-tour',
 			steps: [...EDITOR_TOUR_STEPS],
-			onHighlightStarted: (element) => {
+			onHighlightStarted: element => {
 				if (!(element instanceof HTMLElement)) return;
-				element.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'center' });
+				element.scrollIntoView({
+					behavior: 'auto',
+					block: 'center',
+					inline: 'center',
+				});
 			},
 			onDestroyed: markTourSeen,
 		});

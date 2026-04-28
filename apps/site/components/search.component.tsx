@@ -47,10 +47,13 @@ export function Search() {
 		[router],
 	);
 
-	const handleInputChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-		setQuery(event.target.value);
-		setActiveIndex(0);
-	}, []);
+	const handleInputChange = useCallback(
+		(event: ChangeEvent<HTMLInputElement>) => {
+			setQuery(event.target.value);
+			setActiveIndex(0);
+		},
+		[],
+	);
 
 	const handleInputKeyDown = useCallback(
 		(event: KeyboardEvent<HTMLInputElement>) => {
@@ -153,9 +156,7 @@ export function Search() {
 							onClick={handleResultClick}
 							onMouseEnter={handleResultHover}
 						>
-							<span className="search-result-title">
-								{result.entry.title}
-							</span>
+							<span className="search-result-title">{result.entry.title}</span>
 							{result.matchedHeading && (
 								<span className="search-result-heading">
 									{result.matchedHeading}
@@ -172,8 +173,14 @@ export function Search() {
 		if (!open) return null;
 
 		return createPortal(
-			<div className="search-overlay" onClick={closeDialog}>
-				<div className="search-dialog" onClick={stopPropagation}>
+			<div
+				className="search-overlay"
+				onClick={closeDialog}
+			>
+				<div
+					className="search-dialog"
+					onClick={stopPropagation}
+				>
 					<input
 						ref={inputRef}
 						type="text"

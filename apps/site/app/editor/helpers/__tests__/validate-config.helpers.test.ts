@@ -16,9 +16,7 @@ describe('validateConfig annotations', () => {
 	it('returns no issues for a valid configuration', () => {
 		const result = validateConfig(
 			baseConfig({
-				annotations: [
-					{ id: 'a1', token: 'answer', line: 0, occurrence: 0 },
-				],
+				annotations: [{ id: 'a1', token: 'answer', line: 0, occurrence: 0 }],
 			}),
 		);
 		expect(result.annotationIssues).toEqual({});
@@ -49,9 +47,7 @@ describe('validateConfig annotations', () => {
 	it('flags token-mismatch when token cannot be found at the requested occurrence', () => {
 		const result = validateConfig(
 			baseConfig({
-				annotations: [
-					{ id: 'a1', token: 'answer', line: 0, occurrence: 5 },
-				],
+				annotations: [{ id: 'a1', token: 'answer', line: 0, occurrence: 5 }],
 			}),
 		);
 		expect(result.annotationIssues[0]).toContain('token-mismatch');

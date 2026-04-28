@@ -17,15 +17,21 @@ import { CodeGloss } from '@codegloss/vue';
 </script>
 
 <template>
-  <CodeGloss
-    code="function fib(n) { return n < 2 ? n : fib(n-1) + fib(n-2); }"
-    lang="js"
-    filename="fib.js"
-    :annotations="[
-      { id: 'a1', token: 'fib', line: 0, occurrence: 0,
-        title: 'Recursion', text: 'Calls itself with smaller inputs.' },
-    ]"
-  />
+	<CodeGloss
+		code="function fib(n) { return n < 2 ? n : fib(n-1) + fib(n-2); }"
+		lang="js"
+		filename="fib.js"
+		:annotations="[
+			{
+				id: 'a1',
+				token: 'fib',
+				line: 0,
+				occurrence: 0,
+				title: 'Recursion',
+				text: 'Calls itself with smaller inputs.',
+			},
+		]"
+	/>
 </template>
 ```
 

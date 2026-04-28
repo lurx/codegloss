@@ -15,37 +15,35 @@ CodeGloss works with Astro (and [Starlight](https://starlight.astro.build/)) usi
 
 Add `remark-codegloss` to your `astro.config.mjs` with `output: 'html'`. If you've declared a `highlight` in `codegloss.config.ts` (see [Syntax Highlighters](/docs/highlighters)), thread it through so blocks are pre-highlighted at build:
 
-````js
+```js
 import starlight from '@astrojs/starlight';
 import { defineConfig } from 'astro/config';
 import remarkCodegloss from 'codegloss/remark';
 import codeglossConfig from './codegloss.config';
 
 export default defineConfig({
-  integrations: [
-    starlight({
-      title: 'My Docs',
-      head: [
-        {
-          tag: 'script',
-          attrs: { type: 'module', src: '/codegloss.js' },
-        },
-      ],
-      sidebar: [
-        { label: 'Intro', link: '/intro/' },
-      ],
-    }),
-  ],
-  markdown: {
-    remarkPlugins: [
-      [
-        remarkCodegloss,
-        { output: 'html', highlight: codeglossConfig.highlight },
-      ],
-    ],
-  },
+	integrations: [
+		starlight({
+			title: 'My Docs',
+			head: [
+				{
+					tag: 'script',
+					attrs: { type: 'module', src: '/codegloss.js' },
+				},
+			],
+			sidebar: [{ label: 'Intro', link: '/intro/' }],
+		}),
+	],
+	markdown: {
+		remarkPlugins: [
+			[
+				remarkCodegloss,
+				{ output: 'html', highlight: codeglossConfig.highlight },
+			],
+		],
+	},
 });
-````
+```
 
 For plain Astro (without Starlight), add the plugin under the same `markdown.remarkPlugins` key and load the runtime script in your layout's `<head>`.
 
@@ -53,7 +51,7 @@ For plain Astro (without Starlight), add the plugin under the same `markdown.rem
 
 Astro serves static assets from `public/`. Create a prebuild script that copies the CodeGloss runtime there:
 
-````js
+```js
 // scripts/copy-runtime.mjs
 import { copyFile, mkdir, readdir } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
@@ -70,43 +68,49 @@ await copyFile(runtimeEntry, resolve(publicDir, 'codegloss.js'));
 // Copy any chunk files the runtime imports
 const distSrc = dirname(runtimeEntry);
 for (const entry of await readdir(distSrc)) {
-  if (entry.startsWith('chunk-') && entry.endsWith('.js')) {
-    await copyFile(resolve(distSrc, entry), resolve(publicDir, entry));
-  }
+	if (entry.startsWith('chunk-') && entry.endsWith('.js')) {
+		await copyFile(resolve(distSrc, entry), resolve(publicDir, entry));
+	}
 }
-````
+```
 
 Add it to your build script:
 
-````json
+```json
 {
-  "scripts": {
-    "prebuild": "node ./scripts/copy-runtime.mjs",
-    "build": "astro build"
-  }
+	"scripts": {
+		"prebuild": "node ./scripts/copy-runtime.mjs",
+		"build": "astro build"
+	}
 }
-````
+```
 
 ## Write annotated code blocks
 
 Use the standard fenced codegloss syntax in any `.md` or `.mdx` content file:
 
-`````md
+````md
 ```js codegloss fib.js
 function fib(n) {
-  return n < 2 ? n : fib(n - 1) + fib(n - 2);
+	return n < 2 ? n : fib(n - 1) + fib(n - 2);
 }
 ```
 
 ```json annotations
 {
-  "annotations": [
-    { "id": "a1", "token": "fib", "line": 0, "occurrence": 0,
-      "title": "Recursion", "text": "Calls itself with smaller inputs." }
-  ]
+	"annotations": [
+		{
+			"id": "a1",
+			"token": "fib",
+			"line": 0,
+			"occurrence": 0,
+			"title": "Recursion",
+			"text": "Calls itself with smaller inputs."
+		}
+	]
 }
 ```
-`````
+````
 
 The remark plugin transforms these into `<code-gloss>` HTML elements at build time. The runtime script in the `<head>` registers the custom element on the client.
 

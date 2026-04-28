@@ -35,9 +35,10 @@ function serializeToHtml(nodes: ElementContent[]): string {
 			out += `<${node.tagName}`;
 			for (const [key, value] of Object.entries(node.properties ?? {})) {
 				if (value === undefined || value === null || value === false) continue;
-				const attr = key === 'className'
-					? 'class'
-					: key.replace(/([A-Z])/g, '-$1').toLowerCase();
+				const attr =
+					key === 'className'
+						? 'class'
+						: key.replace(/([A-Z])/g, '-$1').toLowerCase();
 				out += ` ${attr}="${String(value).replaceAll('"', '&quot;')}"`;
 			}
 			out += `>${serializeToHtml(node.children)}</${node.tagName}>`;
@@ -74,9 +75,14 @@ function visit(parent: Root | Element): void {
 			child.children[0].tagName === 'code'
 		) {
 			const codeEl = child.children[0] as Element;
-			const lang = parseLang(codeEl.properties?.className as string | string[] | undefined);
+			const lang = parseLang(
+				codeEl.properties?.className as string | string[] | undefined,
+			);
 			const rawCode = extractText(codeEl.children).replace(/\n$/, '');
-			const highlightedHtml = serializeToHtml(codeEl.children).replace(/\n$/, '');
+			const highlightedHtml = serializeToHtml(codeEl.children).replace(
+				/\n$/,
+				'',
+			);
 
 			const config: Record<string, unknown> = { code: rawCode, lang };
 			if (highlightedHtml) config.highlightedHtml = highlightedHtml;

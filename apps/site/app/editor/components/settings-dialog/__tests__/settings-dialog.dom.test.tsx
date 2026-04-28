@@ -42,8 +42,8 @@ describe('SettingsDialog patches', () => {
 		);
 		const theme = screen.getByLabelText('Theme') as HTMLSelectElement;
 		const concrete = Array.from(theme.options)
-			.map((o) => o.value)
-			.find((v) => v !== '');
+			.map(o => o.value)
+			.find(v => v !== '');
 		if (!concrete) throw new Error('no concrete theme option in fixture');
 		fireEvent.change(theme, { target: { value: concrete } });
 		expect(onPatch).toHaveBeenCalledWith({ theme: concrete });
@@ -151,7 +151,7 @@ describe('SettingsDialog patches', () => {
 		fireEvent.change(numbers[1], { target: { value: '0.4' } });
 		fireEvent.change(numbers[2], { target: { value: '1.5' } });
 		fireEvent.change(numbers[3], { target: { value: '0.8' } });
-		expect(onPatch.mock.calls.map((c) => c[0].arcs)).toEqual([
+		expect(onPatch.mock.calls.map(c => c[0].arcs)).toEqual([
 			{ dotOpacity: 0.4 },
 			{ strokeWidth: 1.5 },
 			{ opacity: 0.8 },
@@ -268,7 +268,7 @@ describe('SettingsDialog patches', () => {
 		);
 		fireEvent.click(screen.getByRole('button', { name: /Copy/ }));
 		// after the rejected promise settles the button stays as "Copy"
-		await new Promise((r) => setTimeout(r, 0));
+		await new Promise(r => setTimeout(r, 0));
 		expect(screen.getByRole('button', { name: /Copy/ })).toBeTruthy();
 	});
 

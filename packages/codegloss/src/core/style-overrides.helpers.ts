@@ -7,21 +7,22 @@ type StyleOverrideGroup = keyof CodeGlossStyleOverrides;
  * `<code-gloss>` host. One entry per supported field — unknown fields
  * are a TypeScript error rather than a silent no-op.
  */
-const CSS_VAR_MAP: ReadonlyArray<readonly [StyleOverrideGroup, string, string]> =
-	[
-		['codeBlock', 'background', '--cg-bg'],
-		['codeBlock', 'foreground', '--cg-text'],
-		['codeBlock', 'border', '--cg-border'],
-		['codeBlock', 'borderRadius', '--cg-radius'],
-		['codeBlock', 'toolbarBackground', '--cg-toolbar-bg'],
-		['codeBlock', 'mutedForeground', '--cg-muted'],
-		['annotations', 'markerBackground', '--cg-ann-bg'],
-		['annotations', 'markerBorder', '--cg-ann-border'],
-		['annotations', 'markerHover', '--cg-ann-hover'],
-		['badge', 'background', '--cg-badge-bg'],
-		['badge', 'foreground', '--cg-badge-text'],
-		['lineNumbers', 'foreground', '--cg-line-num'],
-	];
+const CSS_VAR_MAP: ReadonlyArray<
+	readonly [StyleOverrideGroup, string, string]
+> = [
+	['codeBlock', 'background', '--cg-bg'],
+	['codeBlock', 'foreground', '--cg-text'],
+	['codeBlock', 'border', '--cg-border'],
+	['codeBlock', 'borderRadius', '--cg-radius'],
+	['codeBlock', 'toolbarBackground', '--cg-toolbar-bg'],
+	['codeBlock', 'mutedForeground', '--cg-muted'],
+	['annotations', 'markerBackground', '--cg-ann-bg'],
+	['annotations', 'markerBorder', '--cg-ann-border'],
+	['annotations', 'markerHover', '--cg-ann-hover'],
+	['badge', 'background', '--cg-badge-bg'],
+	['badge', 'foreground', '--cg-badge-text'],
+	['lineNumbers', 'foreground', '--cg-line-num'],
+];
 
 /**
  * Flatten a `styleOverrides` object into a list of `[cssVar, value]` pairs,

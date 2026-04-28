@@ -1,53 +1,55 @@
 {
-  "name": "@codegloss/shiki",
-  "version": "0.1.0",
-  "description": "Shiki integration for codegloss — rehype plugin that renders every fenced code block as a <code-gloss> element, plus the Shiki highlighter adapter",
-  "license": "MIT",
-  "homepage": "https://lurx.github.io/codegloss/",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/lurx/codegloss.git",
-    "directory": "packages/shiki"
-  },
-  "bugs": "https://github.com/lurx/codegloss/issues",
-  "publishConfig": {
-    "access": "public"
-  },
-  "keywords": [
-    "codegloss",
-    "code-annotation",
-    "annotated-code",
-    "syntax-highlighting",
-    "shiki",
-    "rehype",
-    "rehype-plugin"
-  ],
-  "type": "module",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "engines": {
-    "node": ">=20"
-  },
-  "files": ["dist"],
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    }
-  },
-  "peerDependencies": {
-    "codegloss": "workspace:*",
-    "shiki": ">=1.0.0"
-  },
-  "devDependencies": {
-    "@types/hast": "^3",
-    "codegloss": "workspace:*",
-    "shiki": "^3",
-    "tsup": "^8",
-    "typescript": "^5.9.3"
-  },
-  "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch"
-  }
+	"name": "@codegloss/shiki",
+	"version": "0.1.0",
+	"description": "Shiki integration for codegloss — rehype plugin that renders every fenced code block as a <code-gloss> element, plus the Shiki highlighter adapter",
+	"license": "MIT",
+	"homepage": "https://lurx.github.io/codegloss/",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/lurx/codegloss.git",
+		"directory": "packages/shiki"
+	},
+	"bugs": "https://github.com/lurx/codegloss/issues",
+	"publishConfig": {
+		"access": "public"
+	},
+	"keywords": [
+		"codegloss",
+		"code-annotation",
+		"annotated-code",
+		"syntax-highlighting",
+		"shiki",
+		"rehype",
+		"rehype-plugin"
+	],
+	"type": "module",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"engines": {
+		"node": ">=20"
+	},
+	"files": [
+		"dist"
+	],
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		}
+	},
+	"peerDependencies": {
+		"codegloss": "workspace:*",
+		"shiki": ">=1.0.0"
+	},
+	"devDependencies": {
+		"@types/hast": "^3",
+		"codegloss": "workspace:*",
+		"shiki": "^3",
+		"tsup": "^8",
+		"typescript": "^5.9.3"
+	},
+	"scripts": {
+		"build": "tsup",
+		"dev": "tsup --watch"
+	}
 }

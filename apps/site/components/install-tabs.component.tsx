@@ -4,7 +4,11 @@ import { useCallback, type MouseEvent } from 'react';
 import { CopyCodeButton } from './copy-code-button.component';
 import { COMMAND_PREFIXES } from './install-tabs.constants';
 import type { InstallTabsProps } from './install-tabs.types';
-import { usePackageManager, VALID_MANAGERS, type PackageManager } from '@/hooks';
+import {
+	usePackageManager,
+	VALID_MANAGERS,
+	type PackageManager,
+} from '@/hooks';
 
 export function InstallTabs({ packages }: Readonly<InstallTabsProps>) {
 	const [manager, setManagerAction] = usePackageManager();
@@ -22,7 +26,10 @@ export function InstallTabs({ packages }: Readonly<InstallTabsProps>) {
 
 	return (
 		<div className="install-tabs">
-			<div className="install-tabs-bar" role="tablist">
+			<div
+				className="install-tabs-bar"
+				role="tablist"
+			>
 				{VALID_MANAGERS.map(pm => (
 					<button
 						key={pm}

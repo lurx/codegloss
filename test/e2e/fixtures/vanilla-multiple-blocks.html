@@ -1,66 +1,72 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>codegloss e2e · multiple blocks on one page</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script type="module" src="/codegloss/index.js"></script>
-  </head>
-  <body>
-    <main>
-      <h1>multiple blocks</h1>
+	<head>
+		<meta charset="utf-8" />
+		<title>codegloss e2e · multiple blocks on one page</title>
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1"
+		/>
+		<script
+			type="module"
+			src="/codegloss/index.js"
+		></script>
+	</head>
+	<body>
+		<main>
+			<h1>multiple blocks</h1>
 
-      <h2>first</h2>
-      <code-gloss>
-        <script type="application/json">
-{
-  "code": "const greet = (name) => `hello, ${name}`;\ngreet('world');",
-  "lang": "js",
-  "filename": "greet.js",
-  "annotations": [
-    {
-      "id": "a1",
-      "token": "greet",
-      "line": 0,
-      "occurrence": 0,
-      "title": "Arrow",
-      "text": "Single-expression arrow function."
-    }
-  ]
-}
-        </script>
-      </code-gloss>
+			<h2>first</h2>
+			<code-gloss>
+				<script type="application/json">
+					{
+						"code": "const greet = (name) => `hello, ${name}`;\ngreet('world');",
+						"lang": "js",
+						"filename": "greet.js",
+						"annotations": [
+							{
+								"id": "a1",
+								"token": "greet",
+								"line": 0,
+								"occurrence": 0,
+								"title": "Arrow",
+								"text": "Single-expression arrow function."
+							}
+						]
+					}
+				</script>
+			</code-gloss>
 
-      <h2>second</h2>
-      <code-gloss>
-        <script type="application/json">
-{
-  "code": "const sum = (a, b) => a + b;\nconsole.log(sum(2, 3));",
-  "lang": "js",
-  "filename": "sum.js",
-  "annotations": [
-    {
-      "id": "b1",
-      "token": "sum",
-      "line": 0,
-      "occurrence": 0,
-      "title": "Sum",
-      "text": "Adds two numbers."
-    }
-  ]
-}
-        </script>
-      </code-gloss>
+			<h2>second</h2>
+			<code-gloss>
+				<script type="application/json">
+					{
+						"code": "const sum = (a, b) => a + b;\nconsole.log(sum(2, 3));",
+						"lang": "js",
+						"filename": "sum.js",
+						"annotations": [
+							{
+								"id": "b1",
+								"token": "sum",
+								"line": 0,
+								"occurrence": 0,
+								"title": "Sum",
+								"text": "Adds two numbers."
+							}
+						]
+					}
+				</script>
+			</code-gloss>
 
-      <h2>third (no annotations)</h2>
-      <code-gloss>
-        <script type="application/json">
-{
-  "code": "console.log('plain block');",
-  "lang": "js"
-}
-        </script>
-      </code-gloss>
-    </main>
-  </body>
+			<h2>third (no annotations)</h2>
+			<code-gloss>
+				<script type="application/json">
+					{
+						"code": "console.log('plain block');",
+						"lang": "js"
+					}
+				</script>
+			</code-gloss>
+		</main>
+	</body>
 </html>

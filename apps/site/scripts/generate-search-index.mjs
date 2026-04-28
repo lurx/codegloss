@@ -3,7 +3,10 @@ import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
 import path from 'node:path';
 
 const docsDir = path.resolve(import.meta.dirname, '../content/docs');
-const outPath = path.resolve(import.meta.dirname, '../public/search-index.json');
+const outPath = path.resolve(
+	import.meta.dirname,
+	'../public/search-index.json',
+);
 
 function walkMdx(dir) {
 	const entries = [];

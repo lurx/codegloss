@@ -75,7 +75,9 @@ export class CodeGlossElement extends SafeHTMLElement {
 	private copyBtn!: HTMLButtonElement;
 	private popoverEl!: HTMLDivElement;
 	private annotationPopoverEl!: HTMLDivElement;
-	private annotationPopoverState: { annId: string; top: number; left: number } | undefined;
+	private annotationPopoverState:
+		| { annId: string; top: number; left: number }
+		| undefined;
 	private readonly lineRefs = new Map<number, HTMLDivElement>();
 
 	private resizeTimer: ReturnType<typeof setTimeout> | undefined;
@@ -145,7 +147,8 @@ export class CodeGlossElement extends SafeHTMLElement {
 		// the host would diverge from server-rendered HTML and trip React's
 		// hydration check.
 		if (this.root) {
-			if (chromeBackground) this.root.style.setProperty('--cg-bg', chromeBackground);
+			if (chromeBackground)
+				this.root.style.setProperty('--cg-bg', chromeBackground);
 			if (chromeColor) this.root.style.setProperty('--cg-text', chromeColor);
 		}
 		this.attachListeners();
@@ -213,7 +216,6 @@ export class CodeGlossElement extends SafeHTMLElement {
 		this.shadow.innerHTML = '';
 		this.connectedCallback();
 	}
-
 
 	private applyTheme(themeName: string | undefined): void {
 		// Remove existing theme stylesheet if any
@@ -632,11 +634,14 @@ export class CodeGlossElement extends SafeHTMLElement {
 
 		const midY =
 			fromRect && toRect
-				? (fromRect.top + fromRect.height / 2 + toRect.top + toRect.height / 2) / 2
+				? (fromRect.top +
+						fromRect.height / 2 +
+						toRect.top +
+						toRect.height / 2) /
+					2
 				: codeAreaRect.top + codeAreaRect.height / 2;
 
-		const left =
-			conn.side === 'right' ? codeAreaRect.right : codeAreaRect.left;
+		const left = conn.side === 'right' ? codeAreaRect.right : codeAreaRect.left;
 
 		return { top: midY, left };
 	}
@@ -710,14 +715,14 @@ export class CodeGlossElement extends SafeHTMLElement {
 			if (!lineElement) continue;
 
 			const midY = lineElement.offsetTop + lineElement.offsetHeight / 2;
-			const lineContent = lineElement.querySelector<HTMLElement>('.lineContent');
+			const lineContent =
+				lineElement.querySelector<HTMLElement>('.lineContent');
 			// .lineContent is a flex:1 box that stretches to fill the row, so
 			// its own bounding rect doesn't mark where text actually ends.
 			// A Range over its children gives us the true text extent.
 			/* c8 ignore next */
 			const textRight = lineContent ? measureTextRight(lineContent) : 0;
-			const lineEndX =
-				textRight - codeAreaRect.left + this.codeArea.scrollLeft;
+			const lineEndX = textRight - codeAreaRect.left + this.codeArea.scrollLeft;
 
 			annotationPositions.set(ann.id, { y: midY, lineEndX });
 		}

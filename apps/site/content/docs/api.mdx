@@ -9,21 +9,24 @@ CodeGloss is a Web Component (`<code-gloss>`) with thin framework wrappers at `c
 
 ## Web Component
 
-````html
-<script type="module" src="https://unpkg.com/codegloss/dist/index.js"></script>
+```html
+<script
+	type="module"
+	src="https://unpkg.com/codegloss/dist/index.js"
+></script>
 
 <code-gloss>
-  <script type="application/json">
-    {
-      "code": "...",
-      "lang": "js",
-      "filename": "example.js",
-      "annotations": [...],
-      "connections": [...]
-    }
-  </script>
+	<script type="application/json">
+		{
+		  "code": "...",
+		  "lang": "js",
+		  "filename": "example.js",
+		  "annotations": [...],
+		  "connections": [...]
+		}
+	</script>
 </code-gloss>
-````
+```
 
 The element reads its config from a `<script type="application/json">` child. JSON keeps complex props (arrays, objects) clean — no attribute serialization headaches.
 
@@ -44,16 +47,16 @@ CodeGloss ships thin wrappers for popular frameworks. Each passes props to the s
 
 The same `CodeGlossConfig` shape powers both usage modes:
 
-| Field | Type | Default | Description |
-| --- | --- | --- | --- |
-| `code` | `string` | — | Raw source code to display. Preserve indentation. |
-| `lang` | `string` | — | Language identifier (`js`, `ts`, `py`, `css`, etc.). |
-| `filename` | `string?` | — | Filename shown in the toolbar. |
-| `annotations` | `Annotation[]?` | `[]` | Token-level annotations with inline callouts. |
-| `connections` | `Connection[]?` | `[]` | Visual arcs between related annotations. |
-| `theme` | `string?` | — | Named theme (`github-dark`, `dracula`, etc.). |
-| `arcs` | `object?` | — | Arc style overrides (see [Arc style options](#arc-style-options)). |
-| `callouts` | `object?` | — | Annotation callout behavior (see [Callout options](#callout-options)). |
+| Field         | Type            | Default | Description                                                            |
+| ------------- | --------------- | ------- | ---------------------------------------------------------------------- |
+| `code`        | `string`        | —       | Raw source code to display. Preserve indentation.                      |
+| `lang`        | `string`        | —       | Language identifier (`js`, `ts`, `py`, `css`, etc.).                   |
+| `filename`    | `string?`       | —       | Filename shown in the toolbar.                                         |
+| `annotations` | `Annotation[]?` | `[]`    | Token-level annotations with inline callouts.                          |
+| `connections` | `Connection[]?` | `[]`    | Visual arcs between related annotations.                               |
+| `theme`       | `string?`       | —       | Named theme (`github-dark`, `dracula`, etc.).                          |
+| `arcs`        | `object?`       | —       | Arc style overrides (see [Arc style options](#arc-style-options)).     |
+| `callouts`    | `object?`       | —       | Annotation callout behavior (see [Callout options](#callout-options)). |
 
 ## Types
 
@@ -61,18 +64,18 @@ The same `CodeGlossConfig` shape powers both usage modes:
 
 Defines a single highlighted token with an expanding callout.
 
-````ts
+```ts
 type Annotation = {
-  id: string;            // Unique ID, e.g. "a1"
-  token: string;         // Exact substring to match, e.g. "memo[k]"
-  line: number;          // 0-indexed line number
-  occurrence: number;    // 0-indexed match on that line
-  title: string;         // Callout heading
-  text: string;          // Callout body
-  popover?: boolean;     // Present the callout as a floating popover. Default: false.
-  defaultOpen?: boolean; // Open this callout automatically on first render. Default: false.
+	id: string; // Unique ID, e.g. "a1"
+	token: string; // Exact substring to match, e.g. "memo[k]"
+	line: number; // 0-indexed line number
+	occurrence: number; // 0-indexed match on that line
+	title: string; // Callout heading
+	text: string; // Callout body
+	popover?: boolean; // Present the callout as a floating popover. Default: false.
+	defaultOpen?: boolean; // Open this callout automatically on first render. Default: false.
 };
-````
+```
 
 - **`token`** — the exact substring to search for on the given line. Must match character-for-character.
 - **`line`** — 0-indexed. Line 0 is the first line of the code.
@@ -86,19 +89,19 @@ Clicking an annotated token either expands an inline callout row directly below 
 
 Draws a visual arc between two annotations.
 
-````ts
+```ts
 type Connection = {
-  from: string;              // Source annotation ID
-  to: string;                // Target annotation ID
-  color: string;             // Hex color, e.g. "#534AB7"
-  title?: string;            // Popover heading shown on click
-  text?: string;             // Popover body. Without it, the arc is not clickable.
-  side?: 'left' | 'right';   // Which side to render on. Default: 'left'.
-  defaultOpen?: boolean;     // Open this arc's popover automatically on first render. Default: false.
+	from: string; // Source annotation ID
+	to: string; // Target annotation ID
+	color: string; // Hex color, e.g. "#534AB7"
+	title?: string; // Popover heading shown on click
+	text?: string; // Popover body. Without it, the arc is not clickable.
+	side?: 'left' | 'right'; // Which side to render on. Default: 'left'.
+	defaultOpen?: boolean; // Open this arc's popover automatically on first render. Default: false.
 };
-````
+```
 
-When a connection has `text`, the arc and its endpoint dots become clickable. Clicking opens a popover (using the native [Popover API](https://developer.chrome.com/blog/introducing-popover-api)) with the title and text — useful for explaining *why* two pieces of code are related.
+When a connection has `text`, the arc and its endpoint dots become clickable. Clicking opens a popover (using the native [Popover API](https://developer.chrome.com/blog/introducing-popover-api)) with the title and text — useful for explaining _why_ two pieces of code are related.
 
 Arcs render as dashed Bezier curves with dots at each endpoint. Multiple connections on the same side are offset to avoid overlap.
 
@@ -108,29 +111,29 @@ Arcs render as dashed Bezier curves with dots at each endpoint. Multiple connect
 
 The Web Component uses a built-in regex highlighter by default (recognizes JS/TS keywords, strings, numbers, comments). For production-grade tokenization, declare a real highlighter on your project config and let the runtime pick it up:
 
-````ts
+```ts
 // codegloss.config.ts
 import { defineConfig } from 'codegloss/config';
 import { createShikiHighlighter } from 'codegloss/highlighters/shiki';
 import { createHighlighter } from 'shiki';
 
 const shiki = await createHighlighter({
-  themes: ['github-dark'],
-  langs: ['js', 'ts', 'tsx', 'py', 'rust'],
+	themes: ['github-dark'],
+	langs: ['js', 'ts', 'tsx', 'py', 'rust'],
 });
 
 export default defineConfig({
-  highlight: createShikiHighlighter(shiki, { theme: 'github-dark' }),
+	highlight: createShikiHighlighter(shiki, { theme: 'github-dark' }),
 });
-````
+```
 
-````ts
+```ts
 // app root (client) — registers config.highlight as the default
 import { initCodegloss } from 'codegloss';
 import codeglossConfig from './codegloss.config';
 
 initCodegloss(codeglossConfig);
-````
+```
 
 `initCodegloss(config)` reads `config.highlight` and applies it to every `<code-gloss>` instance — current and future — refreshing mounted blocks so the swap is visible without a page reload. The lower-level `setDefaultHighlighter(fn)` is still exported for cases where you'd rather not bundle the config (e.g. you compute the highlighter elsewhere).
 
@@ -146,20 +149,20 @@ See the dedicated [Styles & Theming](/docs/theming) page for named themes, CSS v
 
 Create a project-level config file to set defaults for all `<code-gloss>` instances.
 
-````ts
+```ts
 // codegloss.config.ts
 import { defineConfig } from 'codegloss/config';
 
 export default defineConfig({
-  theme: 'github-light',
-  darkTheme: 'github-dark',
-  arcs: {
-    strokeWidth: 2,
-    strokeDasharray: 'none',
-    opacity: 0.7,
-  },
+	theme: 'github-light',
+	darkTheme: 'github-dark',
+	arcs: {
+		strokeWidth: 2,
+		strokeDasharray: 'none',
+		opacity: 0.7,
+	},
 });
-````
+```
 
 ### Config file resolution
 
@@ -174,45 +177,45 @@ Searched in order from the project root:
 
 ### Config shape
 
-````ts
+```ts
 type CodeGlossUserConfig = {
-  /** Named bundled theme, or an inline theme object. */
-  theme?: string | CodeGlossTheme;
-  /** Theme override for dark mode. */
-  darkTheme?: string | CodeGlossTheme;
-  /** Style overrides for connection arcs. */
-  arcs?: CodeGlossArcStyle;
-  /** Block-level callout behavior for annotations. */
-  callouts?: CodeGlossCallouts;
-  /** Chrome colors and sizing — forwarded as inline CSS vars. */
-  styleOverrides?: CodeGlossStyleOverrides;
-  /**
-   * Project-wide syntax highlighter. Read by the remark plugin at build
-   * time and by `initCodegloss(config)` at runtime. See
-   * [Syntax Highlighters](/docs/highlighters) for adapters.
-   */
-  highlight?: Highlighter;
-  /**
-   * Localizable strings rendered by the element itself (copy button
-   * labels, callout close button, fallback error text). Pass any subset;
-   * unspecified keys keep their English defaults. Applied via
-   * `initCodegloss(config)` — or call `setDefaultLabels(labels)` directly.
-   */
-  labels?: {
-    copy?: string;            // Copy button aria-label + title (idle)
-    copied?: string;          // Copy button aria-label after click
-    copiedTitle?: string;     // Copy button title after click
-    closeAnnotation?: string; // Annotation callout close-button aria-label
-    invalidConfig?: string;   // Fallback error text when config is missing
-  };
+	/** Named bundled theme, or an inline theme object. */
+	theme?: string | CodeGlossTheme;
+	/** Theme override for dark mode. */
+	darkTheme?: string | CodeGlossTheme;
+	/** Style overrides for connection arcs. */
+	arcs?: CodeGlossArcStyle;
+	/** Block-level callout behavior for annotations. */
+	callouts?: CodeGlossCallouts;
+	/** Chrome colors and sizing — forwarded as inline CSS vars. */
+	styleOverrides?: CodeGlossStyleOverrides;
+	/**
+	 * Project-wide syntax highlighter. Read by the remark plugin at build
+	 * time and by `initCodegloss(config)` at runtime. See
+	 * [Syntax Highlighters](/docs/highlighters) for adapters.
+	 */
+	highlight?: Highlighter;
+	/**
+	 * Localizable strings rendered by the element itself (copy button
+	 * labels, callout close button, fallback error text). Pass any subset;
+	 * unspecified keys keep their English defaults. Applied via
+	 * `initCodegloss(config)` — or call `setDefaultLabels(labels)` directly.
+	 */
+	labels?: {
+		copy?: string; // Copy button aria-label + title (idle)
+		copied?: string; // Copy button aria-label after click
+		copiedTitle?: string; // Copy button title after click
+		closeAnnotation?: string; // Annotation callout close-button aria-label
+		invalidConfig?: string; // Fallback error text when config is missing
+	};
 };
-````
+```
 
 ### Theme defaults
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `theme` | `string \| CodeGlossTheme` | Default theme for all blocks (e.g. `'github-light'`). |
+| Field       | Type                       | Description                                                                 |
+| ----------- | -------------------------- | --------------------------------------------------------------------------- |
+| `theme`     | `string \| CodeGlossTheme` | Default theme for all blocks (e.g. `'github-light'`).                       |
 | `darkTheme` | `string \| CodeGlossTheme` | Theme used when the user is in dark mode. Falls back to `theme` if not set. |
 
 The config file is **build-time only** — framework integrations (remark plugin, React wrappers) read it and inject the theme into each rendered block. Individual blocks can still override the default by specifying their own `theme`.
@@ -221,88 +224,88 @@ The config file is **build-time only** — framework integrations (remark plugin
 
 Arcs are the Bezier curves drawn in the line number gutter connecting related annotations.
 
-| Field | Type | Default | Description |
-| --- | --- | --- | --- |
-| `dotRadius` | `number` | `2.5` | Endpoint dot radius in px |
-| `dotOpacity` | `number` | `0.8` | Endpoint dot opacity (0–1) |
-| `strokeWidth` | `number` | `1.5` | Arc stroke width in px |
-| `strokeDasharray` | `string` | `'4 3'` | SVG dash pattern, or `'none'` for solid |
-| `opacity` | `number` | `0.55` | Arc opacity (0–1) |
-| `arrowhead` | `boolean` | `false` | When `true`, the `to` endpoint renders as a colored SVG marker-end arrowhead instead of a dot. The `from` endpoint always stays a plain dot. |
+| Field             | Type      | Default | Description                                                                                                                                  |
+| ----------------- | --------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `dotRadius`       | `number`  | `2.5`   | Endpoint dot radius in px                                                                                                                    |
+| `dotOpacity`      | `number`  | `0.8`   | Endpoint dot opacity (0–1)                                                                                                                   |
+| `strokeWidth`     | `number`  | `1.5`   | Arc stroke width in px                                                                                                                       |
+| `strokeDasharray` | `string`  | `'4 3'` | SVG dash pattern, or `'none'` for solid                                                                                                      |
+| `opacity`         | `number`  | `0.55`  | Arc opacity (0–1)                                                                                                                            |
+| `arrowhead`       | `boolean` | `false` | When `true`, the `to` endpoint renders as a colored SVG marker-end arrowhead instead of a dot. The `from` endpoint always stays a plain dot. |
 
 Arrowheads apply to both left- and right-side arcs and are per-block, not per-connection — setting `arrowhead: true` affects every connection rendered into the block.
 
 Arc styles can also be set per-block via the JSON config:
 
-````html
+```html
 <code-gloss>
-  <script type="application/json">
-    {
-      "code": "...",
-      "lang": "js",
-      "arcs": { "strokeDasharray": "none", "arrowhead": true },
-      "connections": [
-        { "from": "a", "to": "b", "color": "#534AB7" },
-        { "from": "a", "to": "c", "color": "#00b894", "side": "right" }
-      ]
-    }
-  </script>
+	<script type="application/json">
+		{
+			"code": "...",
+			"lang": "js",
+			"arcs": { "strokeDasharray": "none", "arrowhead": true },
+			"connections": [
+				{ "from": "a", "to": "b", "color": "#534AB7" },
+				{ "from": "a", "to": "c", "color": "#00b894", "side": "right" }
+			]
+		}
+	</script>
 </code-gloss>
-````
+```
 
 ### Callout options
 
 Callouts are the title + text surfaces that appear when an annotation token is clicked. They have two presentations:
 
-| Field | Type | Default | Description |
-| --- | --- | --- | --- |
+| Field     | Type      | Default | Description                                                                                                                                            |
+| --------- | --------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `popover` | `boolean` | `false` | When `true`, every annotation in the block opens as a floating popover anchored at the click position instead of the default inline expanding callout. |
 
 `popover` is per-block — setting it on the config file, `CodeGlossConfig.callouts`, or the JSON annotations block flips the default for every annotation in that block. Individual annotations can still override via [`annotation.popover`](#annotation).
 
 Arc popovers and annotation popovers are independent surfaces: a user can have both open at once. Inline and popover presentations of an annotation are mutually exclusive — opening one dismisses the other.
 
-````html
+```html
 <code-gloss>
-  <script type="application/json">
-    {
-      "code": "...",
-      "lang": "js",
-      "callouts": { "popover": true },
-      "annotations": [...]
-    }
-  </script>
+	<script type="application/json">
+		{
+		  "code": "...",
+		  "lang": "js",
+		  "callouts": { "popover": true },
+		  "annotations": [...]
+		}
+	</script>
 </code-gloss>
-````
+```
 
 ### Style override options
 
 `styleOverrides` bridges the block's chrome (backgrounds, borders, accents, line-number color) to the host site's design tokens. Every field is a CSS value string — literal colors, `var(--my-token)` references, `calc()`, whatever — forwarded as an inline `--cg-*` custom property on the `<code-gloss>` host. One value applies in both light and dark mode (inline styles beat the theme's `:host` rules in either scheme).
 
-````ts
+```ts
 type CodeGlossStyleOverrides = {
-  codeBlock?: {
-    background?: string;         // → --cg-bg
-    foreground?: string;         // → --cg-text
-    border?: string;             // → --cg-border
-    borderRadius?: string;       // → --cg-radius
-    toolbarBackground?: string;  // → --cg-toolbar-bg
-    mutedForeground?: string;    // → --cg-muted
-  };
-  annotations?: {
-    markerBackground?: string;   // → --cg-ann-bg
-    markerBorder?: string;       // → --cg-ann-border
-    markerHover?: string;        // → --cg-ann-hover
-  };
-  badge?: {
-    background?: string;         // → --cg-badge-bg
-    foreground?: string;         // → --cg-badge-text
-  };
-  lineNumbers?: {
-    foreground?: string;         // → --cg-line-num
-  };
+	codeBlock?: {
+		background?: string; // → --cg-bg
+		foreground?: string; // → --cg-text
+		border?: string; // → --cg-border
+		borderRadius?: string; // → --cg-radius
+		toolbarBackground?: string; // → --cg-toolbar-bg
+		mutedForeground?: string; // → --cg-muted
+	};
+	annotations?: {
+		markerBackground?: string; // → --cg-ann-bg
+		markerBorder?: string; // → --cg-ann-border
+		markerHover?: string; // → --cg-ann-hover
+	};
+	badge?: {
+		background?: string; // → --cg-badge-bg
+		foreground?: string; // → --cg-badge-text
+	};
+	lineNumbers?: {
+		foreground?: string; // → --cg-line-num
+	};
 };
-````
+```
 
 Set site-wide in `codegloss.config.ts`, override per block via the `styleOverrides` prop on any wrapper. For the full walkthrough, the raw `--cg-*` escape hatch, and how it composes with named themes, see [Styles & Theming → Chrome styling](/docs/theming#chrome-styling-via-styleoverrides).
 
@@ -316,32 +319,45 @@ An annotation or connection can open automatically on first render by setting `d
 
 **Positioning without a click.** Pre-opened popovers anchor at a computed position since there's no click event: annotation popovers anchor to the right edge of the annotated token; connection popovers anchor at the midpoint between the two annotation lines, offset to the gutter on their side.
 
-````json
+```json
 {
-  "annotations": [
-    { "id": "a1", "token": "cache", "line": 1, "occurrence": 0,
-      "title": "Cache", "text": "...", "defaultOpen": true }
-  ],
-  "connections": [
-    { "from": "a1", "to": "a1", "color": "#534AB7", "text": "Write then read",
-      "side": "right", "defaultOpen": true }
-  ]
+	"annotations": [
+		{
+			"id": "a1",
+			"token": "cache",
+			"line": 1,
+			"occurrence": 0,
+			"title": "Cache",
+			"text": "...",
+			"defaultOpen": true
+		}
+	],
+	"connections": [
+		{
+			"from": "a1",
+			"to": "a1",
+			"color": "#534AB7",
+			"text": "Write then read",
+			"side": "right",
+			"defaultOpen": true
+		}
+	]
 }
-````
+```
 
 ### Loading the config programmatically
 
 For build tools and server-side scripts, use the Node-only config loader:
 
-````ts
+```ts
 import { loadConfig } from 'codegloss/config/node';
 
 const result = loadConfig();
 if (result) {
-  console.log(result.config);   // CodeGlossUserConfig
-  console.log(result.filepath); // absolute path to the config file
+	console.log(result.config); // CodeGlossUserConfig
+	console.log(result.filepath); // absolute path to the config file
 }
-````
+```
 
 > `loadConfig` uses Node.js `fs` APIs and is only available from `codegloss/config/node`. The browser-safe `codegloss/config` entry exports `defineConfig` and types only.
 

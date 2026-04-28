@@ -20,7 +20,7 @@ export function ExportPanel({ config }: Readonly<ExportPanelProps>) {
 	const [active, setActive] = useState<ExportFormat>('json');
 	const [copied, setCopied] = useState(false);
 
-	const activeEntry = EXPORT_FORMATS.find((f) => f.id === active);
+	const activeEntry = EXPORT_FORMATS.find(f => f.id === active);
 	const activeLang = activeEntry?.lang ?? 'json';
 	const output = useMemo(
 		() => (activeEntry ? activeEntry.render(config) : ''),
@@ -48,7 +48,7 @@ export function ExportPanel({ config }: Readonly<ExportPanelProps>) {
 	}, []);
 
 	const renderTabs = () =>
-		EXPORT_FORMATS.map((format) => {
+		EXPORT_FORMATS.map(format => {
 			const isActive = format.id === active;
 			const attrs = { [DATA_FORMAT]: format.id };
 			return (
@@ -67,7 +67,10 @@ export function ExportPanel({ config }: Readonly<ExportPanelProps>) {
 	return (
 		<div className={styles.root}>
 			<div className={styles.header}>
-				<div className={styles.tabs} onClick={handleTabsClick}>
+				<div
+					className={styles.tabs}
+					onClick={handleTabsClick}
+				>
 					{renderTabs()}
 				</div>
 				<button
@@ -77,16 +80,27 @@ export function ExportPanel({ config }: Readonly<ExportPanelProps>) {
 				>
 					{copied ? (
 						<>
-							<Check size={14} aria-hidden="true" /> Copied
+							<Check
+								size={14}
+								aria-hidden="true"
+							/>{' '}
+							Copied
 						</>
 					) : (
 						<>
-							<Copy size={14} aria-hidden="true" /> Copy
+							<Copy
+								size={14}
+								aria-hidden="true"
+							/>{' '}
+							Copy
 						</>
 					)}
 				</button>
 			</div>
-			<HighlightedCode code={output} lang={activeLang} />
+			<HighlightedCode
+				code={output}
+				lang={activeLang}
+			/>
 		</div>
 	);
 }

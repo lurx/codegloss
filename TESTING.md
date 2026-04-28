@@ -19,10 +19,10 @@ codegloss uses three layers of tests that run independently in CI. Each layer ha
 
 **Runner:** Vitest 4, two projects defined in [`packages/codegloss/vitest.config.ts`](./packages/codegloss/vitest.config.ts):
 
-| Project | Environment | Include pattern | Purpose |
-| --- | --- | --- | --- |
-| `node` | `node` | `**/__tests__/**/*.test.ts(x)` (excluding `.dom.test.*`) | Pure helpers, SSR wrappers, remark pipeline |
-| `dom` | `happy-dom` | `**/__tests__/**/*.dom.test.ts(x)` | Custom-element lifecycle, arcs rendering, themes applied to a host |
+| Project | Environment | Include pattern                                          | Purpose                                                            |
+| ------- | ----------- | -------------------------------------------------------- | ------------------------------------------------------------------ |
+| `node`  | `node`      | `**/__tests__/**/*.test.ts(x)` (excluding `.dom.test.*`) | Pure helpers, SSR wrappers, remark pipeline                        |
+| `dom`   | `happy-dom` | `**/__tests__/**/*.dom.test.ts(x)`                       | Custom-element lifecycle, arcs rendering, themes applied to a host |
 
 The `.dom.test.ts` suffix is load-bearing — it routes tests into the `happy-dom` project. Don't rename files without updating `vitest.config.ts`.
 
@@ -89,14 +89,14 @@ pnpm --filter @codegloss/e2e test:ui             # Playwright UI mode
 
 ## When to add tests where
 
-| Change | Layer |
-| --- | --- |
-| New pure helper (tokenize, escape, etc.) | Unit — `node` project |
-| New custom-element DOM behavior | Unit — `dom` project, `.dom.test.ts` |
-| New subpath export (`codegloss/foo`) | Build integration — add or extend an example that imports it |
-| New visible user interaction | E2E — add a spec |
+| Change                                               | Layer                                                             |
+| ---------------------------------------------------- | ----------------------------------------------------------------- |
+| New pure helper (tokenize, escape, etc.)             | Unit — `node` project                                             |
+| New custom-element DOM behavior                      | Unit — `dom` project, `.dom.test.ts`                              |
+| New subpath export (`codegloss/foo`)                 | Build integration — add or extend an example that imports it      |
+| New visible user interaction                         | E2E — add a spec                                                  |
 | Framework-specific wrapper change (React/Vue/Svelte) | Unit for the wrapper + build integration for the matching example |
-| Remark plugin option | Unit (`remark/index.test.ts`) + at least one example that uses it |
+| Remark plugin option                                 | Unit (`remark/index.test.ts`) + at least one example that uses it |
 
 A feature usually earns tests in at least two layers: unit for the logic, integration or E2E for the shape consumers actually see.
 

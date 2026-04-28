@@ -13,20 +13,29 @@ npm install codegloss
 ### Vanilla HTML
 
 ```html
-<script type="module" src="https://unpkg.com/codegloss/dist/index.js"></script>
+<script
+	type="module"
+	src="https://unpkg.com/codegloss/dist/index.js"
+></script>
 
 <code-gloss>
-  <script type="application/json">
-    {
-      "code": "function fib(n) { return n < 2 ? n : fib(n-1) + fib(n-2); }",
-      "lang": "js",
-      "filename": "fib.js",
-      "annotations": [
-        { "id": "a1", "token": "fib", "line": 0, "occurrence": 0,
-          "title": "Recursion", "text": "Calls itself with smaller inputs." }
-      ]
-    }
-  </script>
+	<script type="application/json">
+		{
+			"code": "function fib(n) { return n < 2 ? n : fib(n-1) + fib(n-2); }",
+			"lang": "js",
+			"filename": "fib.js",
+			"annotations": [
+				{
+					"id": "a1",
+					"token": "fib",
+					"line": 0,
+					"occurrence": 0,
+					"title": "Recursion",
+					"text": "Calls itself with smaller inputs."
+				}
+			]
+		}
+	</script>
 </code-gloss>
 ```
 
@@ -34,15 +43,23 @@ npm install codegloss
 
 ````md
 ```js codegloss fib.js
-function fib(n) { return n < 2 ? n : fib(n-1) + fib(n-2); }
+function fib(n) {
+	return n < 2 ? n : fib(n - 1) + fib(n - 2);
+}
 ```
 
 ```json annotations
 {
-  "annotations": [
-    { "id": "a1", "token": "fib", "line": 0, "occurrence": 0,
-      "title": "Recursion", "text": "Calls itself with smaller inputs." }
-  ]
+	"annotations": [
+		{
+			"id": "a1",
+			"token": "fib",
+			"line": 0,
+			"occurrence": 0,
+			"title": "Recursion",
+			"text": "Calls itself with smaller inputs."
+		}
+	]
 }
 ```
 ````
@@ -52,13 +69,13 @@ toolchains, `output: 'html'` for plain markdown.
 
 ## Subpath exports
 
-| Import | What it is |
-|---|---|
-| `codegloss` | The `<code-gloss>` Web Component (auto-registers on import). |
-| `codegloss/remark` | Remark plugin that turns annotated fenced blocks into `<code-gloss>`. |
-| `codegloss/themes` | Nine bundled light/dark themes, tree-shakeable. |
-| `codegloss/config` | `defineConfig` helper for `codegloss.config.ts`. |
-| `codegloss/highlighters/{shiki,prism,hljs}` | Adapter factories for each highlighter. |
+| Import                                      | What it is                                                            |
+| ------------------------------------------- | --------------------------------------------------------------------- |
+| `codegloss`                                 | The `<code-gloss>` Web Component (auto-registers on import).          |
+| `codegloss/remark`                          | Remark plugin that turns annotated fenced blocks into `<code-gloss>`. |
+| `codegloss/themes`                          | Nine bundled light/dark themes, tree-shakeable.                       |
+| `codegloss/config`                          | `defineConfig` helper for `codegloss.config.ts`.                      |
+| `codegloss/highlighters/{shiki,prism,hljs}` | Adapter factories for each highlighter.                               |
 
 ## Framework wrappers
 

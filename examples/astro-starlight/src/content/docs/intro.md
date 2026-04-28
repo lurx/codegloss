@@ -10,21 +10,21 @@ in the head, so the WC upgrades on the client without any framework wrapper.
 
 ```js codegloss fib.js
 function fib(n) {
-  return n < 2 ? n : fib(n - 1) + fib(n - 2);
+	return n < 2 ? n : fib(n - 1) + fib(n - 2);
 }
 ```
 
 ```json annotations
 {
-  "annotations": [
-    {
-      "id": "a1",
-      "token": "fib",
-      "line": 0,
-      "occurrence": 0,
-      "title": "Recursion",
-      "text": "Calls itself with smaller inputs."
-    }
-  ]
+	"annotations": [
+		{
+			"id": "a1",
+			"token": "fib",
+			"line": 0,
+			"occurrence": 0,
+			"title": "Recursion",
+			"text": "Calls itself with smaller inputs."
+		}
+	]
 }
 ```

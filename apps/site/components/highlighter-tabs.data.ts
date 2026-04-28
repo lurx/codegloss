@@ -25,7 +25,7 @@ export const HIGHLIGHTER_TABS: Tab[] = [
 	{
 		label: 'Custom',
 		content:
-			'The contract is tiny — any function `(code, lang) => string` that returns span-wrapped HTML works. Use this for in-house highlighters, to post-process another tool\'s output, or to hard-code a preset for a single language.',
+			"The contract is tiny — any function `(code, lang) => string` that returns span-wrapped HTML works. Use this for in-house highlighters, to post-process another tool's output, or to hard-code a preset for a single language.",
 		blocks: [{ htmlKey: 'Highlighter — Custom' }],
 	},
 ];

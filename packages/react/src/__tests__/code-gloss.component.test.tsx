@@ -64,7 +64,7 @@ describe('CodeGloss (React wrapper)', () => {
 			<CodeGloss
 				code="x"
 				lang="js"
-				highlight={(code) => `<span>${code}</span>`}
+				highlight={code => `<span>${code}</span>`}
 			/>,
 		);
 		const payload = extractConfig(html) as Record<string, unknown>;
@@ -122,7 +122,11 @@ describe('CodeGloss (React wrapper)', () => {
 
 	it('renders the theme attribute on the custom element when provided', () => {
 		const html = renderToStaticMarkup(
-			<CodeGloss code="let x = 1" lang="js" theme="github-dark" />,
+			<CodeGloss
+				code="let x = 1"
+				lang="js"
+				theme="github-dark"
+			/>,
 		);
 		expect(html).toContain('<code-gloss theme="github-dark">');
 		// And it should not end up in the JSON config child:
@@ -177,12 +181,19 @@ describe('CodeGloss (React wrapper)', () => {
 
 	it('omits the style attribute when styleOverrides is empty or unset', () => {
 		const bareHtml = renderToStaticMarkup(
-			<CodeGloss code="let x = 1" lang="js" />,
+			<CodeGloss
+				code="let x = 1"
+				lang="js"
+			/>,
 		);
 		expect(bareHtml).not.toContain('style=');
 
 		const emptyHtml = renderToStaticMarkup(
-			<CodeGloss code="let x = 1" lang="js" styleOverrides={{ codeBlock: {} }} />,
+			<CodeGloss
+				code="let x = 1"
+				lang="js"
+				styleOverrides={{ codeBlock: {} }}
+			/>,
 		);
 		expect(emptyHtml).not.toContain('style=');
 	});

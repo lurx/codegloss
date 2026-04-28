@@ -88,11 +88,7 @@ export function drawArcs({
 	}
 }
 
-function prepareSvg(
-	svg: SVGSVGElement,
-	width: number,
-	height: number,
-): void {
+function prepareSvg(svg: SVGSVGElement, width: number, height: number): void {
 	svg.setAttribute('height', String(height));
 	svg.setAttribute('width', String(width));
 	svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
