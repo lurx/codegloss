@@ -4,6 +4,9 @@ name: Unit tests
 # and `unit-required` always reports a status so branch protection can
 # require it without deadlocking on PRs that don't touch the filtered
 # paths. Wire branch protection to `unit-required`.
+#
+# Sonar runs as a downstream job that consumes the coverage artifact
+# from `test`, so we don't rebuild + re-run tests in a second workflow.
 
 on:
   push:
@@ -12,6 +15,10 @@ on:
 
 permissions:
   contents: read
+
+concurrency:
+  group: unit-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   changes:
@@ -32,6 +39,30 @@ jobs:
               - 'pnpm-workspace.yaml'
               - 'package.json'
               - '.github/workflows/unit.yml'
+              - '.github/actions/setup/**'
+
+  # Advisory quality job — runs lint + prettier but is intentionally
+  # NOT included in `unit-required`'s needs because the repo currently
+  # has pre-existing lint/format debt (see `pnpm lint` / `pnpm format:check`).
+  # Once that debt is cleared, add `quality` to the sentinel's needs and
+  # bump branch protection accordingly.
+  quality:
+    name: lint + format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          build-packages: "false"
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Format check
+        run: pnpm format:check
 
   test:
     name: test
@@ -42,20 +73,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build local packages
-        run: pnpm -w run build:packages
+      - name: Setup
+        uses: ./.github/actions/setup
 
       - name: Run unit tests with coverage
         run: pnpm -w run test:coverage
@@ -66,6 +85,42 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: packages/codegloss/coverage/lcov.info,packages/shiki/coverage/lcov.info,apps/site/coverage/lcov.info
           fail_ci_if_error: false
+
+      - name: Upload coverage artifact for Sonar
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: |
+            packages/codegloss/coverage/lcov.info
+            packages/shiki/coverage/lcov.info
+            apps/site/coverage/lcov.info
+          if-no-files-found: error
+          retention-days: 1
+
+  sonar:
+    name: sonar
+    needs: test
+    if: needs.test.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          # Full history so Sonar can attribute changes to commits.
+          fetch-depth: 0
+
+      - name: Download coverage artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage
+          # Preserves the packages/*/coverage/lcov.info tree the artifact
+          # was uploaded with, which is what sonar-project.properties points at.
+          path: .
+
+      - name: SonarCloud scan
+        uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   # Sentinel job names are unique across workflows because branch
   # protection matches against the literal check_run name, not the

@@ -10,6 +10,7 @@ on:
       - 'pnpm-workspace.yaml'
       - 'package.json'
       - '.github/workflows/deploy.yml'
+      - '.github/actions/setup/**'
   workflow_dispatch:
 
 permissions:
@@ -28,20 +29,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build packages
-        run: pnpm -w run build:packages
+      - name: Setup
+        uses: ./.github/actions/setup
 
       - name: Build site
         env:
