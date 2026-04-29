@@ -13,6 +13,10 @@ pnpm-lock.yaml
 *.generated.ts
 test/e2e/fixtures/codegloss
 test/e2e/fixtures/vendor
+# Fixture HTML pages contain literal Markdown text inside <mark-down> and
+# whitespace-sensitive layout that prettier collapses with
+# htmlWhitespaceSensitivity: "css". Treat them as test data, not source.
+test/e2e/fixtures/*.html
 
 # Author-controlled documentation and example content. Prettier's MDX
 # parser mangles the codegloss `{/* ```json annotations ``` */}` JSX

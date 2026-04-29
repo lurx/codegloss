@@ -1,73 +1,33 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<title>codegloss e2e · right-side arcs + arrowhead</title>
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1"
-		/>
-		<script
-			type="module"
-			src="/codegloss/index.js"
-		></script>
-	</head>
-	<body>
-		<main>
-			<h1>right-side arcs + arrowhead</h1>
-			<code-gloss>
-				<script type="application/json">
-					{
-						"code": "const cache = new Map();\nfunction get(id) {\n  if (cache.has(id)) return cache.get(id);\n  return fetch(id);\n}",
-						"lang": "js",
-						"filename": "cache.js",
-						"annotations": [
-							{
-								"id": "a1",
-								"token": "cache",
-								"line": 0,
-								"occurrence": 0,
-								"title": "Store",
-								"text": "Keyed by id."
-							},
-							{
-								"id": "a2",
-								"token": "cache.has",
-								"line": 2,
-								"occurrence": 0,
-								"title": "Lookup",
-								"text": "Short-circuit on cache hit."
-							},
-							{
-								"id": "a3",
-								"token": "fetch(id)",
-								"line": 3,
-								"occurrence": 0,
-								"title": "Fallback",
-								"text": "Network on miss."
-							}
-						],
-						"connections": [
-							{
-								"from": "a1",
-								"to": "a2",
-								"color": "#534AB7",
-								"title": "Read",
-								"text": "Lookup reads the store."
-							},
-							{
-								"from": "a2",
-								"to": "a3",
-								"color": "#f5a524",
-								"side": "right",
-								"title": "Miss path",
-								"text": "Cache miss falls through to fetch."
-							}
-						],
-						"arcs": { "arrowhead": true }
-					}
-				</script>
-			</code-gloss>
-		</main>
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <title>codegloss e2e · right-side arcs + arrowhead</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script type="module" src="/codegloss/index.js"></script>
+  </head>
+  <body>
+    <main>
+      <h1>right-side arcs + arrowhead</h1>
+      <code-gloss>
+        <script type="application/json">
+{
+  "code": "const cache = new Map();\nfunction get(id) {\n  if (cache.has(id)) return cache.get(id);\n  return fetch(id);\n}",
+  "lang": "js",
+  "filename": "cache.js",
+  "annotations": [
+    { "id": "a1", "token": "cache", "line": 0, "occurrence": 0, "title": "Store", "text": "Keyed by id." },
+    { "id": "a2", "token": "cache.has", "line": 2, "occurrence": 0, "title": "Lookup", "text": "Short-circuit on cache hit." },
+    { "id": "a3", "token": "fetch(id)", "line": 3, "occurrence": 0, "title": "Fallback", "text": "Network on miss." }
+  ],
+  "connections": [
+    { "from": "a1", "to": "a2", "color": "#534AB7", "title": "Read", "text": "Lookup reads the store." },
+    { "from": "a2", "to": "a3", "color": "#f5a524", "side": "right", "title": "Miss path", "text": "Cache miss falls through to fetch." }
+  ],
+  "arcs": { "arrowhead": true }
+}
+        </script>
+      </code-gloss>
+    </main>
+  </body>
 </html>
