@@ -7,9 +7,10 @@ import type { RemarkCodeglossOptions } from './remark.types';
 
 function remarkCodegloss(options: RemarkCodeglossOptions = {}) {
 	const output = options.output ?? 'mdx';
+	const { styleOverrides } = options;
 	const hasStyleOverrides =
-		Boolean(options.styleOverrides) &&
-		Object.values(options.styleOverrides).some(
+		styleOverrides !== undefined &&
+		Object.values(styleOverrides).some(
 			group =>
 				group !== undefined && Object.values(group).some(v => v !== undefined),
 		);
