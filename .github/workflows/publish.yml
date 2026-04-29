@@ -30,10 +30,8 @@ on:
         required: true
         type: string
 
-permissions:
-  contents: write # changesets/action opens/updates the Version Packages PR
-  pull-requests: write # same
-  id-token: write # OIDC exchange with npm for trusted publishing + provenance
+# Permissions are scoped per job (S8233): workflow-level write would
+# also grant `smoke-test` and `snapshot` permissions they don't need.
 
 jobs:
   release:
@@ -41,6 +39,10 @@ jobs:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     concurrency: release-${{ github.ref }}
+    permissions:
+      contents: write # changesets/action opens/updates the Version Packages PR
+      pull-requests: write # same
+      id-token: write # OIDC exchange with npm for trusted publishing + provenance
     outputs:
       published: ${{ steps.changesets.outputs.published }}
       publishedPackages: ${{ steps.changesets.outputs.publishedPackages }}
@@ -77,6 +79,7 @@ jobs:
     needs: release
     if: needs.release.outputs.published == 'true'
     runs-on: ubuntu-latest
+    permissions: {} # installs from public npm; no GITHUB_TOKEN scopes needed
     strategy:
       fail-fast: false
       matrix:
@@ -113,6 +116,9 @@ jobs:
       (github.event_name == 'pull_request' && github.event.label.name == 'snapshot')
     runs-on: ubuntu-latest
     concurrency: snapshot-${{ github.event.pull_request.head.ref || inputs.ref }}
+    permissions:
+      contents: read # checkout
+      id-token: write # OIDC exchange with npm for trusted publishing + provenance
     steps:
       - name: Resolve target ref
         id: resolve
