@@ -70,6 +70,11 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
         with:
+          # Node 24 ships with npm >= 11.5, which is the first npm-cli
+          # version that actually performs the OIDC token exchange for
+          # trusted publishing. Node 22's bundled npm 10.x sends an empty
+          # auth header and gets a misleading 404 from the registry.
+          node-version: '24'
           registry-url: https://registry.npmjs.org
 
       - name: Create release PR or publish
@@ -171,6 +176,9 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
         with:
+          # See node-version note on the release job — npm 11.5+
+          # (Node 24) is required for OIDC trusted publishing.
+          node-version: '24'
           registry-url: https://registry.npmjs.org
 
       - name: Derive snapshot tag from ref
