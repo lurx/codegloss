@@ -7,10 +7,13 @@ name: Publish
 # - push → main           → Changesets opens/updates a Version Packages PR;
 #                           merging that PR re-triggers this workflow and
 #                           publishes to npm under the default `latest` tag.
-# - PR labeled `snapshot` → publishes every package under a branch-derived
-#                           dist-tag (snapshot), so reviewers can install a
-#                           PR straight from npm without it touching main.
-#                           Trackable on the PR via the label itself.
+# - PR with `snapshot` label → publishes every package under a branch-
+#                           derived dist-tag (snapshot), so reviewers can
+#                           install a PR straight from npm without it
+#                           touching main. Triggered both when the label
+#                           is first applied AND on every subsequent push
+#                           to the labeled PR (synchronize), so a rebase
+#                           or fixup automatically refreshes the snapshot.
 # - workflow_dispatch     → manual escape hatch for snapshot publishes on
 #                           refs that aren't tied to an open PR.
 #
@@ -22,7 +25,9 @@ on:
   push:
     branches: [main]
   pull_request:
-    types: [labeled]
+    # `synchronize` so a force-push or new commit to a labeled PR refreshes
+    # the snapshot without the reviewer having to re-toggle the label.
+    types: [labeled, synchronize]
   workflow_dispatch:
     inputs:
       ref:
@@ -111,11 +116,21 @@ jobs:
 
   snapshot:
     name: PR snapshot
+    # `contains(...labels.*.name, 'snapshot')` works for both `labeled`
+    # (the just-added label is included in the labels array) and
+    # `synchronize` (no `event.label`, but the PR's current label set is
+    # still on `event.pull_request.labels`). On unlabeled PRs the job is
+    # skipped at the if-gate, so synchronize doesn't publish for everyone.
     if: |
       github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'pull_request' && github.event.label.name == 'snapshot')
+      (github.event_name == 'pull_request' &&
+       contains(github.event.pull_request.labels.*.name, 'snapshot'))
     runs-on: ubuntu-latest
-    concurrency: snapshot-${{ github.event.pull_request.head.ref || inputs.ref }}
+    concurrency:
+      group: snapshot-${{ github.event.pull_request.head.ref || inputs.ref }}
+      # A rapid burst of pushes shouldn't queue up redundant publishes —
+      # only the latest commit should land on the snapshot tag.
+      cancel-in-progress: true
     permissions:
       contents: read # checkout
       id-token: write # OIDC exchange with npm for trusted publishing + provenance
