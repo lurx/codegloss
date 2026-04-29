@@ -13,3 +13,19 @@ pnpm-lock.yaml
 *.generated.ts
 test/e2e/fixtures/codegloss
 test/e2e/fixtures/vendor
+# Fixture HTML pages contain literal Markdown text inside <mark-down> and
+# whitespace-sensitive layout that prettier collapses with
+# htmlWhitespaceSensitivity: "css". Treat them as test data, not source.
+test/e2e/fixtures/*.html
+
+# Author-controlled documentation and example content. Prettier's MDX
+# parser mangles the codegloss `{/* ```json annotations ``` */}` JSX
+# comment, and reformatting JS/JSON inside code fences silently changes
+# what readers see and what integration tests consume. Treat these
+# files as content, not source.
+apps/site/content/docs/**/*.mdx
+examples/**/*.md
+examples/**/*.mdx
+**/README.md
+/PRE-RELEASE.md
+/TESTING.md

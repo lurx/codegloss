@@ -54,6 +54,7 @@ function mergeObject(
 	if (override && typeof override === 'object') {
 		return { ...base, ...(override as Record<string, unknown>) };
 	}
+
 	return base;
 }
 

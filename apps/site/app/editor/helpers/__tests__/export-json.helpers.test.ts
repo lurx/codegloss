@@ -42,9 +42,7 @@ describe('exportJson', () => {
 	});
 
 	it('drops empty arcs/callouts objects', () => {
-		const out = JSON.parse(
-			exportJson(baseConfig({ arcs: {}, callouts: {} })),
-		);
+		const out = JSON.parse(exportJson(baseConfig({ arcs: {}, callouts: {} })));
 		expect(out).toEqual({ code: 'x', lang: 'js' });
 	});
 });

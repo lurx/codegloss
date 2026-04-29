@@ -117,7 +117,9 @@ describe('createPrismHighlighter', () => {
 describe('createHljsHighlighter', () => {
 	it('highlights with the requested language when hljs knows it', () => {
 		const hljs = {
-			highlight: vi.fn(() => ({ value: '<span class="hljs-keyword">const</span>' })),
+			highlight: vi.fn(() => ({
+				value: '<span class="hljs-keyword">const</span>',
+			})),
 			getLanguage: vi.fn(() => ({})),
 		};
 

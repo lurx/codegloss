@@ -41,7 +41,7 @@ export function createShikiHighlighter(
 		);
 		const chrome = parsePreChrome(raw);
 		return {
-			html: raw.replace(OUTER_WRAPPER_PATTERN, ''),
+			html: raw.replaceAll(OUTER_WRAPPER_PATTERN, ''),
 			...chrome,
 		};
 	};

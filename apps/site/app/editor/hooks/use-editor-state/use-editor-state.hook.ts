@@ -91,7 +91,7 @@ function applyToPresent(
 			);
 			const connections = removed
 				? present.connections.filter(
-						(c) => c.from !== removed.id && c.to !== removed.id,
+						c => c.from !== removed.id && c.to !== removed.id,
 					)
 				: present.connections;
 			return { ...present, annotations, connections };
@@ -169,10 +169,10 @@ export function useEditorState(): UseEditorStateResult {
 	const redoAction = useCallback(() => dispatch({ kind: 'redo' }), []);
 	const replaceConfigAction = useCallback<
 		UseEditorStateResult['replaceConfigAction']
-	>((value) => dispatch({ kind: 'replaceConfig', value }), []);
+	>(value => dispatch({ kind: 'replaceConfig', value }), []);
 	const patchConfigAction = useCallback<
 		UseEditorStateResult['patchConfigAction']
-	>((value) => dispatch({ kind: 'patchConfig', value }), []);
+	>(value => dispatch({ kind: 'patchConfig', value }), []);
 	const setCodeAction = useCallback(
 		(value: string) => dispatch({ kind: 'setCode', value }),
 		[],
@@ -187,7 +187,7 @@ export function useEditorState(): UseEditorStateResult {
 	);
 	const addAnnotationAction = useCallback<
 		UseEditorStateResult['addAnnotationAction']
-	>((value) => dispatch({ kind: 'addAnnotation', value }), []);
+	>(value => dispatch({ kind: 'addAnnotation', value }), []);
 	const updateAnnotationAction = useCallback<
 		UseEditorStateResult['updateAnnotationAction']
 	>((index, value) => dispatch({ kind: 'updateAnnotation', index, value }), []);
@@ -197,7 +197,7 @@ export function useEditorState(): UseEditorStateResult {
 	);
 	const addConnectionAction = useCallback<
 		UseEditorStateResult['addConnectionAction']
-	>((value) => dispatch({ kind: 'addConnection', value }), []);
+	>(value => dispatch({ kind: 'addConnection', value }), []);
 	const updateConnectionAction = useCallback<
 		UseEditorStateResult['updateConnectionAction']
 	>((index, value) => dispatch({ kind: 'updateConnection', index, value }), []);

@@ -12,18 +12,18 @@ const here = dirname(fileURLToPath(import.meta.url));
 const input = await readFile(resolve(here, 'input.md'), 'utf8');
 
 const file = await unified()
-  .use(remarkParse)
-  .use(remarkCodegloss, { output: 'html' })
-  // allowDangerousHtml so the raw <code-gloss> nodes survive remark→rehype.
-  .use(remarkRehype, { allowDangerousHtml: true })
-  .use(rehypeStringify, { allowDangerousHtml: true })
-  .process(input);
+	.use(remarkParse)
+	.use(remarkCodegloss, { output: 'html' })
+	// allowDangerousHtml so the raw <code-gloss> nodes survive remark→rehype.
+	.use(remarkRehype, { allowDangerousHtml: true })
+	.use(rehypeStringify, { allowDangerousHtml: true })
+	.process(input);
 
 const dist = resolve(here, 'dist');
 await mkdir(dist, { recursive: true });
 await writeFile(
-  resolve(dist, 'index.html'),
-  `<!doctype html>
+	resolve(dist, 'index.html'),
+	`<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />

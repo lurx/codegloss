@@ -110,7 +110,11 @@ export function AnnotationsPanel({
 					className={styles.addButton}
 					onClick={handleAdd}
 				>
-					<Plus size={14} aria-hidden="true" /> Add
+					<Plus
+						size={14}
+						aria-hidden="true"
+					/>{' '}
+					Add
 				</button>
 			</div>
 			{showTip && <p className={tipClass}>{renderTip()}</p>}

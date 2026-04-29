@@ -23,15 +23,27 @@ export function HeroDemo({
 				<div className="hero-plain">
 					<div className="hero-plain-toolbar">
 						<span className="hero-plain-dots">
-							<span className="hero-plain-dot" data-color="red" />
-							<span className="hero-plain-dot" data-color="yellow" />
-							<span className="hero-plain-dot" data-color="green" />
+							<span
+								className="hero-plain-dot"
+								data-color="red"
+							/>
+							<span
+								className="hero-plain-dot"
+								data-color="yellow"
+							/>
+							<span
+								className="hero-plain-dot"
+								data-color="green"
+							/>
 						</span>
 						<span className="hero-plain-filename">fibonacci.js</span>
 					</div>
 					<pre className="hero-plain-code">
 						{LINES.map((line, i) => (
-							<div key={line+'-'+i} className="hero-plain-line">
+							<div
+								key={line + '-' + i}
+								className="hero-plain-line"
+							>
 								<span className="hero-plain-num">{i + 1}</span>
 								<span>{line}</span>
 							</div>

@@ -6,9 +6,7 @@ import type { ImportDialogProps } from './import-dialog.types';
 import { importConfig } from '../../helpers/import-config.helpers';
 import styles from './import-dialog.module.scss';
 
-type ImportStatus =
-	| { kind: 'idle' }
-	| { kind: 'error'; message: string };
+type ImportStatus = { kind: 'idle' } | { kind: 'error'; message: string };
 
 const INITIAL_STATUS: ImportStatus = { kind: 'idle' };
 

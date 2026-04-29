@@ -39,7 +39,10 @@ export function QuickStart() {
 		<section className="quickstart fade-in fade-in-delay-3">
 			<h2>Quick start</h2>
 			{STEPS.map(step => (
-				<div key={step.num} className="step">
+				<div
+					key={step.num}
+					className="step"
+				>
 					<span className="step-num">{step.num}</span>
 					<div className="step-content">
 						<div className="step-label">{step.label}</div>

@@ -5,15 +5,15 @@ inputs:
   node-version:
     description: Node.js version to install
     required: false
-    default: "22"
+    default: '22'
   build-packages:
     description: Run `pnpm -w run build:packages` after install
     required: false
-    default: "true"
+    default: 'true'
   registry-url:
     description: npm registry URL for setup-node (needed for OIDC publishes)
     required: false
-    default: ""
+    default: ''
 
 runs:
   using: composite

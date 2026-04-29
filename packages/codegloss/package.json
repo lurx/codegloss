@@ -1,121 +1,121 @@
 {
-  "name": "codegloss",
-  "version": "0.1.0",
-  "description": "Annotated code sandbox web component",
-  "license": "MIT",
-  "homepage": "https://lurx.github.io/codegloss/",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/lurx/codegloss.git",
-    "directory": "packages/codegloss"
-  },
-  "bugs": "https://github.com/lurx/codegloss/issues",
-  "keywords": [
-    "codegloss",
-    "code-annotation",
-    "annotated-code",
-    "web-components",
-    "custom-element",
-    "syntax-highlighting",
-    "remark",
-    "mdx",
-    "code-blocks"
-  ],
-  "type": "module",
-  "sideEffects": [
-    "./dist/index.js",
-    "./dist/chunk-*.js"
-  ],
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "engines": {
-    "node": ">=20"
-  },
-  "files": [
-    "dist"
-  ],
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    },
-    "./themes": {
-      "types": "./dist/themes/index.d.ts",
-      "import": "./dist/themes/index.js"
-    },
-    "./config": {
-      "types": "./dist/config/index.d.ts",
-      "import": "./dist/config/index.js"
-    },
-    "./config/node": {
-      "types": "./dist/config/node.d.ts",
-      "import": "./dist/config/node.js"
-    },
-    "./remark": {
-      "types": "./dist/remark/index.d.ts",
-      "import": "./dist/remark/index.js",
-      "require": "./dist/remark/index.cjs"
-    },
-    "./highlighters": {
-      "types": "./dist/highlighters/index.d.ts",
-      "import": "./dist/highlighters/index.js"
-    },
-    "./highlighters/shiki": {
-      "types": "./dist/highlighters/shiki.d.ts",
-      "import": "./dist/highlighters/shiki.js"
-    },
-    "./highlighters/prism": {
-      "types": "./dist/highlighters/prism.d.ts",
-      "import": "./dist/highlighters/prism.js"
-    },
-    "./highlighters/hljs": {
-      "types": "./dist/highlighters/hljs.d.ts",
-      "import": "./dist/highlighters/hljs.js"
-    }
-  },
-  "dependencies": {},
-  "peerDependencies": {
-    "unified": ">=11",
-    "shiki": ">=1.0.0",
-    "prismjs": ">=1.29.0",
-    "highlight.js": ">=11.0.0"
-  },
-  "peerDependenciesMeta": {
-    "unified": {
-      "optional": true
-    },
-    "shiki": {
-      "optional": true
-    },
-    "prismjs": {
-      "optional": true
-    },
-    "highlight.js": {
-      "optional": true
-    }
-  },
-  "devDependencies": {
-    "@types/mdast": "^4",
-    "@types/node": "^22.19.17",
-    "@vitest/coverage-v8": "^4.1.4",
-    "happy-dom": "^20.8.9",
-    "tsup": "^8",
-    "typescript": "^5.9.3",
-    "vitest": "^4.1.4",
-    "mdast-util-mdx-jsx": "^3",
-    "remark-parse": "^11.0.0",
-    "unified": "^11.0.5"
-  },
-  "scripts": {
-    "generate:styles": "node scripts/inline-css.mjs",
-    "prebuild": "pnpm run generate:styles",
-    "build": "tsup",
-    "dev": "pnpm run generate:styles && tsup --watch",
-    "pretest": "pnpm run generate:styles",
-    "pretest:watch": "pnpm run generate:styles",
-    "pretest:coverage": "pnpm run generate:styles",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
-  }
+	"name": "codegloss",
+	"version": "0.1.0",
+	"description": "Annotated code sandbox web component",
+	"license": "MIT",
+	"homepage": "https://lurx.github.io/codegloss/",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/lurx/codegloss.git",
+		"directory": "packages/codegloss"
+	},
+	"bugs": "https://github.com/lurx/codegloss/issues",
+	"keywords": [
+		"codegloss",
+		"code-annotation",
+		"annotated-code",
+		"web-components",
+		"custom-element",
+		"syntax-highlighting",
+		"remark",
+		"mdx",
+		"code-blocks"
+	],
+	"type": "module",
+	"sideEffects": [
+		"./dist/index.js",
+		"./dist/chunk-*.js"
+	],
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"engines": {
+		"node": ">=20"
+	},
+	"files": [
+		"dist"
+	],
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		},
+		"./themes": {
+			"types": "./dist/themes/index.d.ts",
+			"import": "./dist/themes/index.js"
+		},
+		"./config": {
+			"types": "./dist/config/index.d.ts",
+			"import": "./dist/config/index.js"
+		},
+		"./config/node": {
+			"types": "./dist/config/node.d.ts",
+			"import": "./dist/config/node.js"
+		},
+		"./remark": {
+			"types": "./dist/remark/index.d.ts",
+			"import": "./dist/remark/index.js",
+			"require": "./dist/remark/index.cjs"
+		},
+		"./highlighters": {
+			"types": "./dist/highlighters/index.d.ts",
+			"import": "./dist/highlighters/index.js"
+		},
+		"./highlighters/shiki": {
+			"types": "./dist/highlighters/shiki.d.ts",
+			"import": "./dist/highlighters/shiki.js"
+		},
+		"./highlighters/prism": {
+			"types": "./dist/highlighters/prism.d.ts",
+			"import": "./dist/highlighters/prism.js"
+		},
+		"./highlighters/hljs": {
+			"types": "./dist/highlighters/hljs.d.ts",
+			"import": "./dist/highlighters/hljs.js"
+		}
+	},
+	"dependencies": {},
+	"peerDependencies": {
+		"unified": ">=11",
+		"shiki": ">=1.0.0",
+		"prismjs": ">=1.29.0",
+		"highlight.js": ">=11.0.0"
+	},
+	"peerDependenciesMeta": {
+		"unified": {
+			"optional": true
+		},
+		"shiki": {
+			"optional": true
+		},
+		"prismjs": {
+			"optional": true
+		},
+		"highlight.js": {
+			"optional": true
+		}
+	},
+	"devDependencies": {
+		"@types/mdast": "^4",
+		"@types/node": "^22.19.17",
+		"@vitest/coverage-v8": "^4.1.4",
+		"happy-dom": "^20.8.9",
+		"tsup": "^8",
+		"typescript": "^5.9.3",
+		"vitest": "^4.1.4",
+		"mdast-util-mdx-jsx": "^3",
+		"remark-parse": "^11.0.0",
+		"unified": "^11.0.5"
+	},
+	"scripts": {
+		"generate:styles": "node scripts/inline-css.mjs",
+		"prebuild": "pnpm run generate:styles",
+		"build": "tsup",
+		"dev": "pnpm run generate:styles && tsup --watch",
+		"pretest": "pnpm run generate:styles",
+		"pretest:watch": "pnpm run generate:styles",
+		"pretest:coverage": "pnpm run generate:styles",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"test:coverage": "vitest run --coverage"
+	}
 }

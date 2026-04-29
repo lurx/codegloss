@@ -55,14 +55,16 @@ export const EDITOR_TOUR_STEPS = [
 		element: '[data-tour="settings"]',
 		popover: {
 			title: 'Settings',
-			description: 'Theme, line numbers, and other block-level options live here.',
+			description:
+				'Theme, line numbers, and other block-level options live here.',
 		},
 	},
 	{
 		element: '[data-tour="help"]',
 		popover: {
 			title: 'Replay anytime',
-			description: 'Click this button to run the tour again. That’s it — happy glossing!',
+			description:
+				'Click this button to run the tour again. That’s it — happy glossing!',
 		},
 	},
 ] as const satisfies readonly DriveStep[];

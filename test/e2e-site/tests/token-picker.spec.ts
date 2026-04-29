@@ -7,7 +7,9 @@ test.describe('token picker', () => {
 		await gotoEditor(page);
 
 		// wait for Shiki tokens to render
-		const greetToken = page.locator('[data-token-index]', { hasText: 'greet' }).first();
+		const greetToken = page
+			.locator('[data-token-index]', { hasText: 'greet' })
+			.first();
 		await expect(greetToken).toBeVisible({ timeout: 10_000 });
 		await greetToken.click();
 

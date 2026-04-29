@@ -23,8 +23,8 @@ test.describe('settings dialog', () => {
 		const theme = page.getByLabel('Theme');
 		const options = await theme
 			.locator('option')
-			.evaluateAll((els) => els.map((el) => (el as HTMLOptionElement).value));
-		const nonDefault = options.find((v) => v !== '__auto__' && v !== '');
+			.evaluateAll(els => els.map(el => (el as HTMLOptionElement).value));
+		const nonDefault = options.find(v => v !== '__auto__' && v !== '');
 		if (!nonDefault) test.skip(true, 'no non-default theme options available');
 
 		await theme.selectOption(nonDefault!);

@@ -15,7 +15,7 @@ test.describe('editor accessibility', () => {
 			.withTags(['wcag2a', 'wcag2aa'])
 			.analyze();
 
-		const blocking = results.violations.filter((v) => v.impact === 'critical');
+		const blocking = results.violations.filter(v => v.impact === 'critical');
 		expect(blocking, JSON.stringify(blocking, null, 2)).toEqual([]);
 	});
 });

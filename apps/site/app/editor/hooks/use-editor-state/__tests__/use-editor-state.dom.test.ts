@@ -46,10 +46,7 @@ describe('useEditorState initial state', () => {
 	});
 
 	it('ignores persisted drafts missing code or lang', () => {
-		globalThis.localStorage.setItem(
-			STORAGE_KEY,
-			JSON.stringify({ code: 'x' }),
-		);
+		globalThis.localStorage.setItem(STORAGE_KEY, JSON.stringify({ code: 'x' }));
 		const { result } = renderHook(() => useEditorState());
 		expect(result.current.config.filename).toBe('greet.js');
 	});

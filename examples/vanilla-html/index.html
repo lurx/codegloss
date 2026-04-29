@@ -1,33 +1,39 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>codegloss · vanilla HTML example</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script type="module" src="./codegloss.js"></script>
-  </head>
-  <body>
-    <h1>codegloss in plain HTML</h1>
-    <p>No bundler. No framework. Just a custom element + a JSON config.</p>
+	<head>
+		<meta charset="utf-8" />
+		<title>codegloss · vanilla HTML example</title>
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1"
+		/>
+		<script
+			type="module"
+			src="./codegloss.js"
+		></script>
+	</head>
+	<body>
+		<h1>codegloss in plain HTML</h1>
+		<p>No bundler. No framework. Just a custom element + a JSON config.</p>
 
-    <code-gloss>
-      <script type="application/json">
-        {
-          "code": "function fib(n) {\n  return n < 2 ? n : fib(n - 1) + fib(n - 2);\n}",
-          "lang": "js",
-          "filename": "fib.js",
-          "annotations": [
-            {
-              "id": "a1",
-              "token": "fib",
-              "line": 0,
-              "occurrence": 0,
-              "title": "Recursion",
-              "text": "Calls itself with smaller inputs."
-            }
-          ]
-        }
-      </script>
-    </code-gloss>
-  </body>
+		<code-gloss>
+			<script type="application/json">
+				{
+					"code": "function fib(n) {\n  return n < 2 ? n : fib(n - 1) + fib(n - 2);\n}",
+					"lang": "js",
+					"filename": "fib.js",
+					"annotations": [
+						{
+							"id": "a1",
+							"token": "fib",
+							"line": 0,
+							"occurrence": 0,
+							"title": "Recursion",
+							"text": "Calls itself with smaller inputs."
+						}
+					]
+				}
+			</script>
+		</code-gloss>
+	</body>
 </html>

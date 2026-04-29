@@ -13,8 +13,8 @@ on:
     branches: [main]
   pull_request:
 
-permissions:
-  contents: read
+# Permissions are scoped per job (S8233): the sentinel doesn't need
+# any, and the others only need `contents: read` to checkout.
 
 concurrency:
   group: unit-${{ github.workflow }}-${{ github.ref }}
@@ -23,6 +23,8 @@ concurrency:
 jobs:
   changes:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       run: ${{ steps.filter.outputs.run }}
     steps:
@@ -41,14 +43,13 @@ jobs:
               - '.github/workflows/unit.yml'
               - '.github/actions/setup/**'
 
-  # Advisory quality job — runs lint + prettier but is intentionally
-  # NOT included in `unit-required`'s needs because the repo currently
-  # has pre-existing lint/format debt (see `pnpm lint` / `pnpm format:check`).
-  # Once that debt is cleared, add `quality` to the sentinel's needs and
-  # bump branch protection accordingly.
+  # Required quality job — runs lint + prettier. Wired into
+  # `unit-required` so a regression in either gate blocks merge.
   quality:
     name: lint + format
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -56,7 +57,7 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
         with:
-          build-packages: "false"
+          build-packages: 'false'
 
       - name: Lint
         run: pnpm lint
@@ -69,6 +70,8 @@ jobs:
     needs: changes
     if: needs.changes.outputs.run == 'true'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -102,6 +105,8 @@ jobs:
     needs: test
     if: needs.test.result == 'success'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -127,15 +132,20 @@ jobs:
   # workflow-prefixed display label the GitHub UI shows.
   unit-required:
     name: unit-required
-    needs: [changes, test]
+    needs: [changes, quality, test]
     if: always()
     runs-on: ubuntu-latest
+    permissions: {} # sentinel only inspects upstream job results; no checkout
     steps:
       - name: Assert heavy job passed or was correctly skipped
         env:
-          RESULT: ${{ needs.test.result }}
+          TEST_RESULT: ${{ needs.test.result }}
+          QUALITY_RESULT: ${{ needs.quality.result }}
         run: |
-          if [ "$RESULT" = "failure" ] || [ "$RESULT" = "cancelled" ]; then
+          if [ "$TEST_RESULT" = "failure" ] || [ "$TEST_RESULT" = "cancelled" ]; then
             exit 1
           fi
-          echo "ok: test result=$RESULT"
+          if [ "$QUALITY_RESULT" != "success" ]; then
+            exit 1
+          fi
+          echo "ok: test=$TEST_RESULT quality=$QUALITY_RESULT"

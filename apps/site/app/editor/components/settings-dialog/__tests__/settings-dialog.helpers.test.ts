@@ -41,9 +41,7 @@ describe('patchArcs', () => {
 	});
 
 	it('returns undefined when clearing the last key', () => {
-		expect(
-			patchArcs({ opacity: 0.5 }, { opacity: undefined }),
-		).toBeUndefined();
+		expect(patchArcs({ opacity: 0.5 }, { opacity: undefined })).toBeUndefined();
 	});
 });
 

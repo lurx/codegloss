@@ -11,7 +11,7 @@ export function parsePreChrome(html: string): {
 	const styleMatch = /<pre\b[^>]*\sstyle="([^"]*)"/i.exec(html);
 	if (!styleMatch) return {};
 
-	const declarations = styleMatch[1]!.split(';');
+	const declarations = styleMatch[1].split(';');
 	let background: string | undefined;
 	let color: string | undefined;
 

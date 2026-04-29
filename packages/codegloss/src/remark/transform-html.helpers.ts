@@ -25,6 +25,7 @@ function mergeObject(
 	if (override && typeof override === 'object') {
 		return { ...base, ...(override as Record<string, unknown>) };
 	}
+
 	return base;
 }
 
@@ -55,8 +56,10 @@ export function buildCodeGlossHtmlNode(pair: DetectedPair): Html {
 
 	const parsed = parseAnnotationsData(pair.annotationsJson);
 
-	if (Array.isArray(parsed.annotations)) config.annotations = parsed.annotations;
-	if (Array.isArray(parsed.connections)) config.connections = parsed.connections;
+	if (Array.isArray(parsed.annotations))
+		config.annotations = parsed.annotations;
+	if (Array.isArray(parsed.connections))
+		config.connections = parsed.connections;
 
 	const mergedArcs = mergeObject(pair.arcs, parsed.arcs);
 	if (mergedArcs && Object.keys(mergedArcs).length > 0) {

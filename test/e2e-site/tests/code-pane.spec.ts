@@ -50,7 +50,7 @@ test.describe('code pane', () => {
 		await expect
 			.poll(async () =>
 				page.evaluate(
-					(key) => globalThis.localStorage.getItem(key),
+					key => globalThis.localStorage.getItem(key),
 					'codegloss:editor:draft',
 				),
 			)

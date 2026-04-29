@@ -120,7 +120,11 @@ export function EditorPage() {
 							disabled={!canUndo}
 							title="Undo (Cmd/Ctrl+Z)"
 						>
-							<Undo2 size={16} aria-hidden="true" /> Undo
+							<Undo2
+								size={16}
+								aria-hidden="true"
+							/>{' '}
+							Undo
 						</button>
 						<button
 							type="button"
@@ -129,14 +133,22 @@ export function EditorPage() {
 							disabled={!canRedo}
 							title="Redo (Cmd/Ctrl+Shift+Z)"
 						>
-							<Redo2 size={16} aria-hidden="true" /> Redo
+							<Redo2
+								size={16}
+								aria-hidden="true"
+							/>{' '}
+							Redo
 						</button>
 						<button
 							type="button"
 							className={styles.historyButton}
 							onClick={handleOpenImport}
 						>
-							<Upload size={16} aria-hidden="true" /> Import
+							<Upload
+								size={16}
+								aria-hidden="true"
+							/>{' '}
+							Import
 						</button>
 						<button
 							type="button"
@@ -145,7 +157,11 @@ export function EditorPage() {
 							aria-label="Settings"
 							data-tour="settings"
 						>
-							<Settings size={16} aria-hidden="true" /> Settings
+							<Settings
+								size={16}
+								aria-hidden="true"
+							/>{' '}
+							Settings
 						</button>
 						<button
 							type="button"
@@ -155,7 +171,10 @@ export function EditorPage() {
 							title="Show editor tour"
 							data-tour="help"
 						>
-							<HelpCircle size={16} aria-hidden="true" />
+							<HelpCircle
+								size={16}
+								aria-hidden="true"
+							/>
 						</button>
 					</div>
 				</div>
@@ -209,12 +228,18 @@ export function EditorPage() {
 			</div>
 
 			<div className={styles.right}>
-				<div className={styles.stickyPreview} data-tour="preview">
+				<div
+					className={styles.stickyPreview}
+					data-tour="preview"
+				>
 					<PreviewPane config={config} />
 				</div>
 			</div>
 
-			<div className={styles.export} data-tour="export">
+			<div
+				className={styles.export}
+				data-tour="export"
+			>
 				<ExportPanel config={config} />
 			</div>
 

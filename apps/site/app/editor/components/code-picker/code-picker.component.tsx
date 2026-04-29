@@ -27,7 +27,7 @@ export function CodePicker({
 			lang: lang as BundledLanguage,
 			theme: theme as BundledTheme,
 		})
-			.then((result) => {
+			.then(result => {
 				if (!cancelled) setLines(result.tokens);
 			})
 			.catch((err: unknown) => {
@@ -107,7 +107,10 @@ export function CodePicker({
 			return <div className={styles.loading}>Loading highlight…</div>;
 		}
 		return lines.map((lineTokens, lineIndex) => (
-			<div key={lineIndex} className={styles.line}>
+			<div
+				key={lineIndex}
+				className={styles.line}
+			>
 				<span className={styles.lineNum}>{lineIndex}</span>
 				<span>
 					{lineTokens.length === 0

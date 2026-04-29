@@ -14,8 +14,12 @@ describe('applyGlobalTheme', () => {
 
 		applyGlobalTheme('github-dark');
 
-		expect(document.getElementById('a')?.getAttribute('theme')).toBe('github-dark');
-		expect(document.getElementById('b')?.getAttribute('theme')).toBe('github-dark');
+		expect(document.querySelector('#a')?.getAttribute('theme')).toBe(
+			'github-dark',
+		);
+		expect(document.querySelector('#b')?.getAttribute('theme')).toBe(
+			'github-dark',
+		);
 	});
 
 	it('leaves existing theme attributes alone', () => {
@@ -26,7 +30,11 @@ describe('applyGlobalTheme', () => {
 
 		applyGlobalTheme('github-dark');
 
-		expect(document.getElementById('explicit')?.getAttribute('theme')).toBe('dracula');
-		expect(document.getElementById('implicit')?.getAttribute('theme')).toBe('github-dark');
+		expect(document.querySelector('#explicit')?.getAttribute('theme')).toBe(
+			'dracula',
+		);
+		expect(document.querySelector('#implicit')?.getAttribute('theme')).toBe(
+			'github-dark',
+		);
 	});
 });

@@ -8,11 +8,11 @@ afterEach(() => {
 
 describe('measureTextRight', () => {
 	it('uses a Range over the element children instead of the element itself', () => {
-		const el = document.createElement('span');
-		el.append(document.createTextNode('hi'));
-		document.body.append(el);
+		const element = document.createElement('span');
+		element.append(document.createTextNode('hi'));
+		document.body.append(element);
 
-		vi.spyOn(el, 'getBoundingClientRect').mockReturnValue({
+		vi.spyOn(element, 'getBoundingClientRect').mockReturnValue({
 			right: 999,
 			left: 0,
 			top: 0,
@@ -40,7 +40,7 @@ describe('measureTextRight', () => {
 			},
 		});
 
-		expect(measureTextRight(el)).toBe(120);
+		expect(measureTextRight(element)).toBe(120);
 	});
 
 	it('falls back to the element left edge when the line is empty', () => {

@@ -222,17 +222,18 @@ describe('remarkCodegloss (full pipeline)', () => {
 			) as {
 				attributes: Array<{
 					name: string;
-					value: string | { value?: string } | null;
+					value: string | { value?: string } | undefined;
 				}>;
 			};
 			const arcs = jsx.attributes.find(a => a.name === 'arcs');
 			const callouts = jsx.attributes.find(a => a.name === 'callouts');
-			expect(
-				JSON.parse((arcs!.value as { value: string }).value),
-			).toEqual({ opacity: 0.65, arrowhead: true });
-			expect(
-				JSON.parse((callouts!.value as { value: string }).value),
-			).toEqual({ popover: true });
+			expect(JSON.parse((arcs!.value as { value: string }).value)).toEqual({
+				opacity: 0.65,
+				arrowhead: true,
+			});
+			expect(JSON.parse((callouts!.value as { value: string }).value)).toEqual({
+				popover: true,
+			});
 		});
 
 		it('forwards arcs/callouts defaults into the emitted html node', () => {
@@ -269,7 +270,9 @@ describe('remarkCodegloss (full pipeline)', () => {
 			const html = jsx.attributes.find(a => a.name === 'highlightedHtml') as {
 				value: { value: string };
 			};
-			expect(JSON.parse(html.value.value)).toBe('<span class="kw">const</span>');
+			expect(JSON.parse(html.value.value)).toBe(
+				'<span class="kw">const</span>',
+			);
 			expect(
 				jsx.attributes.find(a => a.name === 'highlightBackground'),
 			).toBeUndefined();
@@ -339,13 +342,11 @@ describe('remarkCodegloss (full pipeline)', () => {
 			) as {
 				attributes: Array<{
 					name: string;
-					value: string | { value?: string } | null;
+					value: string | { value?: string } | undefined;
 				}>;
 			};
 			const attr = jsx.attributes.find(a => a.name === 'styleOverrides');
-			expect(
-				JSON.parse((attr!.value as { value: string }).value),
-			).toEqual({
+			expect(JSON.parse((attr!.value as { value: string }).value)).toEqual({
 				codeBlock: { background: 'var(--surface)', borderRadius: '4px' },
 			});
 		});
@@ -386,10 +387,7 @@ describe('remarkCodegloss (full pipeline)', () => {
 			const html = tree.children.find(n => n.type === 'html') as {
 				value: string;
 			};
-			expect(html.value).toContain(
-				'style="--cg-bg: url(&quot;/bg.png&quot;)"',
-			);
+			expect(html.value).toContain('style="--cg-bg: url(&quot;/bg.png&quot;)"');
 		});
 	});
-
 });

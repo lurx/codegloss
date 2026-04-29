@@ -1,3 +1,3 @@
 export type CopyButtonProps = {
-  text: string;
+	text: string;
 };

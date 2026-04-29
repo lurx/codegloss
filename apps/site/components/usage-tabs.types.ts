@@ -12,4 +12,3 @@ export type Tab = {
 	install?: string;
 	blocks: CodeBlockEntry[];
 };
-

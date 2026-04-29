@@ -3,9 +3,7 @@ import type { Annotation, CodeGlossConfig, Connection } from '@codegloss/react';
 export type ArcsStyle = NonNullable<CodeGlossConfig['arcs']>;
 export type CalloutsStyle = NonNullable<CodeGlossConfig['callouts']>;
 
-export type EditorConfig = Required<
-	Pick<CodeGlossConfig, 'code' | 'lang'>
-> & {
+export type EditorConfig = Required<Pick<CodeGlossConfig, 'code' | 'lang'>> & {
 	filename?: string;
 	theme?: string;
 	arcs?: ArcsStyle;

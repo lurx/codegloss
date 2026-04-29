@@ -22,14 +22,14 @@ await copyFile(codeglossEntry, resolve(dist, 'codegloss.js'));
 const { readdir } = await import('node:fs/promises');
 const distSrc = dirname(codeglossEntry);
 for (const entry of await readdir(distSrc)) {
-  if (entry.startsWith('chunk-') && entry.endsWith('.js')) {
-    await copyFile(resolve(distSrc, entry), resolve(dist, entry));
-  }
+	if (entry.startsWith('chunk-') && entry.endsWith('.js')) {
+		await copyFile(resolve(distSrc, entry), resolve(dist, entry));
+	}
 }
 
 await writeFile(
-  resolve(dist, 'BUILD_INFO.txt'),
-  `built at ${new Date().toISOString()}\n`,
+	resolve(dist, 'BUILD_INFO.txt'),
+	`built at ${new Date().toISOString()}\n`,
 );
 
 console.log(`vanilla-html built → ${dist}`);

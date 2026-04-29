@@ -60,9 +60,7 @@ describe('buildCodeGlossMdxNode', () => {
 			}),
 		);
 		const attrs = node.attributes as MdxJsxAttribute[];
-		expect(expressionValue(findAttr(attrs, 'arcs'))).toBe(
-			'{"arrowhead":true}',
-		);
+		expect(expressionValue(findAttr(attrs, 'arcs'))).toBe('{"arrowhead":true}');
 	});
 
 	it('forwards a callouts object as a JSX expression attribute', () => {
@@ -178,8 +176,7 @@ describe('buildCodeGlossMdxNode', () => {
 			const node = buildCodeGlossMdxNode(
 				pair({
 					arcs: { opacity: 0.65, arrowhead: true, strokeDasharray: '1 1' },
-					annotationsJson:
-						'{"arcs":{"opacity":0.3,"strokeWidth":2}}',
+					annotationsJson: '{"arcs":{"opacity":0.3,"strokeWidth":2}}',
 				}),
 			);
 			const attrs = node.attributes as MdxJsxAttribute[];
@@ -205,13 +202,11 @@ describe('buildCodeGlossMdxNode', () => {
 		});
 
 		it('forwards pair-level callouts defaults when no per-block callouts exist', () => {
-			const node = buildCodeGlossMdxNode(
-				pair({ callouts: { popover: true } }),
-			);
+			const node = buildCodeGlossMdxNode(pair({ callouts: { popover: true } }));
 			const attrs = node.attributes as MdxJsxAttribute[];
-			expect(
-				JSON.parse(expressionValue(findAttr(attrs, 'callouts'))!),
-			).toEqual({ popover: true });
+			expect(JSON.parse(expressionValue(findAttr(attrs, 'callouts'))!)).toEqual(
+				{ popover: true },
+			);
 		});
 	});
 

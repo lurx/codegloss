@@ -1,85 +1,91 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>codegloss · vanilla HTML smoke test</title>
-    <style>
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        max-width: 720px;
-        margin: 40px auto;
-        padding: 0 20px;
-        background: #0d0f13;
-        color: #e8eaee;
-      }
-      h1 {
-        font-size: 1.5rem;
-        margin-bottom: 0.5rem;
-      }
-      p {
-        color: #6b7280;
-        margin-bottom: 2rem;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>vanilla HTML smoke test</h1>
-    <p>
-      No React, no MDX. Just a <code>&lt;script&gt;</code> tag and a custom
-      element with a JSON config child.
-    </p>
+	<head>
+		<meta charset="utf-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1"
+		/>
+		<title>codegloss · vanilla HTML smoke test</title>
+		<style>
+			body {
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+				max-width: 720px;
+				margin: 40px auto;
+				padding: 0 20px;
+				background: #0d0f13;
+				color: #e8eaee;
+			}
+			h1 {
+				font-size: 1.5rem;
+				margin-bottom: 0.5rem;
+			}
+			p {
+				color: #6b7280;
+				margin-bottom: 2rem;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>vanilla HTML smoke test</h1>
+		<p>
+			No React, no MDX. Just a <code>&lt;script&gt;</code> tag and a custom
+			element with a JSON config child.
+		</p>
 
-    <code-gloss>
-      <script type="application/json">
-        {
-          "code": "function fibonacci(n) {\n  const memo = {};\n\n  function fib(k) {\n    if (k <= 1) return k;\n    if (memo[k] !== undefined) return memo[k];\n    memo[k] = fib(k - 1) + fib(k - 2);\n    return memo[k];\n  }\n\n  return fib(n);\n}\n\nconsole.log(fibonacci(10));",
-          "lang": "js",
-          "filename": "fibonacci.js",
-          "annotations": [
-            {
-              "id": "a1",
-              "token": "memo",
-              "line": 1,
-              "occurrence": 0,
-              "title": "Memoization table",
-              "text": "Stores already-computed values by index to avoid repeated recursion."
-            },
-            {
-              "id": "a2",
-              "token": "memo[k]",
-              "line": 5,
-              "occurrence": 0,
-              "title": "Cache lookup",
-              "text": "Returns immediately when this subproblem was solved before."
-            },
-            {
-              "id": "a3",
-              "token": "memo[k]",
-              "line": 6,
-              "occurrence": 0,
-              "title": "Cache write",
-              "text": "Store the result so future calls short-circuit."
-            }
-          ],
-          "connections": [
-            {
-              "from": "a1",
-              "to": "a2",
-              "color": "#534AB7",
-              "title": "Read after declare",
-              "text": "The cache is declared on line 2 and read on line 6."
-            },
-            {
-              "from": "a3",
-              "to": "a2",
-              "color": "#0F6E56"
-            }
-          ]
-        }
-      </script>
-    </code-gloss>
+		<code-gloss>
+			<script type="application/json">
+				{
+					"code": "function fibonacci(n) {\n  const memo = {};\n\n  function fib(k) {\n    if (k <= 1) return k;\n    if (memo[k] !== undefined) return memo[k];\n    memo[k] = fib(k - 1) + fib(k - 2);\n    return memo[k];\n  }\n\n  return fib(n);\n}\n\nconsole.log(fibonacci(10));",
+					"lang": "js",
+					"filename": "fibonacci.js",
+					"annotations": [
+						{
+							"id": "a1",
+							"token": "memo",
+							"line": 1,
+							"occurrence": 0,
+							"title": "Memoization table",
+							"text": "Stores already-computed values by index to avoid repeated recursion."
+						},
+						{
+							"id": "a2",
+							"token": "memo[k]",
+							"line": 5,
+							"occurrence": 0,
+							"title": "Cache lookup",
+							"text": "Returns immediately when this subproblem was solved before."
+						},
+						{
+							"id": "a3",
+							"token": "memo[k]",
+							"line": 6,
+							"occurrence": 0,
+							"title": "Cache write",
+							"text": "Store the result so future calls short-circuit."
+						}
+					],
+					"connections": [
+						{
+							"from": "a1",
+							"to": "a2",
+							"color": "#534AB7",
+							"title": "Read after declare",
+							"text": "The cache is declared on line 2 and read on line 6."
+						},
+						{
+							"from": "a3",
+							"to": "a2",
+							"color": "#0F6E56"
+						}
+					]
+				}
+			</script>
+		</code-gloss>
 
-    <script type="module" src="../dist/index.js"></script>
-  </body>
+		<script
+			type="module"
+			src="../dist/index.js"
+		></script>
+	</body>
 </html>

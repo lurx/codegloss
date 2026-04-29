@@ -12,14 +12,16 @@ import type { Highlighter } from './code-gloss.types';
  * rebuilt with the new highlighter so the swap is visible without a
  * full page reload.
  */
-export function setDefaultHighlighter(highlight: Highlighter | undefined): void {
+export function setDefaultHighlighter(
+	highlight: Highlighter | undefined,
+): void {
 	CodeGlossElement.prototype.highlight = highlight;
 
 	/* v8 ignore next -- SSR guard, unreachable in a browser test env */
 	if (typeof document === 'undefined') return;
-	for (const el of document.querySelectorAll(CUSTOM_ELEMENT_NAME)) {
+	for (const element of document.querySelectorAll(CUSTOM_ELEMENT_NAME)) {
 		/* v8 ignore next -- querySelectorAll(<code-gloss>) only returns CodeGlossElement */
-		if (!(el instanceof CodeGlossElement)) continue;
-		el.refresh();
+		if (!(element instanceof CodeGlossElement)) continue;
+		element.refresh();
 	}
 }

@@ -37,7 +37,9 @@ describe('buildCodeGlossHtmlNode', () => {
 
 	it('emits a theme attribute when a theme is set on the pair', () => {
 		const node = buildCodeGlossHtmlNode(pair({ theme: 'github-dark' }));
-		expect(node.value.startsWith('<code-gloss theme="github-dark">')).toBe(true);
+		expect(node.value.startsWith('<code-gloss theme="github-dark">')).toBe(
+			true,
+		);
 	});
 
 	it('includes annotations and connections from the JSON blob', () => {
@@ -132,8 +134,7 @@ describe('buildCodeGlossHtmlNode', () => {
 			const node = buildCodeGlossHtmlNode(
 				pair({
 					arcs: { opacity: 0.65, arrowhead: true, strokeDasharray: '1 1' },
-					annotationsJson:
-						'{"arcs":{"opacity":0.3,"strokeWidth":2}}',
+					annotationsJson: '{"arcs":{"opacity":0.3,"strokeWidth":2}}',
 				}),
 			);
 			expect(extractConfig(node.value).arcs).toEqual({
