@@ -43,6 +43,11 @@ jobs:
     name: Release (main)
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
+    # Same environment as `snapshot` so a single npm trusted-publisher
+    # entry (workflow: publish.yml, environment: npm-publishing) covers
+    # both flows. npm only allows one trusted publisher per package, so
+    # we can't split release vs snapshot into separate publisher entries.
+    environment: npm-publishing
     concurrency: release-${{ github.ref }}
     permissions:
       contents: write # changesets/action opens/updates the Version Packages PR
@@ -126,6 +131,16 @@ jobs:
       (github.event_name == 'pull_request' &&
        contains(github.event.pull_request.labels.*.name, 'snapshot'))
     runs-on: ubuntu-latest
+    # Same environment as the release job — npm only allows one
+    # trusted publisher per package, and PR-event OIDC tokens aren't
+    # accepted unless the publish is scoped to an environment that
+    # the trusted publisher specifies. Scoping both jobs to
+    # `npm-publishing` means a single trusted-publisher entry
+    # (workflow: publish.yml, environment: npm-publishing) authorizes
+    # both. Tighten with deployment-branch rules or required reviewers
+    # in repo Settings if you want to gate which PRs can publish
+    # snapshots.
+    environment: npm-publishing
     concurrency:
       group: snapshot-${{ github.event.pull_request.head.ref || inputs.ref }}
       # A rapid burst of pushes shouldn't queue up redundant publishes —
