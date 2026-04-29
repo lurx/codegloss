@@ -9,8 +9,8 @@ on:
     branches: [main]
   pull_request:
 
-permissions:
-  contents: read
+# Permissions are scoped per job (S8264): the sentinel doesn't need
+# any, and the others only need `contents: read` to checkout.
 
 concurrency:
   group: e2e-${{ github.workflow }}-${{ github.ref }}
@@ -19,6 +19,8 @@ concurrency:
 jobs:
   changes:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       run: ${{ steps.filter.outputs.run }}
     steps:
@@ -41,6 +43,8 @@ jobs:
     needs: changes
     if: needs.changes.outputs.run == 'true'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       version: ${{ steps.read.outputs.version }}
     steps:
@@ -55,6 +59,8 @@ jobs:
     needs: [changes, playwright-version]
     if: needs.changes.outputs.run == 'true'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     container:
       image: mcr.microsoft.com/playwright:v${{ needs.playwright-version.outputs.version }}-noble
     env:
@@ -86,6 +92,7 @@ jobs:
     needs: [changes, e2e]
     if: always()
     runs-on: ubuntu-latest
+    permissions: {} # sentinel only inspects upstream job results; no checkout
     steps:
       - name: Assert heavy job passed or was correctly skipped
         env:
