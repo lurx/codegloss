@@ -51,6 +51,13 @@ export type CodeGlossStyleOverrides = {
 		border?: string;
 		/** Maps to `--cg-radius`. Defaults to `8px`. */
 		borderRadius?: string;
+		/**
+		 * Maps to `--cg-max-inline-size`. Caps the host's inline (logical
+		 * width) size — accepts any CSS length, `none` to disable the cap,
+		 * or a `var(...)` reference to the host site's own breakpoint
+		 * variable. Defaults to `680px`.
+		 */
+		maxInlineSize?: string;
 		/** Maps to `--cg-toolbar-bg`. */
 		toolbarBackground?: string;
 		/** Maps to `--cg-muted` — filename, callout body, copy button. */

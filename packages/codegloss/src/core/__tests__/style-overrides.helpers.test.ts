@@ -22,6 +22,7 @@ describe('styleOverridesToCssVars', () => {
 					foreground: '#111',
 					border: '1px solid #333',
 					borderRadius: '4px',
+					maxInlineSize: '880px',
 					toolbarBackground: 'var(--my-toolbar)',
 					mutedForeground: '#666',
 				},
@@ -31,6 +32,7 @@ describe('styleOverridesToCssVars', () => {
 			['--cg-text', '#111'],
 			['--cg-border', '1px solid #333'],
 			['--cg-radius', '4px'],
+			['--cg-max-inline-size', '880px'],
 			['--cg-toolbar-bg', 'var(--my-toolbar)'],
 			['--cg-muted', '#666'],
 		]);
