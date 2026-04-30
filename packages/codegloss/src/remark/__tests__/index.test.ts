@@ -390,4 +390,112 @@ describe('remarkCodegloss (full pipeline)', () => {
 			expect(html.value).toContain('style="--cg-bg: url(&quot;/bg.png&quot;)"');
 		});
 	});
+
+	describe('options.transformAllCodeFences', () => {
+		const MIXED_MD = [
+			'```ts codegloss someFile.ts',
+			'type System = (entities: Entities) => Entities;',
+			'```',
+			'',
+			'```json annotations',
+			'{"annotations":[{"id":"a1","token":"entities","line":0,"occurrence":0,"title":"x","text":"y"}]}',
+			'```',
+			'',
+			'Some prose.',
+			'',
+			'```typescript',
+			'const SYSTEMS = [a, b, c];',
+			'```',
+		].join('\n');
+
+		it('leaves plain fences untouched by default', () => {
+			const tree = run(MIXED_MD);
+			const jsxNodes = tree.children.filter(
+				n => (n as { type: string }).type === 'mdxJsxFlowElement',
+			);
+			const codeNodes = tree.children.filter(n => n.type === 'code');
+			expect(jsxNodes).toHaveLength(1);
+			expect(codeNodes).toHaveLength(1);
+			expect((codeNodes[0] as { lang: string }).lang).toBe('typescript');
+		});
+
+		it('transforms plain fences alongside annotated ones when enabled', () => {
+			const tree = run(MIXED_MD, { transformAllCodeFences: true });
+			const jsxNodes = tree.children.filter(
+				n => (n as { type: string }).type === 'mdxJsxFlowElement',
+			);
+			expect(jsxNodes).toHaveLength(2);
+			expect(tree.children.filter(n => n.type === 'code')).toHaveLength(0);
+		});
+
+		it('forwards the plugin theme/styleOverrides to the un-annotated block', () => {
+			const tree = run(MIXED_MD, {
+				transformAllCodeFences: true,
+				theme: 'github-dark',
+				styleOverrides: { codeBlock: { background: 'var(--surface)' } },
+			});
+			const jsxNodes = tree.children.filter(
+				n => (n as { type: string }).type === 'mdxJsxFlowElement',
+			) as Array<{
+				attributes: Array<{
+					name: string;
+					value: string | { value?: string } | undefined;
+				}>;
+			}>;
+			const plain = jsxNodes[1];
+			expect(plain.attributes.find(a => a.name === 'theme')?.value).toBe(
+				'github-dark',
+			);
+			const styleOverridesAttr = plain.attributes.find(
+				a => a.name === 'styleOverrides',
+			);
+			expect(
+				JSON.parse((styleOverridesAttr!.value as { value: string }).value),
+			).toEqual({ codeBlock: { background: 'var(--surface)' } });
+		});
+
+		it('runs the highlighter for plain fences too', () => {
+			const tree = run(MIXED_MD, {
+				transformAllCodeFences: true,
+				highlight: code => `<span>${code.length}</span>`,
+			});
+			const jsxNodes = tree.children.filter(
+				n => (n as { type: string }).type === 'mdxJsxFlowElement',
+			) as Array<{
+				attributes: Array<{
+					name: string;
+					value: string | { value?: string } | undefined;
+				}>;
+			}>;
+			const plain = jsxNodes[1];
+			const highlighted = plain.attributes.find(
+				a => a.name === 'highlightedHtml',
+			);
+			expect(
+				JSON.parse((highlighted!.value as { value: string }).value),
+			).toContain('<span>');
+		});
+
+		it('skips orphan `json annotations` blocks', () => {
+			const md = [
+				'```json annotations',
+				'{"annotations":[]}',
+				'```',
+				'',
+				'```ts',
+				'let x = 1',
+				'```',
+			].join('\n');
+			const tree = run(md, { transformAllCodeFences: true });
+			const jsxNodes = tree.children.filter(
+				n => (n as { type: string }).type === 'mdxJsxFlowElement',
+			);
+			const remainingCode = tree.children.filter(n => n.type === 'code');
+			expect(jsxNodes).toHaveLength(1);
+			expect(remainingCode).toHaveLength(1);
+			const orphan = remainingCode[0] as { lang: string; meta: string };
+			expect(orphan.lang).toBe('json');
+			expect(orphan.meta).toBe('annotations');
+		});
+	});
 });

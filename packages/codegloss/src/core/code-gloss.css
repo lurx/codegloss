@@ -21,12 +21,13 @@
 	--cg-ann-hover: rgba(83, 74, 183, 0.22);
 	--cg-ann-hover-dark: rgba(174, 169, 236, 0.22);
 	--cg-radius: 8px;
+	--cg-max-inline-size: 680px;
 
 	display: block;
 	font-family:
 		-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 	position: relative;
-	max-width: 680px;
+	max-inline-size: var(--cg-max-inline-size);
 }
 
 .codegloss {
