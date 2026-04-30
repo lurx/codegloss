@@ -28,7 +28,9 @@ function remarkCodegloss(options: RemarkCodeglossOptions = {}) {
 			let index = 0;
 
 			while (index < parent.children.length) {
-				const pair = detectCodeglossPair(parent.children, index);
+				const pair = detectCodeglossPair(parent.children, index, {
+					transformAllCodeFences: options.transformAllCodeFences,
+				});
 
 				if (pair) {
 					const highlightResult = options.highlight?.(pair.code, pair.lang);
