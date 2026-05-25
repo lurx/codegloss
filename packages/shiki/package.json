@@ -1,6 +1,6 @@
 {
 	"name": "@codegloss/shiki",
-	"version": "0.1.0",
+	"version": "1.0.0",
 	"description": "Shiki integration for codegloss — rehype plugin that renders every fenced code block as a <code-gloss> element, plus the Shiki highlighter adapter",
 	"license": "MIT",
 	"homepage": "https://lurx.github.io/codegloss/",
