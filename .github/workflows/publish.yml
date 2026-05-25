@@ -79,6 +79,15 @@ jobs:
 
       - name: Create release PR or publish
         id: changesets
+        # `pnpm changeset publish` is atomic per-package via npm's
+        # Trusted Publishing — once it returns, the package is on the
+        # registry with its provenance attestation. The action then loops
+        # over the new versions and does `git push origin <tag>` one tag
+        # at a time. A transient GitHub 5xx on any one push fails the
+        # action with exit 1, even though the publish itself is consistent.
+        # We swallow that here and let the `Reconcile release outcome`
+        # step below decide whether the job actually failed.
+        continue-on-error: true
         uses: changesets/action@v1
         with:
           version: pnpm changeset version
@@ -88,6 +97,70 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           NPM_CONFIG_PROVENANCE: 'true'
+
+      - name: Reconcile release outcome
+        # Three cases the previous step can land in:
+        #   1. success                              → nothing to do.
+        #   2. failure, published == 'true'         → publish completed, a
+        #      tag-push hit a 5xx. Retry the missing tag pushes with
+        #      backoff. The job succeeds iff every tag eventually lands.
+        #   3. failure, published != 'true'         → the action broke
+        #      somewhere before publish. That's a real failure; surface it.
+        if: always()
+        env:
+          OUTCOME: ${{ steps.changesets.outcome }}
+          PUBLISHED: ${{ steps.changesets.outputs.published }}
+          PUBLISHED_PACKAGES: ${{ steps.changesets.outputs.publishedPackages }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ "$OUTCOME" = "success" ]; then
+            echo "changesets/action succeeded; nothing to reconcile."
+            exit 0
+          fi
+
+          if [ "$PUBLISHED" != "true" ]; then
+            echo "::error::changesets/action failed before any package was published."
+            exit 1
+          fi
+
+          echo "Publish completed but the action exited with a failure"
+          echo "(likely a transient git-push 5xx). Verifying each package's"
+          echo "tag on origin and re-pushing any missing ones with backoff."
+          echo
+
+          missing=0
+          while read -r tag; do
+            [ -z "$tag" ] && continue
+            if git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null 2>&1; then
+              echo "  ok: $tag already on origin"
+              continue
+            fi
+            if ! git rev-parse --verify "refs/tags/$tag" >/dev/null 2>&1; then
+              git tag "$tag" HEAD
+            fi
+            pushed=0
+            for attempt in 1 2 3 4 5; do
+              if git push origin "refs/tags/$tag"; then
+                echo "  ok: $tag pushed (attempt $attempt)"
+                pushed=1
+                break
+              fi
+              echo "  attempt $attempt for $tag failed; waiting 10s..."
+              sleep 10
+            done
+            if [ "$pushed" -ne 1 ]; then
+              echo "::error::failed to push tag $tag after 5 attempts"
+              missing=1
+            fi
+          done < <(echo "$PUBLISHED_PACKAGES" | jq -r '.[] | "\(.name)@\(.version)"')
+
+          if [ "$missing" -ne 0 ]; then
+            exit 1
+          fi
+          echo
+          echo "All tags reconciled."
 
   smoke-test:
     name: Smoke-test published tarballs
