@@ -83,6 +83,12 @@ type RemarkCodeglossOptions = {
    * Accepts a bundled theme name (e.g. 'github-dark', 'dracula').
    */
   theme?: string;
+  /**
+   * When true, every fenced code block with a language is wrapped in a
+   * <CodeGloss /> and inherits the plugin's theme/styleOverrides/highlight
+   * defaults, even without the explicit `codegloss` meta marker. Default: false.
+   */
+  transformAllCodeFences?: boolean;
 };
 ````
 
@@ -95,6 +101,22 @@ remarkCodegloss({ theme: 'github-dark' })
 ````
 
 Individual code blocks can override the global default — the remark plugin only injects the theme when the block doesn't specify its own.
+
+### Treating every fence as a codegloss block
+
+By default the plugin only transforms fences marked with the `codegloss` keyword (`\`\`\`ts codegloss filename`). A plain `\`\`\`ts` fence on the same page is left untouched, so it won't pick up the plugin's `theme` / `styleOverrides` / `highlight` defaults — meaning annotated and un-annotated blocks on the same MDX page can render with mismatched chrome.
+
+Flip `transformAllCodeFences: true` to make every langed fence a `<CodeGloss />` instance and inherit the same defaults:
+
+````js
+remarkCodegloss({
+  theme: 'github-dark',
+  styleOverrides: { codeBlock: { background: 'var(--surface-1)' } },
+  transformAllCodeFences: true,
+});
+````
+
+The `<lang> codegloss [filename]` form still wins for any block that needs paired annotations — this option just removes the marker requirement for un-annotated blocks. Fences with no language and orphan `json annotations` blocks are skipped even when this is on.
 
 ## Configuration examples
 

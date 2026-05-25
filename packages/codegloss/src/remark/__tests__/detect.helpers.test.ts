@@ -118,4 +118,70 @@ describe('detectCodeglossPair', () => {
 		expect(result?.lang).toBe('js');
 		expect(result?.filename).toBe('app.js');
 	});
+
+	describe('transformAllCodeFences', () => {
+		it('treats a plain langed fence as an un-annotated codegloss block', () => {
+			const node = code({ lang: 'ts', value: 'const x = 1' });
+			expect(
+				detectCodeglossPair([node], 0, { transformAllCodeFences: true }),
+			).toEqual({
+				lang: 'ts',
+				filename: undefined,
+				code: 'const x = 1',
+				annotationsJson: undefined,
+				codeIndex: 0,
+				nodeCount: 1,
+			});
+		});
+
+		it('still pairs a `codegloss` fence with its annotations block', () => {
+			const fence = code({ lang: 'js', meta: 'codegloss app.js', value: 'x' });
+			const annotations = code({
+				lang: 'json annotations',
+				value: '{"annotations":[]}',
+			});
+			const result = detectCodeglossPair([fence, annotations], 0, {
+				transformAllCodeFences: true,
+			});
+			expect(result?.nodeCount).toBe(2);
+			expect(result?.filename).toBe('app.js');
+		});
+
+		it('skips a fence with no language', () => {
+			const node = code({ lang: null, value: 'plain text' });
+			expect(
+				detectCodeglossPair([node], 0, { transformAllCodeFences: true }),
+			).toBeUndefined();
+		});
+
+		it('skips orphan `json annotations` blocks', () => {
+			const node = code({
+				lang: 'json annotations',
+				value: '{"annotations":[]}',
+			});
+			expect(
+				detectCodeglossPair([node], 0, { transformAllCodeFences: true }),
+			).toBeUndefined();
+		});
+
+		it('skips orphan `json` blocks whose meta is `annotations`', () => {
+			const node = code({
+				lang: 'json',
+				meta: 'annotations',
+				value: '{}',
+			});
+			expect(
+				detectCodeglossPair([node], 0, { transformAllCodeFences: true }),
+			).toBeUndefined();
+		});
+
+		it('still transforms a regular `json` fence (no `annotations` meta)', () => {
+			const node = code({ lang: 'json', value: '{"x":1}' });
+			const result = detectCodeglossPair([node], 0, {
+				transformAllCodeFences: true,
+			});
+			expect(result?.lang).toBe('json');
+			expect(result?.code).toBe('{"x":1}');
+		});
+	});
 });

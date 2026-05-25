@@ -187,6 +187,7 @@ export default defineConfig({
       foreground: 'var(--text-primary)',
       border: '1px solid var(--border-subtle)',
       borderRadius: 'var(--radius-md)',
+      maxInlineSize: 'var(--prose-width)',
     },
     annotations: {
       markerBackground: 'var(--accent-dim)',

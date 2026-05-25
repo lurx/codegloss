@@ -105,4 +105,20 @@ export type RemarkCodeglossOptions = {
 		code: string,
 		lang: string,
 	) => string | { html: string; background?: string; color?: string };
+	/**
+	 * When true, every fenced code block with a language is wrapped in a
+	 * `<CodeGloss />` (or `<code-gloss>` in html mode) and inherits the
+	 * plugin's `theme` / `styleOverrides` / `arcs` / `callouts` / `highlight`
+	 * defaults — even without the explicit `codegloss` meta marker. The
+	 * `<lang> codegloss [filename]` form still wins (and is what enables
+	 * paired annotations); this option just removes the marker requirement
+	 * for un-annotated blocks so an MDX page can mix annotated and plain
+	 * fences without chrome inconsistency. Default: false.
+	 *
+	 * Skipped even when this is on:
+	 * - fences with no `lang`
+	 * - `json annotations` / `json` + `meta: annotations` blocks (they're
+	 *   paired metadata for a preceding codegloss block, not real code)
+	 */
+	transformAllCodeFences?: boolean;
 };

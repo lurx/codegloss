@@ -14,6 +14,7 @@ const CSS_VAR_MAP: ReadonlyArray<
 	['codeBlock', 'foreground', '--cg-text'],
 	['codeBlock', 'border', '--cg-border'],
 	['codeBlock', 'borderRadius', '--cg-radius'],
+	['codeBlock', 'maxInlineSize', '--cg-max-inline-size'],
 	['codeBlock', 'toolbarBackground', '--cg-toolbar-bg'],
 	['codeBlock', 'mutedForeground', '--cg-muted'],
 	['annotations', 'markerBackground', '--cg-ann-bg'],

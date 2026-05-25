@@ -92,6 +92,7 @@ export default defineConfig({
       foreground: 'var(--text-primary)',
       border: '1px solid var(--border-subtle)',
       borderRadius: 'var(--radius-md)',
+      maxInlineSize: 'var(--prose-width)',
     },
     annotations: {
       markerBackground: 'var(--accent-dim)',
@@ -112,7 +113,7 @@ Groups mirror the visual subcomponents:
 
 | Group | Fields |
 | --- | --- |
-| `codeBlock` | `background`, `foreground`, `border`, `borderRadius`, `toolbarBackground`, `mutedForeground` |
+| `codeBlock` | `background`, `foreground`, `border`, `borderRadius`, `maxInlineSize`, `toolbarBackground`, `mutedForeground` |
 | `annotations` | `markerBackground`, `markerBorder`, `markerHover` |
 | `badge` | `background`, `foreground` |
 | `lineNumbers` | `foreground` |
@@ -147,6 +148,7 @@ code-gloss {
 | `--cg-bg` | `#f8f8f6` | `#1e1e1e` | Code area background |
 | `--cg-border` | `#e8e8e6` | `#3a3a3a` | Border color |
 | `--cg-radius` | `8px` | `8px` | Outer border radius |
+| `--cg-max-inline-size` | `680px` | `680px` | Host max inline size (set to `none` to disable the cap) |
 | `--cg-text` | `#1a1a1a` | `#e0e0e0` | Code text color |
 | `--cg-muted` | `#666` | `#999` | Secondary text |
 | `--cg-line-num` | `#bbb` | `#555` | Line number color |
